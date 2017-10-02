@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+java -jar $bin/GenomeAnalysisTK.jar -T SelectVariants -R $1 -V $2 -selectType SNP -o $3.snp.vcf
+java -jar $bin/GenomeAnalysisTK.jar -T SelectVariants -R $1 -V $2 -selectType INDEL -o $3.indel.vcf
+java -jar $bin/GenomeAnalysisTK.jar -T VariantFiltration -R $1 -V $3.snp.vcf --filterExpression "QD < 2.0 || FS > 60.0 || MQ < 40.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0"  --filterName "Failure" -o $3.snp.filter.vcf
+java -jar $bin/GenomeAnalysisTK.jar -T VariantFiltration -R $1 -V $3.indel.vcf --filterExpression "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0"  --filterName "Failure" -o $3.indel.filter.vcf 
