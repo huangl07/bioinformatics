@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+bwa mem -M -a -t 4 $1 $2 $3
