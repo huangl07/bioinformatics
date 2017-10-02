@@ -1,2 +1,0 @@
-# bioinformatics
-tools for biolinux
