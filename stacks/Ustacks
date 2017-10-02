@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-ustacks -i 1 -f $1 -m 3 -M 4 -r -d -o $2 -t gzfastq -p 8
+ustacks -i 1 -f $1 -m 3 -M 4 -r -d -o $2 -t gzfastq -p 8 --gapped

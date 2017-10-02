@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+cstacks -i 1 -s $1 -o $2 -p 8 --gapped
