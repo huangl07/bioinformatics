@@ -13,6 +13,11 @@ mapthis <- drop.markers(mapthis, todrop)
 gt <- geno.table(mapthis)
 todrop <- rownames(gt[gt$P.value < 0.05,])
 mapthis <- drop.markers(mapthis, todrop)
+#indi
+cg <- comparegeno(mapthis)
+wh <- which(cg > 0.9, arr=TRUE)
+wh <- wh[wh[,1] < wh[,2],]
+mapthis <- subset(mapthis, ind=-wh[,2])
 #group
 mapthis <- est.rf(mapthis)
 mapthis <- formLinkageGroups(mapthis, max.rf=0.35, min.lod=6, reorgMarkers=TRUE)
@@ -20,12 +25,17 @@ mapthis <- formLinkageGroups(mapthis, max.rf=0.35, min.lod=6, reorgMarkers=TRUE)
 pdf("mapthis.rf.pdf")
 plotRF(mapthis)
 dev.off()
-toswitch <- markernames(mapthis, chr=c(5, 7:11))
+#adjust group
+toswitch <- markernames(mapthis, chr=c(2,8))
 mapthis <- switchAlleles(mapthis, toswitch)
+mapthis <- est.rf(mapthis)
+mapthis <- formLinkageGroups(mapthis, max.rf=0.35, min.lod=6, reorgMarkers=TRUE)
 toswitch <- markernames(mapthis,chr=c(4,6))
 mapthis <-switchAlleles(mapthis,toswitch)
 mapthis <- est.rf(mapthis)
 mapthis <- formLinkageGroups(mapthis, max.rf=0.35, min.lod=6, reorgMarkers=TRUE)
+#mapping
 mapthis <- orderMarkers(mapthis)
-
-
+plotMap(mapthis)
+plotRF(mapthis)
+plotGeno(mapthis,chr=5)
