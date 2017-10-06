@@ -1,9 +1,7 @@
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/425/GCF_000005425.2_Build_4.0/GCF_000005425.2_Build_4.0_genomic.gff.gz
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/425/GCF_000005425.2_Build_4.0/GCF_000005425.2_Build_4.0_genomic.fna.gz
 mkdir -p data/ref/ && mv *.gz data/ref/
-echo "data.dir =/home/huangl/bin/bioinformatics/snpEFF/data" > snpEff.config
-echo "#rice genome, version ref" > snpEff.config
-echo "ref.genome : ref" > snpEff.config
+echo -e "data.dir =/home/huangl/bin/bioinformatics/snpEFF/data\n#rice genome, version ref\nref.genome : ref" > snpEff.config
 cd data/ref/
 gunzip GCF_000005425.2_Build_4.0_genomic.gff.gz
 gunzip GCF_000005425.2_Build_4.0_genomic.fna.gz
