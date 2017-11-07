@@ -1,2 +1,0 @@
-Middle_SNP_position	Set1_heterozygosity	Set2_heterozygosity	Set1_heterozygosity_Nei	Set2_heterozygosity_Nei	Set1_nucleotideDiversity_pi	Set2_nucleotideDiversity_pi
-#Heterozygosities: 	S1:0.36	S2:0.298333	Nei1:0.48	Nei20.397778

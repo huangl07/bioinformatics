@@ -1,1 +1,0 @@
-var_num	scaffold	Start	End	Fst	Dxy_onlyVariants	Dxy_AllSites	windowSize

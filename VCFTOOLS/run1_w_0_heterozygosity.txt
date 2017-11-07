@@ -1,1 +1,0 @@
-#Heterozygosities: 	S1:0.325	S2:0.39	Nei1:0.433333	Nei20.52
