@@ -1,0 +1,1 @@
+scaffold	Start	End	Fst	Dxy	Set1_pi	Set2_pi	Accessible_bp	Set1_VariantDensity	Set2_VariantDensity
