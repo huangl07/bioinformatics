@@ -9,3 +9,4 @@ mv GCF_000005425.2_Build_4.0_genomic.fna sequences.fa
 mv GCF_000005425.2_Build_4.0_genomic.gff genes.gff
 cd ../../
 java -jar $bin/snpEff.jar build -gff3 -v ref -c snpEff.config
+java -jar $bin/snpEff.jar ann -c snpEff.config -v ref $vcf > anno.vcf
