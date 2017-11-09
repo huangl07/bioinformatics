@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+use strict;
+my $group=shift;
+my $qstat;
+if (!defined $group|| $group eq ""){
+	$qstat=`qstat -a`
+}else{
+	$qstat=`qgroup $group`;
+}
+my @line=split(/\n/,$qstat);
+my %hash;
+foreach my $l (@line){
+	next if ($l =~/^\s+/ || $l =~ /^$/);
+	next if ($l =~ /Job/);
+	next if ($l =~ /\-\-\-/);
+	my (undef,$user,undef,undef,undef,undef,$cpu,$mem,undef,$state,undef)=split(/\s+/,$l);
+	next if (!defined $user || $user =~ /^\s+$/ || $user eq "");
+	$mem=~s/gb//g;
+#	print $state,"\n";
+	$hash{$user}{$state}{cpu}+=$cpu;
+	$hash{$user}{$state}{mem}+=$mem;
+	$hash{$user}{$state}{job}++;
+}
+print join("\t","#User","Run jobs","Run CPU","Run Mem","Queue jobs","Queue CPU","Queue Mem"),"\n";
+my ($total,$rcpu,$rmem,$rjob,$qcpu,$qmem,$qjob);
+foreach my $user(sort keys %hash){
+	$hash{$user}{R}{cpu}||=0;
+	$hash{$user}{R}{mem}||=0;
+	$hash{$user}{R}{job}||=0;
+	$hash{$user}{Q}{cpu}||=0;
+	$hash{$user}{Q}{mem}||=0;
+	$hash{$user}{Q}{job}||=0;
+	print join("\t",$user,$hash{$user}{R}{job},$hash{$user}{R}{cpu}, $hash{$user}{R}{mem}."G",$hash{$user}{Q}{job} ,$hash{$user}{Q}{cpu}, $hash{$user}{Q}{mem}."G"),"\n";
+	$rjob+=$hash{$user}{R}{job};
+	$rmem+=$hash{$user}{R}{mem};
+	$rcpu+=$hash{$user}{R}{cpu};
+	$qjob+=$hash{$user}{Q}{job};
+	$qmem+=$hash{$user}{Q}{mem};
+	$qcpu+=$hash{$user}{Q}{cpu};
+}
+print join("\t","Total",$rjob,$rcpu,$rmem."G",$qjob ,$qcpu, $qmem."G"),"\n";
