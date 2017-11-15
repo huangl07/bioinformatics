@@ -1,0 +1,89 @@
+library('getopt');
+library('qtl');
+spec = matrix(c(
+	'map','m',1,'character',
+	'loc','l',1,'character',
+	'trt','t',1,'character',
+	'out','o',1,'character',
+	'num','n',1,'character',
+	'help','h',0,'logical'
+	), byrow=TRUE, ncol=4)
+opt = getopt(spec)
+print_usage <- function(spec=NULL){
+	cat(getopt(spec, usage=TRUE));
+	cat("Usage example: \n")
+	cat("
+Usage example: 
+	Rscript Rqtl_CP.r --map --loc --trt --out --num
+	
+Usage:
+	--map	map file
+	--loc	loc file
+	--trt	trt file
+	--out	out dir
+	--num	pm number
+	--help		usage
+\n")
+	q(status=1);
+}
+
+if ( !is.null(opt$help) ) { print_usage(spec) }
+if ( is.null(opt$map) ) { print_usage(spec) }
+if ( is.null(opt$loc) ) { print_usage(spec) }
+if ( is.null(opt$trt) ) { print_usage(spec) }
+if ( is.null(opt$num) ) { opt$num=1000; }
+if ( is.null(opt$out) ) { opt$out="./"; }
+opt$out=paste(opt$out,"/",sep="")
+d<-read.cross(mapfile=opt$map,genfile=opt$loc,phefile=opt$trt,format="mapqtl")
+d<-jittermap(d)
+d<-sim.geno(d)
+d<-calc.genoprob(d)
+phe.name<-colnames(d$pheno)
+nrow=4;
+ncol=ceiling(length(phe.name)/4)
+if(ncol==1){nrow=length(phe.name)}
+pdf(paste(opt$out,"/","pheno.pdf",sep=""))
+par(mfrow=c(ncol,nrow))
+for (i in 1:length(phe.name)){
+	plotPheno(d,pheno.col=phe.name[i])
+}
+dev.off()
+qtls<-matrix()
+for(i in 1:length(phe.name)){
+	scan<-scanone(d,pheno.col=i);
+	scan.pm<-scanone(d,pheno.col=i,n.perm=1000);
+	write.table(file=paste(opt$out,phe.name[i],".scan.csv",sep=""),sep="\t",x=scan);
+	write.table(file=paste(opt$out,phe.name[i],".pm.csv",sep=""),sep="\t",x=scan.pm);
+	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
+	if(min(scan.result$pval) >0.1){
+		scan.result<-summary(scan,format="tabByCol",threshold=max(scan$lod)-0.5,drop=1)
+		pm.result<-c(max(scan$lod)-0.5,max(scan$lod)-1)
+		legend=pm.result
+	}else{	
+		pm.result<-summary(scan.pm)
+		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		legend=paste(rownames(pm.result),round(pm.result,2))
+	}
+	pdf(file=paste(opt$out,phe.name[i],".scan.pdf",sep=""))
+	plot(scan)
+	abline(h=pm.result,col=rainbow(length(pm.result)))
+	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
+	dev.off()
+	write.table(file=paste(opt$out,phe.name[i],".region.csv",sep=""),sep="\t",x=scan.result);
+	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
+	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
+	fitqtl<-fitqtl(cross=d,qtl=qtl)
+	write.table(file=paste(opt$out,phe.name[i],".qtl.csv",sep=""),sep="\t",x=fitqtl$result.drop)
+	pdf(paste(opt$out,phe.name[i],".qtl.pdf",sep=""))
+	plot(qtl)
+	dev.off()
+	if (length(qtl)==1){
+		qtls=cbind(scan.result$lod$chr,scan.result$lod$pos,qtlname)
+	}else{
+		qtls<-rbind(qtls,c(scan.result$lod$chr,scan.result$lod$pos,qtlname))
+	}
+}
+qtl<-makeqtl(d,chr=qtls$V1,pos=qtls$V2,qtl.name=qtls$V3)
+pdf("total.qtl.pdf");
+plot(totalqtl)
+dev.off()

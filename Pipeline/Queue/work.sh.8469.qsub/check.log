@@ -1,0 +1,45 @@
+Job Id: 4176423.majorbio.cluster.com
+    Job_Name = work.sh_00008.sh
+    Job_Owner = long.huang@login02.local
+    job_state = Q
+    queue = dna
+    server = majorbio.cluster.com
+    Checkpoint = u
+    ctime = Wed Nov  8 15:23:47 2017
+    Error_Path = login02.local:/mnt/ilustre/users/long.huang/Pipeline/v2.0/09_
+	Qsub/work.sh.8469.qsub/work.sh_00008.sh.e4176423
+    Hold_Types = n
+    Join_Path = n
+    Keep_Files = n
+    Mail_Points = a
+    mtime = Wed Nov  8 15:23:47 2017
+    Output_Path = login02.local:/mnt/ilustre/users/long.huang/Pipeline/v2.0/09
+	_Qsub/work.sh.8469.qsub/work.sh_00008.sh.o4176423
+    Priority = 0
+    qtime = Wed Nov  8 15:23:47 2017
+    Rerunable = True
+    Resource_List.mem = 1gb
+    Resource_List.nodect = 1
+    Resource_List.nodes = 1:ppn=1
+    Resource_List.walltime = 240:00:00
+    Variable_List = PBS_O_QUEUE=dna,PBS_O_HOME=/mnt/ilustre/users//long.huang,
+	PBS_O_LOGNAME=long.huang,
+	PBS_O_PATH=/mnt/ilustre/users/dna/.env//mysql/bin/:/mnt/ilustre/users
+	/dna/.env//root//bin/:/mnt/ilustre/users/dna/.env//lib64/R/bin/:/mnt/i
+	lustre/users/dna/.env//java/bin/:/mnt/ilustre/users/dna/.env//bin/:/us
+	r/bin/:/bin/:/opt/torque/bin/,PBS_O_MAIL=/var/spool/mail/long.huang,
+	PBS_O_SHELL=/bin/bash,PBS_O_LANG=en_US.iso885915,
+	PBS_O_WORKDIR=/mnt/ilustre/users/long.huang/Pipeline/v2.0/09_Qsub/wor
+	k.sh.8469.qsub,PBS_O_HOST=login02.local,
+	PBS_O_SERVER=majorbio.cluster.com
+    euser = long.huang
+    egroup = dna
+    queue_type = E
+    etime = Wed Nov  8 15:23:47 2017
+    submit_args = -l nodes=1:ppn=1 -l mem=1G -l walltime=240:00:00 -q dna /mnt
+	/ilustre/users/long.huang/Pipeline/v2.0/09_Qsub/work.sh.8469.qsub/work
+	.sh_00008.sh
+    fault_tolerant = False
+    job_radix = 0
+    submit_host = login02.local
+

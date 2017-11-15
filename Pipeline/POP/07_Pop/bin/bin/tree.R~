@@ -1,0 +1,119 @@
+# load library
+library('getopt');
+
+#-----------------------------------------------------------------
+# getting parameters
+#-----------------------------------------------------------------
+#get options, using the spec as defined by the enclosed list.
+#we read the options from the default: commandArgs(TRUE).
+spec = matrix(c(
+	'help' , 'h', 0, "logical",
+	'infile' , 'i', 1, "character",
+	'outfile' , 'o', 1, "character",
+	'group', 'g', 1 , "character"
+	), byrow=TRUE, ncol=4);
+opt = getopt(spec);
+# define usage function
+print_usage <- function(spec=NULL){
+	cat(getopt(spec, usage=TRUE));
+	cat("Usage example: \n")
+	cat("
+Usage example: 
+Options: 
+	--help		NULL 		get this help
+	--infile 	character 	the input file [forced]
+	--outfile 	character 	the filename for output graph [forced]
+	--group		character	the group file for draw
+	\n")
+	q(status=1);
+}
+
+# if help was asked for print a friendly message
+# and exit with a non-zero error code
+if ( !is.null(opt$help) ) { print_usage(spec) }
+# check non-null args
+if ( is.null(opt$infile) )	{ print_usage(spec) }
+if ( is.null(opt$outfile) )	{ print_usage(spec) }
+#if ( is.null(opt$group) )	{ print_usage(spec) }
+if ( is.null(opt$group) ){print("none colour tree!");}
+library(ggtree)
+raxml<-read.raxml(file=opt$infile)
+if (!is.null(opt$group)){
+	gro=read.table(opt$group,header=FALSE);
+	col=unique(gro$V2);
+	cls<-NULL
+	for (i in 1:length(col)){
+		cls<-c(cls,list(as.character(gro$V1[gro$V2==col[i]])));
+	}
+	names(cls)=paste("gro",1:length(col),sep="")
+	print(cls)
+	raxml <- groupOTU(raxml,cls)
+}
+pdf(paste(opt$outfile,".rectangular.tree.pdf",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="rectangular")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab(size=2,align=TRUE,linesize=.2)+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color="black",aes(subse
+	t=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="rectangular") %>% 
+	geom_tiplab(size=2,align=TRUE,linesize=.2)+geom_text2(size=2,color="black",aes(subset=!isTip, label=bootstrap,color="black"))
+}
+dev.off()
+png(paste(opt$outfile,".rectangular.tree.png",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="rectangular")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab(size=2,align=TRUE,linesize=.2)+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color="black",aes(subse
+	t=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="rectangular")+geom_tiplab(size=2,align=TRUE,linesize=.2)+geom_text2(size=2,color="black",aes(subset=!isTip
+	, label=bootstrap,color="black"))
+}
+dev.off()
+pdf(paste(opt$outfile,".circular.tree.pdf",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="circular")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color
+	="black",aes(subset=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="circular")+geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+geom_text2(size=2,color="black",ae
+	s(subset=!isTip, label=bootstrap,color="black"))
+}
+dev.off()
+png(paste(opt$outfile,".circular.tree.png",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="circular")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color
+	="black",aes(subset=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="circular")+geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+geom_text2(aes(subset=!isTip, 
+	label=bootstrap),size=2,color="black")
+}
+
+pdf(paste(opt$outfile,".unrooted.tree.pdf",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="unrooed")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color
+	="black",aes(subset=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="unrooted")+geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+geom_text2(size=2,color="black",ae
+	s(subset=!isTip, label=bootstrap,color="black"))
+}
+dev.off()
+png(paste(opt$outfile,".unrooted.tree.png",sep=""))
+if(!is.null(opt$group)){
+	g<-ggtree(raxml,size=.2,layout="unrooted")
+	groupOTU(g,cls)+aes(color=group)+ 
+	geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+scale_color_manual(values=c(rainbow(length(col))))+geom_text2(size=2,color
+	="black",aes(subset=!isTip, label=bootstrap))
+}else{
+	ggtree(raxml,size=.2,layout="unrooted")+geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))+geom_text2(aes(subset=!isTip, 
+	label=bootstrap),size=2,color="black")
+}
+
+dev.off()
+

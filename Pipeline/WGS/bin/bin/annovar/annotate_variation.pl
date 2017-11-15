@@ -1,0 +1,1 @@
+/mnt/ilustre/users//long.huang/Software/Annovar/annovar/annotate_variation.pl

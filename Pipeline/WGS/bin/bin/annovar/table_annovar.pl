@@ -1,0 +1,1 @@
+/mnt/ilustre/users//long.huang/Software/Annovar/annovar/table_annovar.pl

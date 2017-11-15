@@ -1,0 +1,1 @@
+/mnt/ilustre/users//long.huang/Software/Annovar/annovar/variants_reduction.pl
