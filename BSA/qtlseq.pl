@@ -55,7 +55,7 @@ while (<In>) {
 	}else{
 		my %info;
 		my @format=split(/:/,$format);
-		my $ann=$ids;
+		my $ann="--";
 		if($info=~/ANN=([^\;]*)/){$ann=$1;}
 		for (my $i=0;$i<@indi;$i++) {
 			next if (!exists $Indi{$indi[$i]});
@@ -67,7 +67,7 @@ while (<In>) {
 				$info{$id}{dp}=$info[$j] if ($format[$j] eq "DP");
 			}
 		}
-		next if ($info{B1}{dp} < $Bdep || $info{B2}{dp} < $Bdep);
+		next if ($info{B1}{gt}  eq "./." || $info{B2}{gt} eq "./." ||$info{B1}{dp} < $Bdep || $info{B2}{dp} < $Bdep);
 		my @b1=split(/\/|\|/,$info{B1}{gt});
 		my @b2=split(/\/|\|/,$info{B2}{gt});
 		my @ad1=split(/\,/,$info{B1}{ad});
@@ -100,9 +100,9 @@ while (<In>) {
 				}
 				my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
 				next if ($p1 ne $p2 || $p3 ne $p4);
-				next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Mdep);
+				next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
 				next if ($p1 eq $p3);
-				next if (!exists $stat{$p1} || $!exists $stat{$p3});
+				next if (!exists $stat{$p1} || !exists $stat{$p3});
 				$index1=$ad1[$p1]/$info{B1}{dp};
 				$index2=$ad2[$p1]/$info{B2}{dp};
 				$delta=$index1-$index2;
@@ -113,7 +113,7 @@ while (<In>) {
 			my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
 			next if ($p1 eq $p2 || $p3 ne $p4);
 			next if ($p1 ne $p2 || $p3 eq $p4);
-			next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Mdep);
+			next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
 			if ($p3 eq $p1 && $p1 eq $p2) {#nnxnp
 				$index1=$ad1[$p1]/$info{B1}{dp};
 				$index1=$ad2[$p1]/$info{B2}{dp};
@@ -134,7 +134,7 @@ while (<In>) {
 		$info{P1}{ad}||="--";
 		$info{P2}{gt}||="--";
 		$info{P2}{ad}||="--";
-		print Out join("\t",$chr,$pos,$ref,$alt,$anno,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B2}{ad},$info{B1}{gt},$info{B2}{gt},$index1,$index2,$delta),"\n";
+		print Out join("\t",$chr,$pos,$ref,$alt,$ann,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B1}{ad},$info{B2}{gt},$info{B2}{ad},$index1,$index2,$delta),"\n";
 	}
 }
 close In;
