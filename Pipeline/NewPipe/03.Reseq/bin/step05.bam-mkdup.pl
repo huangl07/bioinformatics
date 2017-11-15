@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$outdir,$proc,$dsh);
+my ($bamlist,$dOut,$proc,$dShell);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -11,38 +11,36 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
+	"out:s"=>\$dOut,
 	"proc:s"=>\$proc,
-	"dsh:s"=>\$dsh
+	"dsh:s"=>\$dShell
 			) or &USAGE;
-&USAGE unless ($bamlist and $outdir and $dsh);
-mkdir $outdir if (!-d $outdir);
-$outdir=ABSOLUTE_DIR($outdir);
+&USAGE unless ($bamlist and $dOut and $dShell);
+mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
 $bamlist=ABSOLUTE_DIR($bamlist);
 $proc||=20;
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
+open SH,">$dShell/05.bam-mkdup.sh";
 open In,$bamlist;
+open Out,">$dOut/bam.mkdup.list";
+open Metric,">$dOut/metric.list";
 my %bam;
+my $number=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
-	foreach my $bam (@bam) {
-		if (!-f $bam) {
-			die "check $bam!";
-		}
-	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
+	my ($sampleID,$bam)=split(/\s+/,$_);
+	print Out "$sampleID\t$dOut/$sampleID.mkdup.bam\n";
+	print Metric "$sampleID\t$dOut/$sampleID.metric\n";
+	print SH "java -Xmx30G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MarkDuplicates TMP_DIR=$dOut/MKDUP/ MAX_FILE_HANDLES=100 VALIDATION_STRINGENCY=SILENT ASSUME_SORTED=true REMOVE_DUPLICATES=true I=$bam O=$dOut/$sampleID.mkdup.bam  M=$dOut/$sampleID.metric CREATE_INDEX=TRUE \n";
 }
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+close Out;
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc  $dShell/05.bam-mkdup.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -78,9 +76,10 @@ Description:
 Usage:
   Options:
   -bam	<file>	input bamlist file
-  -out	<dir>	output dir
+  -out	<out>	output dir
   -proc <num>	number of process for qsub,default 20
   -dsh	<dir>	output shell dir
+
   -h         Help
 
 USAGE

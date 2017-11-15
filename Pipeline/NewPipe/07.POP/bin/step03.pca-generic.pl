@@ -3,47 +3,34 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$outdir,$proc,$dsh);
+my ($pop,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
-	"proc:s"=>\$proc,
-	"dsh:s"=>\$dsh
+	"vcf:s"=>\$pop,
+	"gro:s"=>\$gro,
+	"out:s"=>\$out,
+	"chr:s"=>\$chr,
+	"dsh:s"=>\$dsh,
 			) or &USAGE;
-&USAGE unless ($bamlist and $outdir and $dsh);
-mkdir $outdir if (!-d $outdir);
-$outdir=ABSOLUTE_DIR($outdir);
-$bamlist=ABSOLUTE_DIR($bamlist);
-$proc||=20;
-mkdir $dShell if (!-d $dShell);
-$dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
-open In,$bamlist;
-my %bam;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
-	foreach my $bam (@bam) {
-		if (!-f $bam) {
-			die "check $bam!";
-		}
-	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
-}
+&USAGE unless ($pop and $out and $dsh and $chr );
+mkdir $out if (!-d $out);
+mkdir $dsh if (!-d $dsh);
+$out=ABSOLUTE_DIR($out);
+$dsh=ABSOLUTE_DIR($dsh);
+$pop=ABSOLUTE_DIR($pop);
+$gro=ABSOLUTE_DIR($gro);
+open SH,">$dsh/step03.PCA-generic.sh";
+print SH "plink --vcf $vcf --pca 20 header tabs var-wts --out $out/$id.pca --allow-extra-chr --chr-set $chr && ";
+print SH "Rscript $Bin/bin/pca.R --infile $out/$id.pca.eigenvec --outfile $out/$id.pca --varfile $out/$id.pca.eigenval --group $gro";
 close In;
 close SH;
-close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.PCA-generic.sh";
 `$job`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -66,6 +53,7 @@ sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 	chdir $cur_dir;
 	return $return;
 }
+
 sub USAGE {#
         my $usage=<<"USAGE";
 Contact:        long.huang\@majorbio.com;
@@ -73,14 +61,14 @@ Script:			$Script
 Description:
 	fq thanslate to fa format
 	eg:
-	perl $Script -bam -out -dsh
+	perl $Script -i -o -k -c
 
 Usage:
   Options:
-  -bam	<file>	input bamlist file
+  -vcf	<file>	input vcf files
   -out	<dir>	output dir
-  -proc <num>	number of process for qsub,default 20
-  -dsh	<dir>	output shell dir
+  -dsh	<dir>	output work shell
+
   -h         Help
 
 USAGE

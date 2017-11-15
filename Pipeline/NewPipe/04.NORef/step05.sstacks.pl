@@ -3,47 +3,52 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$outdir,$proc,$dsh);
+my ($ulist,$clist,$dOut,$dShell);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
-	"proc:s"=>\$proc,
-	"dsh:s"=>\$dsh
+	"ulist:s"=>\$ulist,
+	"clist:s"=>\$clist,
+	"out:s"=>\$dOut,
+	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($bamlist and $outdir and $dsh);
-mkdir $outdir if (!-d $outdir);
-$outdir=ABSOLUTE_DIR($outdir);
-$bamlist=ABSOLUTE_DIR($bamlist);
-$proc||=20;
-mkdir $dShell if (!-d $dShell);
+&USAGE unless ($ulist and $clist and $dOut and $dShell);
+mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
+mkdir $dShell if(!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
-open In,$bamlist;
-my %bam;
+open In,$clist;
+open SH,">$dShell/step05.sstacks.sh";
+open Out,">$dOut/sstacks.list";
+my $cstack;
 while (<In>) {
 	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
-	foreach my $bam (@bam) {
-		if (!-f $bam) {
-			die "check $bam!";
-		}
-	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
+	next if ($_ eq ""||/^$/);
+	my ($sample,$cstacks)=split(/\s+/,$_);
+	$cstack="$cstacks";
+}
+close In;
+open In,$ulist;
+my @ustacks;
+print $cstack;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($sample,$ustacks)=split(/\s+/,$_);
+	print SH "sstacks -s $ustacks -c $cstack -p 8 --gapped -o $dOut/\n";
+	print Out "$sample\t$dOut/$sample\n";
 }
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 8 --Nodes 1 $dShell/step05.sstacks.sh";
+print "$job\n";
 `$job`;
+print "$job\tdone!\n";
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -66,6 +71,7 @@ sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 	chdir $cur_dir;
 	return $return;
 }
+
 sub USAGE {#
         my $usage=<<"USAGE";
 Contact:        long.huang\@majorbio.com;
@@ -73,14 +79,14 @@ Script:			$Script
 Description:
 	fq thanslate to fa format
 	eg:
-	perl $Script -bam -out -dsh
+	perl $Script -i -o -k -c
 
 Usage:
   Options:
-  -bam	<file>	input bamlist file
+  -ulist	<file>	input file name
+  -clist	<file>	input clist
   -out	<dir>	output dir
-  -proc <num>	number of process for qsub,default 20
-  -dsh	<dir>	output shell dir
+  -dsh	<dir>	output worksh
   -h         Help
 
 USAGE

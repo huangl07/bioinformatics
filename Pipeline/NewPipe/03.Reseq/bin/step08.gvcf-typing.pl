@@ -1,48 +1,49 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$outdir,$proc,$dsh);
+my ($proc,$gvcflist,$dOut,$dShell,$ref,$dict);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
+	"gvcf:s"=>\$gvcflist,
+	"ref:s"=>\$ref,
+	"out:s"=>\$dOut,
 	"proc:s"=>\$proc,
-	"dsh:s"=>\$dsh
+	"dsh:s"=>\$dShell
 			) or &USAGE;
-&USAGE unless ($bamlist and $outdir and $dsh);
-mkdir $outdir if (!-d $outdir);
-$outdir=ABSOLUTE_DIR($outdir);
-$bamlist=ABSOLUTE_DIR($bamlist);
+&USAGE unless ($gvcflist and $dOut and $dShell);
 $proc||=20;
+mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
+$gvcflist=ABSOLUTE_DIR($gvcflist);
+$ref=ABSOLUTE_DIR($ref);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
-open In,$bamlist;
-my %bam;
+open SH,">$dShell/08.gvcf-typing.sh";
+open In,$gvcflist;
+open Out,">$dOut/gvcf.combine.list";
+my %gvcf;
+my $number=0;
+my $nct=8;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
-	foreach my $bam (@bam) {
-		if (!-f $bam) {
-			die "check $bam!";
-		}
-	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
+	my ($sampleID,$chr,$gvcf)=split(/\s+/,$_);
+	$gvcf{$chr}.=" -V $gvcf ";
 }
 close In;
+foreach my $chr (sort keys %gvcf) {
+		print Out $chr,"\t","$dOut/$chr.variant.vcf\n";
+		print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx35G  -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $gvcf{$chr} -o $dOut/$chr.variant.vcf -R $ref -log $dOut/$chr.variant.log \n";
+}
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=35G --CPU 1   --maxjob $proc $dShell/08.gvcf-typing.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -73,13 +74,14 @@ Script:			$Script
 Description:
 	fq thanslate to fa format
 	eg:
-	perl $Script -bam -out -dsh
+	perl $Script -i -o -k -c
 
 Usage:
   Options:
-  -bam	<file>	input bamlist file
+  -gvcf	<file>	input bamlist file
+  -ref	<file>	input reference file
   -out	<dir>	output dir
-  -proc <num>	number of process for qsub,default 20
+  -proc <num>	number of process for qsub,default
   -dsh	<dir>	output shell dir
   -h         Help
 

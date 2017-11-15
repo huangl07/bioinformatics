@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
@@ -22,7 +22,7 @@ $bamlist=ABSOLUTE_DIR($bamlist);
 $proc||=20;
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
+open SH,">$dsh/04.bam-sort.sh";
 open Out,">$outdir/bam.sort.list";
 open In,$bamlist;
 my %bam;
@@ -42,7 +42,7 @@ while (<In>) {
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/04.bam-sort.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

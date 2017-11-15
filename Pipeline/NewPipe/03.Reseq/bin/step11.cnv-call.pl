@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$outdir,$proc,$dsh);
+my ($proc,$bamlist,$dOut,$dShell,$ref,$dict,$gff);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -11,38 +11,39 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
+	"gff:s"=>\$gff,
+	"out:s"=>\$dOut,
 	"proc:s"=>\$proc,
-	"dsh:s"=>\$dsh
+	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($bamlist and $outdir and $dsh);
-mkdir $outdir if (!-d $outdir);
-$outdir=ABSOLUTE_DIR($outdir);
-$bamlist=ABSOLUTE_DIR($bamlist);
+&USAGE unless ($bamlist and $dOut and $dShell and $gff);
 $proc||=20;
+mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
+$bamlist=ABSOLUTE_DIR($bamlist);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dsh/step02.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
+$gff=ABSOLUTE_DIR($gff);
+open SH,">$dShell/11.cnv-calling.sh";
 open In,$bamlist;
-my %bam;
+open Out,">$dOut/cnv.filter.list";
 while (<In>) {
 	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
-	foreach my $bam (@bam) {
-		if (!-f $bam) {
-			die "check $bam!";
-		}
-	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
+	next if ($_ eq "" ||/^$/);
+	my ($sampleID,$bam)=split(/\s+/,$_);
+	print SH "export  LD_LIBRARY_PATH=/mnt/ilustre/app/medical/tools/zlib-1.2.8/:/mnt/ilustre/app/dna/Others/yeppp-1.0.0/binaries/linux/x86_64/:/mnt/ilustre/app/medical/tools/root-6.04.10/lib/:/mnt/ilustre/app/pub/gcc/5.1.0/lib64/:/mnt/ilustre/app/dna/software/lib/:/usr/lib64/:/mnt/ilustre/app/pub/lib64/:\$LD_LIBRARY_PATH &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  $dOut/ &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -call 300 > $dOut/$sampleID.cnv &&";
+	print SH "perl $Bin/bin/cnv_anno.pl -i $dOut/$sampleID.cnv -g $gff -o $dOut/$sampleID.cnv.anno \n";
+	print Out "$sampleID\t$dOut/$sampleID.cnv.anno\n";
 }
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/step02.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=3G --CPU 1 --maxjob $proc $dShell/11.cnv-calling.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -73,11 +74,12 @@ Script:			$Script
 Description:
 	fq thanslate to fa format
 	eg:
-	perl $Script -bam -out -dsh
+	perl $Script -i -o -k -c
 
 Usage:
   Options:
   -bam	<file>	input bamlist file
+  -gff	<file>	input gff file
   -out	<dir>	output dir
   -proc <num>	number of process for qsub,default 20
   -dsh	<dir>	output shell dir
