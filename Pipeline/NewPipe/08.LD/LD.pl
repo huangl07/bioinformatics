@@ -29,32 +29,10 @@ $maf||=0.05;
 $dep||=2;
 $mis=1-$mis;
 open SH,">$dsh/step00.LD-calc.sh";
-open LD,">$out/ld.list";
-if ($gro) {
-	open In,$gro;
-	my %filehand;
-	while (<In>) {
-		chomp;
-		next if ($_ eq ""||/^$/ || /^#/);
-		my ($id,@gro)=split(/\s+/,$_);
-		for (my $i=0;$i<$gro;$i++) {
-			next if ($gro[$i] eq "--");
-			if (!exists $filehand{$gro[$i]}) {
-				open $filehand{$gro[$i]},">$out/$gro[$i].info\n"
-				print SH "vcftools --vcf $vcf --out $out/$gro[$i] --min-meanDP $dep --max-missing $mis  --maf $maf  --geno-r2   --ld-window-bp 1000000 --keep $out/$gro[$i].info &&"
-				print SH "Rscript $Bin/bin/ld-decay.R --infile $out/$gro[$i].geno.ld --outfile $out/$gro[$i].geno.ld\n";
-				print "$gro[$i]\t$out/$gro[$i].geno.ld\n";
-			}
-			print {$filehand{$gro[$i]}} "$id\n";
-		}
-	}
-	close In;
-}else{
-	print SH "vcftools --vcf $vcf --out $out/pop --min-meanDP $dep --max-missing $mis  --maf $maf  --geno-r2 --ld-window-bp 1000000 "
-	print LG "pop\t$out/pop.geno.ld\n";
-}
+print SH "vcftools --vcf $vcf --out $out/pop --min-meanDP $dep --max-missing $mis  --maf $maf  --geno-r2   --ld-window-bp 3000000 \n";
+print SH "PopLDdecay --InVCF $vcf --OutStat $out/pop --MAF $maf --Miss $mis &&";
+print SH "Rscript $Bin/bin/ld-decay.R --infile $out/pop.stat.gz --outfile $out/pop.ld\n";
 close SH;
-close LD;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step00.LD-calc.sh";
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

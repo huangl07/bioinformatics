@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 times<-Sys.time()
 library('getopt');
 options(bitmapType='cairo')

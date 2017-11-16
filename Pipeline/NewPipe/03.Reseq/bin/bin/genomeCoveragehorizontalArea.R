@@ -1,4 +1,4 @@
-#!/share/nas2/genome/biosoft/R/current/bin/Rscript
+#!/usr/bin/env Rscript
 
 
 # load library

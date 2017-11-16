@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use strict;
 use warnings;
 my $BEGIN_TIME=time();

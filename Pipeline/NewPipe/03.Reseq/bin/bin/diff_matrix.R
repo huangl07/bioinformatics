@@ -1,9 +1,8 @@
+#!/usr/bin/env Rscript
 times<-Sys.time();
 library('getopt')
 library(pheatmap)
 options(bitmapType='cairo')
-
-
 spec = matrix(c(
 	'i','a',0,'character',
 	'o','b',0,'character',
