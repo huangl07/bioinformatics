@@ -1,1 +1,0 @@
-qsub -l nodes=1:ppn=1 -l mem=1G -l walltime=240:00:00 -q dnaqsub done! now check!there were 8 still running! Please wait!
