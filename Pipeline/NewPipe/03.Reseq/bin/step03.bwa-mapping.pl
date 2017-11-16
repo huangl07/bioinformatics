@@ -42,7 +42,7 @@ while (<In>) {
 	$sample{$sampleID}=1;
 	my $nsample=scalar keys %sample;
 	$bam{$sampleID}++;
-	print SH "bwa mem  -M -a -t 8 -R \"\@RG\\tID:$nsample\\tLG:$sampleID\\tPL:illumina\\tSM:$sampleID\\tPU:run_barcode\\tCN:MajorBio\tDS:reseq\" $ref $fq1 $fq2|$Bin/bin/samtools view -bS - > $dOut/$sampleID.b$bam{$sampleID}.bam\n";
+	print SH "bwa mem  -M -a -t 8 -R \"\@RG\\tID:$nsample\\tLG:$sampleID\\tLB:$bam{$sampleID}\\tPL:illumina\\tSM:$sampleID\\tPU:run_barcode\\tCN:MajorBio\tDS:reseq\" $ref $fq1 $fq2| samtools view -bS - > $dOut/$sampleID.b$bam{$sampleID}.bam\n";
 	push @{$bamfile{$sampleID}},"$dOut/$sampleID.b$bam{$sampleID}.bam";
 }
 close In;

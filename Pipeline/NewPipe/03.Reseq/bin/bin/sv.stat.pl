@@ -3,36 +3,41 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
+my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"vcf:s"=>\$vcf,
-	"gro:s"=>\$gro,
-	"out:s"=>\$out,
-	"dsh:s"=>\$dsh,
+	"i:s"=>\$fIn,
+	"o:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($vcf and $out and $dsh );
-mkdir $out if (!-d $out);
-mkdir $dsh if (!-d $dsh);
-$out=ABSOLUTE_DIR($out);
-$dsh=ABSOLUTE_DIR($dsh);
-$vcf=ABSOLUTE_DIR($vcf);
-open SH,">$dsh/step03.PCA-generic.sh";
-print SH "vcftools --vcf $vcf --plink --out $out/pop && ";
-print SH "plink --file  $out/pop --pca 20 header tabs var-wts --out $out/pop.pca --allow-extra-chr && ";
-print SH "Rscript $Bin/bin/pca.R --infile $out/pop.pca.eigenvec --outfile $out/pop.pca --varfile $out/pop.pca.eigenval ";
-if ($gro) {
-	$gro=ABSOLUTE_DIR($gro);
-	print SH "--group $gro\n";
+&USAGE unless ($fIn );
+open In,$fIn;
+my %stat;
+my %length;
+while (<In>) {
+	chomp;
+	next if ($_ eq "" ||/^$/ ||/^#/);
+	my ($chr1,$pos1,$chr2,$pos2,$length,$type,$pvalue,$genenum,$geneinfo)=split(/\t/,$_);
+	$stat{$type}{total}++;
+	$stat{$type}{gene}++ if ($genenum !=0);
+	$length{$length}{$type}++;
 }
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.PCA-generic.sh";
-`$job`;
-
+close In;
+open Out,">$fOut.length";
+print Out "#length\t",join("\t",sort keys %stat),"\n";
+foreach my $len (sort {$a<=>$b} keys %length) {
+	my @out;
+	push @out,$len;
+	foreach my $type (sort keys %stat) {
+		$length{$len}{$type}||=0;
+		push @out,$length{$len}{$type};
+	}
+	print Out join("\t",@out),"\n";
+}
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -67,11 +72,8 @@ Description:
 
 Usage:
   Options:
-  -vcf	<file>	input vcf files
-  -out	<dir>	output dir
-  -dsh	<dir>	output work shell
-  -gro	<file>	input group file
-
+  -i	<file>	input file name
+  -o	<file>	split windows sh
   -h         Help
 
 USAGE

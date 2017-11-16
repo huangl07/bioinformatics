@@ -3,36 +3,62 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
+my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"vcf:s"=>\$vcf,
-	"gro:s"=>\$gro,
-	"out:s"=>\$out,
-	"dsh:s"=>\$dsh,
+	"i:s"=>\$fIn,
+	"o:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($vcf and $out and $dsh );
-mkdir $out if (!-d $out);
-mkdir $dsh if (!-d $dsh);
-$out=ABSOLUTE_DIR($out);
-$dsh=ABSOLUTE_DIR($dsh);
-$vcf=ABSOLUTE_DIR($vcf);
-open SH,">$dsh/step03.PCA-generic.sh";
-print SH "vcftools --vcf $vcf --plink --out $out/pop && ";
-print SH "plink --file  $out/pop --pca 20 header tabs var-wts --out $out/pop.pca --allow-extra-chr && ";
-print SH "Rscript $Bin/bin/pca.R --infile $out/pop.pca.eigenvec --outfile $out/pop.pca --varfile $out/pop.pca.eigenval ";
-if ($gro) {
-	$gro=ABSOLUTE_DIR($gro);
-	print SH "--group $gro\n";
+&USAGE unless ($fIn and $fOut);
+open In,$fIn;
+open Out,">$fOut/cv.error";
+my %CV;
+my $bestfile;
+my $min=1;
+my $K=1;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($i,$log,$xls)=split(/\s+/,$_);
+	next if ($i == 1);
+	my $CV=`grep \"CV error\" $log`;
+	chomp $CV;
+	$CV=(split(/\s+/,$CV))[-1];
+	print Out "$i\t$CV\n";
+	if ($CV < $min) {
+		$min=$CV;
+		$bestfile=$xls;
+		$K=$i;
+	}
 }
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.PCA-generic.sh";
+close In;
+close Out;
+`cp $bestfile $fOut/best.$K.xls`;
+my $job="Rscript $Bin/cverror.R --infile $fOut/cv.error --outfile $fOut/cv.error";
+print $job;
 `$job`;
-
+open In,$bestfile;
+open Out,">$fOut/group.list";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($id,@info)=split(/\s+/,$_);
+	my $max=0;
+	my $group=0;
+	for (my $i=0;$i<@info;$i++) {
+		if ($info[$i] > $max) {
+			$max=$info[$i];
+			$group=$i+1;
+		}
+	}
+	print Out $id,"\t",$group,"\n";
+}
+close In;
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -67,11 +93,8 @@ Description:
 
 Usage:
   Options:
-  -vcf	<file>	input vcf files
-  -out	<dir>	output dir
-  -dsh	<dir>	output work shell
-  -gro	<file>	input group file
-
+  -i	<file>	input file name
+  -o	<file>	split windows sh
   -h         Help
 
 USAGE

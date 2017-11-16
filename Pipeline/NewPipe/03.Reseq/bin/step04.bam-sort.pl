@@ -20,8 +20,8 @@ mkdir $outdir if (!-d $outdir);
 $outdir=ABSOLUTE_DIR($outdir);
 $bamlist=ABSOLUTE_DIR($bamlist);
 $proc||=20;
-mkdir $dShell if (!-d $dShell);
-$dShell=ABSOLUTE_DIR($dShell);
+mkdir $dsh if (!-d $dsh);
+$dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/04.bam-sort.sh";
 open Out,">$outdir/bam.sort.list";
 open In,$bamlist;
@@ -35,14 +35,16 @@ while (<In>) {
 			die "check $bam!";
 		}
 	}
-	my $bam=join(" I=",@bam);
-	print Out $sampleID,"\t$dOut/$sampleID.sort.bam\n";
-	print SH "java -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MergeSamFiles I=$bam O=$dOut/$sampleID.sort.bam SORT_ORDER=coordinate TMP_DIR=$dOut/merge MAX_RECORDS_IN_RAM=50000000 VALIDATION_STRINGENCY=LENIENT&& ";
+	my $bam=join(" ",@bam);
+	print Out $sampleID,"\t$outdir/$sampleID.sort.bam\n";
+	print SH "samtools merge -f -p -@ 8 --output-fmt BAM $outdir/$sampleID.merged.bam $bam && ";
+	print SH "samtools sort -o $outdir/$sampleID.sort.bam --output-fmt BAM -@ 8 $outdir/$sampleID.merged.bam &&";
+	print SH "samtools index $outdir/$sampleID.sort.bam \n";
 }
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dsh/04.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 8 --maxjob $proc  $dsh/04.bam-sort.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

@@ -3,56 +3,45 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($proc,$ref,$gff,$vcf,$dsh,$out);
+my ($proc,$con,$vcf,$dsh,$out);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
-	"gff:s"=>\$gff,
+	"con:s"=>\$con,
 	"vcf:s"=>\$vcf,
 	"dsh:s"=>\$dsh,
 	"out:s"=>\$out,
 	"proc:s"=>\$proc
 			) or &USAGE;
-&USAGE unless ($ref and $gff and $vcf and $out);
+&USAGE unless ($vcf and $con and $out);
 $dsh||=$out;
 $proc||=20;
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
-$ref=ABSOLUTE_DIR($ref);
-$gff=ABSOLUTE_DIR($gff);
+$con=ABSOLUTE_DIR($con);
 $vcf=ABSOLUTE_DIR($vcf);
 $dsh=ABSOLUTE_DIR($dsh);
 my $data="$out/data/ref";
-open Config,">$out/snpEff.config";
-print Config "data.dir =$out/data\nref.genome : ref\n";
-close Config;
-open SH,">$dsh/09-1.config.sh";
-print SH "mkdir -p $out/data/ref/ &&";
-print SH "ln -s $ref $out/data/ref/sequences.fa && ";
-print SH "ln -s $gff $out/data/ref/genes.gff && ";
-print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar build -gff3 -v ref -c $out/snpEff.config";
-close SH;
-open SH,">$dsh/09-2.annovar.sh";
+open SH,">$dsh/10.annovar.sh";
 open ANNOLIST,">$out/anno.list";
 open In,$vcf;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($id,$vcfs)=split(/\s+/,$_);
-	print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar -v ref -csvStats $out/$id.anno.csv -c $out/snpEff.config $vcfs > $out/$id.anno.primary.vcf && vcftools --vcf $out/$id.anno.primary.vcf --recode-INFO ANN --recode --out $out/$id";
-	print ANNOLIST "$id\t$out/$id.recode\t$out/$id.anno.csv\n";
+	print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar -v ref -csvStats $out/$id.anno.csv -c $con $vcfs > $out/$id.anno.primary.vcf && ";
+	print SH "vcftools --vcf $out/$id.anno.primary.vcf --recode-INFO ANN --recode --out $out/$id \n";
+	print ANNOLIST "$id\t$out/$id.recode.vcf\t$out/$id.anno.csv\n";
 }
 close In;
 close SH;
 close ANNOLIST;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/09-1.config.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar.sh";
 `$job`;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/09-2.annovar.sh";
-`$job`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -87,8 +76,7 @@ Description:
 
 Usage:
   Options:
-  -ref	<file>	input reference file 
-  -gff	<file>	input gff file
+  -con	<file>	input snp eff config file
   -proc <num>   number of process for qsub,default 20
   -vcf	<file>	input vcf list
   -out	<dir>	output dir

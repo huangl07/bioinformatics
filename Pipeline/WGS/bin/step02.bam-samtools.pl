@@ -26,7 +26,6 @@ open SH,">$dsh/step02.bam-sort.sh";
 open Out,">$out/bam.sort.list";
 open In,$bam;
 my %bam;
-my $number=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
@@ -37,11 +36,10 @@ while (<In>) {
 		}
 	}
 	my $bam=join(" ",@bam);
-	$number++;
 	print Out $sampleID,"\t$out/$sampleID.sort.bam\n";
 	print SH "samtools merge -f -p -@ 8 --output-fmt BAM $out/$sampleID.merged.bam $bam && ";
 	print SH "samtools sort -o $out/$sampleID.sort.bam --output-fmt BAM -@ 8 $out/$sampleID.merged.bam &&";
-	print SH "samtools index $out/$sampleID.sort.bam ";
+	print SH "samtools index $out/$sampleID.sort.bam";
 	print SH "\n";
 }
 close In;

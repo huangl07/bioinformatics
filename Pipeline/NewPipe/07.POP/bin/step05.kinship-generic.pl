@@ -3,42 +3,38 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($pop,$out,$dsh,$maf,$mis,$dep,$gro,$sam);
+my ($pop,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"pop:s"=>\$vcf,
+	"vcf:s"=>\$pop,
+	"gro:s"=>\$gro,
 	"out:s"=>\$out,
+	"chr:s"=>\$chr,
 	"dsh:s"=>\$dsh,
 			) or &USAGE;
-&USAGE unless ($pop and $out and $dsh );
-$pop=ABSOLUTE_DIR($pop);
+&USAGE unless ($pop and $out and $dsh and $chr );
 mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.structure1.sh";
-print SH "vcftools --vcf $vcf --plink --out $out/pop && ";
-print SH "plink --vcf $vcf --make-bed --out $out/pop --allow-extra-chr && "
-print SH "cut -f 1 $out/pop.fam > $sample \n";
-close SH;
-open SH,">$dsh/step02.structure2.sh";
-for (my $i=2;$i<20;$i++) {
-	print SH "admixture $out/pop $i --cv -j8 > $out/pop.$i.log && paste $sam $out/pop.$i.Q > $out/pop.$i.xls && ";
-	print SH "Rscript $Bin/bin/structure.R --infile $out/$id.$i.xls --outfile $out/$id.$i\n";
+$pop=ABSOLUTE_DIR($pop);
+open SH,">$dsh/step05.kinship-generic.sh";
+open In,$pop;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	next if (!/structure/);
+	my (undef,$id,$vcf)=split(/\s+/,$_);
+	$vcf=~s/.bed$//g;
+	print SH "ldak --bfile $vcf --calc-kins-direct kinship --ignore-weights YES  --power -0.25 --kinship-gz YES\n ";
 }
+close In;
 close SH;
-open SH,">$dsh/step01.structure3.sh\n";
-print SH "perl $Bin/bin/CVerror.pl -i $out -o $out";
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.structure1.sh";
-`$job`;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.structure2.sh";
-`$job`;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.structure3.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step05.kinship-generic.sh";
 `$job`;
 
 #######################################################################################
@@ -75,9 +71,10 @@ Description:
 
 Usage:
   Options:
-  -pop	<file>	input pop list 
+  -vcf	<file>	input vcf files
   -out	<dir>	output dir
   -dsh	<dir>	output work shell
+
   -h         Help
 
 USAGE

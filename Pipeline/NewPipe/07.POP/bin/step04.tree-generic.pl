@@ -3,32 +3,41 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($pop,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
+my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"pop:s"=>\$vcf,
+	"vcf:s"=>\$vcf,
 	"gro:s"=>\$gro,
 	"out:s"=>\$out,
 	"dsh:s"=>\$dsh,
 			) or &USAGE;
-&USAGE unless ($pop and $out and $dsh  );
+&USAGE unless ($vcf and $out and $dsh  );
 mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
-$pop=ABSOLUTE_DIR($pop);
+$vcf=ABSOLUTE_DIR($vcf);
+my $id="pop";
 open SH,">$dsh/step04.tree-generic1.sh";
 print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id \n";
 open SH,">$dsh/step04.tree-generic2.sh";
 print SH "cd $out/ && raxmlHPC -f a -x 12345 -T 16 -p 12345 -# 1000 -m GTRGAMMA -s $out/$id.phylip -n $id 2> $out/$id.raxmlHPC.log && ";
 print SH "ln -s $out/RAxML_bipartitionsBranchLabels.$id.tree $out/$id.ml.nwk && ";
-print SH "Rscript $Bin/bin/tree.R --infile $out/RAxML_bipartitionsBranchLabels.$id.tree --group $gro --outfile $out/$id.ml.tree \n";
-print SH "export OMP_NUM_THREADS=16 && FastTreeMP $out/$id.fa >  $out/$id.nj.tree && ";
-print SH "Rscript $Bin/bin/tree.R --infile $out/$id.nj.tree --group $gro --outfile $out/$id.nj.tree \n";
+print SH "Rscript $Bin/bin/tree.R --infile $out/RAxML_bipartitionsBranchLabels.$id.tree  --outfile $out/$id.ml.tree ";
+if ($gro) {
+	$gro=ABSOLUTE_DIR($gro);
+	print SH "--group $gro\n";
+}
+print SH "export OMP_NUM_THREADS=16 && FastTreeMP $out/$id.fasta >  $out/$id.nj.tree && ";
+print SH "Rscript $Bin/bin/tree.R --infile $out/$id.nj.tree --outfile $out/$id.nj.tree ";
+if ($gro) {
+	$gro=ABSOLUTE_DIR($gro);
+	 print SH  "--group $gro\n"
+}
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step04.tree-generic1.sh --CPU 16 --Resource mem=10G";
 `$job`;

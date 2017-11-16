@@ -14,9 +14,9 @@ GetOptions(
 	"gff:s"=>\$gff,
 	"out:s"=>\$dOut,
 	"proc:s"=>\$proc,
-	"dsh:s"=>\$dShell
+	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($bamlist and $dOut and $dShell);
+&USAGE unless ($bamlist and $dOut and $dShell and $gff);
 $proc||=20;
 mkdir $dOut if (!-d $dOut);
 $dOut=ABSOLUTE_DIR($dOut);
@@ -24,22 +24,25 @@ $bamlist=ABSOLUTE_DIR($bamlist);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 $gff=ABSOLUTE_DIR($gff);
-open SH,">$dShell/10.sv-calling.sh";
+open SH,">$dShell/12.cnv-calling.sh";
 open In,$bamlist;
-open List,">$dOut/sv.filter.list";
+open Out,">$dOut/cnv.filter.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
-	print SH "perl $Bin/bin/bam2cfg.pl -v 5 $bam > $dOut/$sampleID.cfg && ";
-	print SH "breakdancer-max -y 50 -r 10 -a -d $dOut/$sampleID.ctx $dOut/$sampleID.cfg > $dOut/$sampleID.sv && ";
-	print SH "perl $Bin/bin/sv_anno.pl -i $dOut/$sampleID.sv -g $gff -o $dOut/$sampleID.sv.anno\n";
-	print List "$sampleID $dOut/$sampleID.sv.anno\n";
+	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  $dOut/ &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -call 300 > $dOut/$sampleID.cnv &&";
+	print SH "perl $Bin/bin/cnv_anno.pl -i $dOut/$sampleID.cnv -g $gff -o $dOut/$sampleID.cnv.anno \n";
+	print Out "$sampleID\t$dOut/$sampleID.cnv.anno\n";
 }
 close In;
 close SH;
-close List;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=20G --CPU 1  --maxjob $proc $dShell/10.sv-calling.sh";
+close Out;
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=3G --CPU 1 --maxjob $proc $dShell/12.cnv-calling.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

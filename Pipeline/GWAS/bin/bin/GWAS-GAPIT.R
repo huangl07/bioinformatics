@@ -48,13 +48,13 @@ myG <- read.table(opt$hapmap, head = FALSE)
 if(!dir.exists(opt$output)){dir.create(opt$output)}
 if (is.null(opt$CV)){
 	setwd(opt$output)
-	myGAPIT <- GAPIT(Y=myY,G=myG,PCA.total=3)
+	myGAPIT <- GAPIT(Y=myY,G=myG,PCA.total=3,ncpus=16)
 }else{
 	myCV <- read.table(opt$CV, head = FALSE)
 	names(myCV)[1]="Taxa";
 	for(i in 2:length(colnames(myCV))){names(myCV)[i]=paste("Q",i-1,sep="");}
 	setwd(opt$output)
-	myGAPIT<-GAPIT(Y=myY,G=myG,CV=myCV)
+	myGAPIT<-GAPIT(Y=myY,G=myG,CV=myCV,ncpus=16)
 }
 escaptime=Sys.time()-times;
 print("Done!")

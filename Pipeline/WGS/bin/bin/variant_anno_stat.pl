@@ -27,7 +27,6 @@ while (<In>) {
 }
 close In;
 close Out;
-#print Dumper %type;die;
 open Out,">$statfile";
 print Out "#pos\t$Key\n";
 my $sum=0;

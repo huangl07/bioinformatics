@@ -10,8 +10,6 @@ int usage(){
 	printf("\t-q\tnum\tquality base,default 33\n");
 	printf("\t-o\tdir\toutput dir\n");
 	printf("\t-k\tstr\toutput keys of filename,always samples ID\n");
-	printf("\t-e\tstr\tenzyme 1\n");
-	printf("\t-p\tstr\tenzyme 2\n");
 	printf("\t-h\tusage\n");
 	printf("#--------------------------------------------- usage ------------------------------------------------------\n");
 	// over

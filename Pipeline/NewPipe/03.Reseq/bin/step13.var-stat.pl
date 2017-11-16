@@ -20,7 +20,7 @@ GetOptions(
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($vcflist and $annolist and $dOut and $dShell);
+&USAGE unless ($vcflist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
 mkdir $dShell if (!-d $dShell);
 $proc||=20;
@@ -30,19 +30,20 @@ $dOut=ABSOLUTE_DIR("$dOut");
 $dShell=ABSOLUTE_DIR("$dShell");
 $svlist=ABSOLUTE_DIR("$svlist") if ($svlist);
 $cnvlist=ABSOLUTE_DIR("$cnvlist") if ($cnvlist);
-open SH,">$dShell/12.variant-stat.sh";
+open SH,">$dShell/13.variant-stat.sh";
 open In,$vcflist;
 my %pop;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($type,$vcf)=split(/\s+/,$_);
+	my ($type,$vcf,$annostat)=split(/\s+/,$_);
 	if ($type eq "snp") {
 		$pop{snp}=$vcf;
 		print SH "perl $Bin/bin/snp.stat.pl -i $vcf -o $dOut/snp.stat -m $dOut/snp.matrix && ";
 		print SH "Rscript $Bin/bin/diff_matrix.R --i $dOut/snp.matrix --o $dOut/snp.diff\n";
 		print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/snp.depth -o2 $dOut/snp.GQ &&";
 		print SH "Rscript $Bin/bin/variant_qual.R --GQ $dOut/snp.GQ --dep $dOut/snp.depth --o $dOut/snp.qual --str SNP\n";
+		print SH "perl $Bin/bin/snpEff-stat.pl -i $annostat -o $dOut/snp\n";
 	}elsif ($type eq "indel") {
 		$pop{indel}=$vcf;
 		print SH "perl $Bin/bin/indel.stat.pl -i $vcf -o $dOut/indel.stat -m $dOut/indel.matrix -l $dOut/indel.len && ";
@@ -50,8 +51,8 @@ while (<In>) {
 		print SH "Rscript $Bin/bin/diff_matrix.R --i $dOut/indel.matrix --o $dOut/indel.diff\n";
 		print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/indel.depth -o2 $dOut/indel.GQ && ";
 		print SH "Rscript $Bin/bin/variant_qual.R --GQ $dOut/indel.GQ --dep $dOut/indel.depth --o $dOut/indel.qual --str INDEL\n";
+		print SH "perl $Bin/bin/snpEff-stat.pl -i $annostat -o $dOut/snp\n";
 	}
-
 }
 close In;
 if ($svlist) {
@@ -67,7 +68,8 @@ if ($svlist) {
 			$max=$line;
 			$pop{sv}=$sv;
 		}
-		print SH "perl $Bin/bin/sv.stat.pl -i $sv -o $dOut/$sampleID.sv.stat \n";
+		print SH "perl $Bin/bin/sv.stat.pl -i $sv -o $dOut/$sampleID && ";
+		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sample.sv.len -o $dOut/$sample.sv.len\n";
 	}
 	close In;
 }
@@ -84,18 +86,10 @@ if ($cnvlist) {
 			$max=$line;
 			$pop{cnv}=$cnv;
 		}
-		print SH "perl $Bin/bin/cnv.stat.pl -i $cnv -o $dOut/$sampleID.cnv.stat  \n";
+		print SH "perl $Bin/bin/cnv.stat.pl -i $cnv -o $dOut/$sampleID && ";
+		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sample.cnv.len -o $dOut/$sample.cnv.len\n";
 	}
 	close In;
-}
-open In,$annolist;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($type,$vcf,$stat)=split(/\s+/,$_);
-	if ($type eq "snp" || $type eq "indel") {
-		print SH "perl $Bin/bin/anno-stat.pl -i $stat -o $dOut/$type\n";
-	}
 }
 close In;
 print SH "perl $Bin/bin/draw.circos.pl --windows 100000 --snp $pop{snp} --indel $pop{indel} --chrlist $chr --gff $gff --outdir $dOut";
@@ -105,7 +99,7 @@ print SH "\n";
 
 close SH;
 
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=3G --CPU 1 --maxjob $proc  $dShell/12.variant-stat.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=20G --CPU 1 --maxjob $proc  $dShell/13.variant-stat.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

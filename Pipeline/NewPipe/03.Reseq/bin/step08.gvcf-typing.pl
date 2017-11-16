@@ -26,24 +26,22 @@ mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 open SH,">$dShell/08.gvcf-typing.sh";
 open In,$gvcflist;
-open Out,">$dOut/gvcf.combine.list";
-my %gvcf;
+open Out,">$dOut/vcf.list";
+my $vcf;
 my $number=0;
 my $nct=8;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,$chr,$gvcf)=split(/\s+/,$_);
-	$gvcf{$chr}.=" -V $gvcf ";
+	my ($sampleID,$gvcf)=split(/\s+/,$_);
+	$vcf .=" -V $gvcf ";
 }
 close In;
-foreach my $chr (sort keys %gvcf) {
-		print Out $chr,"\t","$dOut/$chr.variant.vcf\n";
-		print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx35G  -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $gvcf{$chr} -o $dOut/$chr.variant.vcf -R $ref -log $dOut/$chr.variant.log \n";
-}
+print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx35G  -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $vcf -nt 8 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log && ";
+print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=35G --CPU 1   --maxjob $proc $dShell/08.gvcf-typing.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=35G --CPU 8 --maxjob $proc $dShell/08.gvcf-typing.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

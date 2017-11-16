@@ -15,32 +15,35 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($fIn and $fOut);
 open In,$fIn;
-my @Indi;
-my %stat;
+$/="#";
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/ || /^#/);
-	my ($chr,$pos,$id,$ref,$alt,$qual,$filter,$info,$format,@indi)=split(/\s+/,$_);
-	if (/#/) {
-		push @Indi,@indi;
-	}else{
-		my $ANN;
-		if ($info =~ /ANN=([^;]*)/) {
-			$ANN=$1;
+	next if ($_ eq ""||/^$/);
+	next if (!/Count by effects/ || !/Count by genomic region/);
+	if (/Count by effects/) {
+		open Out,">$fOut.effecits";
+		my @line=split(/\n/,$_);
+		foreach my $l (@line) {
+			my @info=split(/ \, /,$l);
+			next if (scalar @info != 3);
+			print Out join("\t",@info),"\n";
 		}
-		if (!defined $ANN) {
-			next;
-		}
-		my @ANN=split(/\,/,$ANN);
-		foreach my $ANNs (@ANN) {
-			my ($allele,$anno,$genename,undef)=split(/\|/,$ANNs);
-			$stat{$anno}++;
-		}
+		close Out;
 	}
+	if (/Count by genomic region/) {
+		open Out,">$fOut.region";
+		my @line=split(/\n/,$_);
+		foreach my $l (@line) {
+			my @info=split(/ \, /,$l);
+			next if (scalar @info != 3);
+			print Out join("\t",@info),"\n";
+		}
+		close Out;
+	}
+
 }
 close In;
-print Dumper %stat;
-die;
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

@@ -28,7 +28,7 @@ $maf||=0.05;
 $dep||=2;
 $mis=1-$mis;
 open SH,">$dsh/step01.vcf-filter.sh";
-print SH "/mnt/ilustre/users/dna/.env/bin/vcftools --remove-filtered-all --remove-indels --minDP $dep  --max-missing $mis --vcf $vcf --recode --vcf $vcf --out $out/pop.filtered --maf $maf ";
+print SH "/mnt/ilustre/users/dna/.env/bin/vcftools --remove-filtered-all --remove-indels --minDP $dep  --max-missing $mis --vcf $vcf --recode --vcf $vcf --out $out/pop --maf $maf ";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.vcf-filter.sh";
 `$job`;

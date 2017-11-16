@@ -38,7 +38,7 @@ while (<In>) {
 		die "!exists $fq1 | $fq2";
 	}
 	$nsample{$id}++;
-	print SH "$Bin/bin/ngsqc -1 $fq1 -2 $fq2 -o $outdir -k $id-$nsample{$id}  && ";
+	print SH "ngsqc -1 $fq1 -2 $fq2 -o $outdir -k $id-$nsample{$id}  && ";
 	print SH "Rscript $Bin/bin/ngsqc.r --base $outdir/$id-$nsample{$id}.atgc --qual $outdir/$id-$nsample{$id}.qual --out $outdir/fig/$id-$nsample{$id}\n";
 }
 close In;

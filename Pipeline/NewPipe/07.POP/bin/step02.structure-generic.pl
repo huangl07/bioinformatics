@@ -3,34 +3,50 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
+my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"vcf:s"=>\$vcf,
-	"gro:s"=>\$gro,
+	"pop:s"=>\$vcf,
 	"out:s"=>\$out,
 	"dsh:s"=>\$dsh,
 			) or &USAGE;
 &USAGE unless ($vcf and $out and $dsh );
+$vcf=ABSOLUTE_DIR($vcf);
 mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
-$vcf=ABSOLUTE_DIR($vcf);
-open SH,">$dsh/step03.PCA-generic.sh";
+my $sam="$out/sample.list";
+open SH,">$dsh/step02.structure1.sh";
 print SH "vcftools --vcf $vcf --plink --out $out/pop && ";
-print SH "plink --file  $out/pop --pca 20 header tabs var-wts --out $out/pop.pca --allow-extra-chr && ";
-print SH "Rscript $Bin/bin/pca.R --infile $out/pop.pca.eigenvec --outfile $out/pop.pca --varfile $out/pop.pca.eigenval ";
-if ($gro) {
-	$gro=ABSOLUTE_DIR($gro);
-	print SH "--group $gro\n";
+print SH "plink --file $out/pop --make-bed --out $out/pop --allow-extra-chr && ";
+print SH "cut -f 1 -d \" \" $out/pop.fam  > $out/sample.list \n";
+close SH;
+open SH,">$dsh/step02.structure2.sh";
+open List,">$out/structure.list";
+for (my $i=2;$i<20;$i++) {
+	print SH "cd $out && ";
+	print SH "admixture $out/pop.bed $i --cv -j8 > $out/pop.$i.log && paste $sam $out/pop.$i.Q > $out/pop.$i.xls && ";
+	print SH "Rscript $Bin/bin/structure.R --infile $out/pop.$i.xls --outfile $out/pop.$i\n";
+	print List "$i\t$out/pop.$i.log\t$out/pop.$i.xls\n";
 }
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.PCA-generic.sh";
+close List;
+open SH,">$dsh/step02.structure3.sh\n";
+print SH "perl $Bin/bin/CVerror.pl -i $out/structure.list -o $out";
+close SH;
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --CPU 1 --Resource mem=3G  $dsh/step02.structure1.sh";
+print $job,"\n";
+`$job`;
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --CPU 8 --Resource mem=20G $dsh/step02.structure2.sh";
+print $job,"\n";
+`$job`;
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --CPU 1 --Resource mem=3G  $dsh/step02.structure3.sh";
+print $job,"\n";
 `$job`;
 
 #######################################################################################
@@ -67,11 +83,9 @@ Description:
 
 Usage:
   Options:
-  -vcf	<file>	input vcf files
+  -pop	<file>	input pop list 
   -out	<dir>	output dir
   -dsh	<dir>	output work shell
-  -gro	<file>	input group file
-
   -h         Help
 
 USAGE

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
@@ -78,7 +78,7 @@ while ($nqsubed ne scalar @Shell ) {
 		my $jobs="$qsub $job";
 		my $return=`$jobs `;
 		while ($return!~/^\d+/) {
-			sleep(5);
+			sleep(10);
 			$return=`$jobs`;
 		}
 		$return=(split(/\./,$return))[0];
@@ -92,7 +92,7 @@ while ($nqsubed ne scalar @Shell ) {
 	$nqsubed=$end;
 	my $check=Checkjob(\%job,\%queue,$qsub,\%filehand);
 	while (scalar keys %job == $maxjob) {
-		sleep(60);
+		sleep(300);
 		$check=Checkjob(\%job,\%queue,$qsub,\%filehand);
 	}
 }
@@ -148,62 +148,73 @@ sub PATH{
 sub Checkjob{
 	my ($qsub,$queue,$reqsub,$filehand)=@_;
 	my $job=0;
-	foreach my $id (sort keys %$qsub) {
-		my $check=`qstat -f $id 1>$workdir/check.log 2>&1 `;
-		open LOG,"$workdir/check.log";
-		my @line=<LOG>;
-		close LOG;
-		my $line=join("\n",@line);
-		if ($line=~/Unknown Job Id Error/) {
-			delete $$qsub{$id};
-			delete $$queue{$id};
-			next;
-		}
-		$job++;
-		my $mem=0;
-		my $vmem=0;
-		my $host="--";
-		my $time=0;
-		my $ctime=0;
-		my $job_stat="R";
-		foreach my $line (@line) {
-			$mem=(split(/\s+/,$line))[-1] if ($line =~ /resources_used.mem/);
-			$vmem=(split(/\s+/,$line))[-1] if ($line=~/resources_used.vmem/);
-			$host=(split(/\s+/,$line))[-1] if ($line=~/exec_host/);
-			$time=(split(/\s+/,$line))[-1] if ($line=~/resources_used.walltime/);
-			$ctime=(split(/\s+/,$line))[-1] if ($line=~/resources_used.cput/);
-			$job_stat=(split(/\s+/,$line))[-1] if ($line =~ /job_state/);
-		}
-		if (!exists $$filehand{$id}) {
-			print $id;die;
-		}
-		print {$$filehand{$id}} "$id\t$mem\t$vmem\t".$time."\t",$ctime,"\t",$host,"\n"; 
-		if ($job_stat eq "Q") {
-			if (!exists $$queue{$id}) {
-				$$queue{$id}=time();
+	my $whoami=`whoami`;
+	my $check=`qstat -fu $whoami`;
+	my @line=split(/\n/,$check);
+	my $jobid="";
+	my %checked;
+	my $mem=0;
+	my $vmem=0;
+	my $host="--";
+	my $time=0;
+	my $ctime=0;
+	my $job_stat="R";
+	foreach my $l (@line) {
+		if ($l=~/Job Id/) {
+			if ($jobid ne "") {
+				print {$$filehand{$jobid}} "$jobid\t$mem\t$vmem\t".$time."\t",$ctime,"\t",$host,"\n"; 
+			}
+			my $id=$l;
+			$id=~s/\D//g;
+			if (exists $$qsub{$id}) {
+				$jobid=$id;
+				$checked{$id}=1;
+				$job++;
 			}else{
-				$time=time()-$$queue{$id};
-				if ($time > 7200) {
-					`qdel $id`;
-					my $jobsh=$$qsub{$id};
-					my $jobs="$reqsub $jobsh";
-					my $return=`$jobs `;
-					while ($return!~/^\d+/) {
-						sleep(5);
-						$return=`$jobs`;
+				$jobid="";
+			}
+		}elsif ($jobid ne "") {
+			my $id=$jobid;
+			$mem=(split(/\s+/,$l))[-1] if ($l =~ /resources_used.mem/);
+			$vmem=(split(/\s+/,$l))[-1] if ($l=~/resources_used.vmem/);
+			$host=(split(/\s+/,$l))[-1] if ($l=~/exec_host/);
+			$time=(split(/\s+/,$l))[-1] if ($l=~/resources_used.walltime/);
+			$ctime=(split(/\s+/,$l))[-1] if ($l=~/resources_used.cput/);
+			$job_stat=(split(/\s+/,$l))[-1] if ($l =~ /job_state/);
+			if ($job_stat eq "Q") {
+				if (!exists $$queue{$id}) {
+					$$queue{$id}=time();
+				}else{
+					$time=time()-$$queue{$id};
+					if ($time > 7200) {
+						`qdel $id`;
+						my $jobsh=$$qsub{$id};
+						my $jobs="$reqsub $jobsh";
+						my $return=`$jobs `;
+						while ($return!~/^\d+/) {
+							sleep(5);
+							$return=`$jobs`;
+						}
+						$return=(split(/\./,$return))[0];
+						delete $$qsub{$id};
+						delete $$queue{$id};
+						close $$filehand{$id};
+						open $$filehand{$return},">$jobsh.m$return";
+						print {$$filehand{$return}} "#jobid\tmemused\tvmemused\truntime\tcputime\thostname\n";
+						$$qsub{$return}=$jobsh;
+						$$queue{$return}=time();
 					}
-					$return=(split(/\./,$return))[0];
-					delete $$qsub{$id};
-					delete $$queue{$id};
-					close $$filehand{$id};
-					open $$filehand{$return},">$jobsh.m$return";
-					print {$$filehand{$return}} "#jobid\tmemused\tvmemused\truntime\tcputime\thostname\n";
-					$$qsub{$return}=$jobsh;
-					$$queue{$return}=time();
 				}
 			}
+		}else{
+			next;
 		}
-		sleep(2);
+	}
+	foreach my $id (sort keys %$qsub) {
+		if (!exists $checked{$id}) {
+			delete $$qsub{$id};
+			delete $$queue{$id}
+		}
 	}
 	return $job;
 }
