@@ -60,9 +60,9 @@ if (!is.null(opt$group)){
 	print(col)
 	raxml <- groupOTU(raxml,cls)
 }
-g<-ggtree(raxml,size=.2,layout="rectangular")+geom_tiplab(size=2,align=TRUE,linesize=.2)
+g<-ggtree(raxml,size=.2,layout="rectangular")+geom_tiplab(size=1,align=TRUE,linesize=.2,aes(angle=angle))
 if (!is.null(opt$raxml)){
-g<-g+geom_text2(size=2,color="black",aes(subset=!isTip, label=bootstrap,color="black"))
+g<-g+geom_text2(size=1,color="black",aes(subset=!isTip, label=bootstrap,color="black"))
 }
 if(!is.null(opt$group)){
 g<-g+aes(color=group)+scale_color_manual(values=c(rainbow(length(col)+1)))
@@ -74,7 +74,9 @@ dev.off()
 
 png(paste(opt$outfile,".rectangular.tree.png",sep=""))
 print(g)
-g<-ggtree(raxml,size=.2,layout="circular")+geom_tiplab(size=2,align=TRUE,linesize=.2)
+dev.off()
+
+g<-ggtree(raxml,size=.2,layout="circular")+geom_tiplab2(size=2,align=TRUE,linesize=.2,aes(angle=angle))
 if (!is.null(opt$raxml)){
 g<-g+geom_text2(size=2,color="black",aes(subset=!isTip, label=bootstrap,color="black"))
 }
@@ -82,7 +84,6 @@ if(!is.null(opt$group)){
 g<-g+aes(color=group)+scale_color_manual(values=c(rainbow(length(col)+1)))
 }
 
-dev.off()
 pdf(paste(opt$outfile,".circular.tree.pdf",sep=""))
 print(g)
 
@@ -91,7 +92,7 @@ png(paste(opt$outfile,".circular.tree.png",sep=""))
 print(g)
 
 dev.off()
-g<-ggtree(raxml,size=.2,layout="unrooted")+geom_tiplab(size=2,align=TRUE,linesize=.2)
+g<-ggtree(raxml,size=.2,layout="unrooted")+geom_tiplab(size=1,align=TRUE,linesize=.2,aes(angle=angle))
 if (!is.null(opt$raxml)){
 g<-g+geom_text2(size=2,color="black",aes(subset=!isTip, label=bootstrap,color="black"))
 }
