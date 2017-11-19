@@ -24,7 +24,7 @@ mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 open SH,">$dShell/05.bam-mkdup.sh";
 open In,$bamlist;
-open Out,">$dOut/bam.mkdup.list";
+open Out,">$dOut/bam.list";
 open Metric,">$dOut/metric.list";
 my %bam;
 my $number=0;

@@ -23,7 +23,7 @@ $proc||=20;
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/04.bam-sort.sh";
-open Out,">$outdir/bam.sort.list";
+open Out,">$outdir/bam.list";
 open In,$bamlist;
 my %bam;
 while (<In>) {

@@ -16,7 +16,6 @@ GetOptions(
 	"proc:s"=>\$proc,
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dShell,
-	"split:s"=>\$split,
 			) or &USAGE;
 &USAGE unless ($bamlist and $dOut and $dShell);
 $proc||=20;

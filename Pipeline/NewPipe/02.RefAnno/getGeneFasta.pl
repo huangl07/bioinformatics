@@ -15,42 +15,41 @@ GetOptions(
 	"g:s"=>\$Gff,
 	"f:s"=>\$match
 	) or &USAGE;
-&USAGE unless ($fGenome and $fOut and $Gff and $match);
-my %change;
-if (!$match) {
-	open In,$match;
-	while (<In>) {
-		chomp;
-		next if ($_ eq ""||/^$/);
-		my ($id,$change)=split(/\s+/,$_);
-		$change{$id}=$change;
-	}
-	close In;
-}
+&USAGE unless ($fGenome and $fOut and $Gff);
 open In,$fGenome;
-open Out,">$fOut.fa";
 $/=">";
-my $n=0;
+my %seq;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
-	my ($info,@seq)=split(/\n/,$_);
-	my $id=(split(/\s+/,$info))[0];
-	if (!exists $change{$id}) {
-	}else{
-		$n++;
-		$change{$id}="sca$n";
-	}
-	print ">$change{$id}\n";
-	print join("\n",@seq),"\n";
+	my ($id,@seq)=split(/\n/,$_);
+	$seq{$id}=join("\n",@seq);
 }
 close In;
-close Out;
-open Out,">$fOut.changelog";
-foreach my $id (sort keys %change) {
-	print Out join("\t",$id,$change{$id}),"\n";
+$/="\n";
+open In,$Gff;
+open Out,">$fOut";
+my %out;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($chrid,$source,$type,$start,$end,undef,undef,undef,$info)=split(/\s+/,$_);
+	next if ($type eq "region" || $type eq "exon" || $type eq "CDS");
+	my $id="";
+	if ($info=~/ID=([^;]*)/) {
+		$id=$1;
+	}
+	if ($info=~/Parent=([^;]*)/) {
+		$id=$1;
+	}
+	next if (exists $out{$id});
+	$out{$id}=1;
+	print Out ">$id\n";
+	print Out substr($seq{$chrid},$start,$end-$start+1),"\n";
+
 }
 close Out;
+close In;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -68,7 +67,6 @@ Usage:
   -i	<file>	input genome name,fasta format,
   -g	<file>	input genome gff file,
   -o	<str>	output file prefix
-  -f	<file>	chromosome change file
 
   -h         Help
 

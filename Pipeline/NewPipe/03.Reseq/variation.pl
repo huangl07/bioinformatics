@@ -14,30 +14,28 @@ GetOptions(
 	"outdir:s"=>\$outdir,
 	"ref:s"=>\$ref,
 	"gff:s"=>\$gff,
-	"realign"=>\$realign,
 	"RAD"=>\$RAD,
-	"SV"=>\$SV,
-	"CNV"=>\$CNV,
+	"sv"=>\$SV,
+	"cnv"=>\$CNV,
 	"step:s"=>\$step,
 	"stop:s"=>\$stop,
 			) or &USAGE;
-&USAGE unless ($fqlist and $dOut and $ref and $gff);
+&USAGE unless ($fqlist and $outdir and $ref and $gff);
 mkdir $outdir if (!-d $outdir);
 $ref=ABSOLUTE_DIR($ref);
 $gff=ABSOLUTE_DIR($gff);
 $fqlist=ABSOLUTE_DIR($fqlist);
 $outdir=ABSOLUTE_DIR($outdir);
-my ($bamlist,$chrlist,$gvcflist,$vcflist,$svlist,$cnvlist,$dict,$annolist,$metric,$dictfile);
 mkdir "$outdir/work_sh" if (!-d "$outdir/work_sh");
 $step||=1;
 $stop||=-1;
-open LOG,">$dOut/work_sh/Resequence.log";
+open LOG,">$outdir/work_sh/Resequence.$BEGIN_TIME.log";
 my $prestep=$step;
 if ($step == 1) {
 	print LOG "########################################\n";
 	print LOG "fastq qc\n"; my $time=time();
 	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh";
+	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -50,7 +48,7 @@ if ($step == 2) {
 	print LOG "########################################\n";
 	print LOG "reference prepair\n"; my $time=time();
 	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step02.ref-config.pl -ref $ref -gff $gff  -outdir $outdir/02.ref-config -dsh $outdir/work_sh";
+	my $job="perl $Bin/bin/step02.ref-config.pl -ref $ref -gff $gff  -out $outdir/02.ref-config -dsh $outdir/work_sh ";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -63,8 +61,8 @@ if ($step == 3) {
 	print LOG "########################################\n";
 	print LOG "bwa mapping\n"; my $time=time();
 	print LOG "########################################\n";
-	$ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
-	my $job="perl $Bin/bin/step03.bwa-mapping.pl -ref $ref -fqlist $fqlist  -outdir $outdir/03.bwa-mapping -dsh $outdir/work_sh";
+	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
+	my $job="perl $Bin/bin/step03.bwa-mapping.pl -ref $ref -fqlist $fqlist  -out $outdir/03.bwa-mapping -dsh $outdir/work_sh  -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -77,8 +75,8 @@ if ($step == 4) {
 	print LOG "########################################\n";
 	print LOG "bam sort\n"; my $time=time();
 	print LOG "########################################\n";
-	$bamlist=ABSOLUTE_DIR("$outdir/03.bwa-mapping/bam.list");
-	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -outdir $outdir/04.bam-sort -dsh $outdir/work_sh";
+	my $bamlist=ABSOLUTE_DIR("$outdir/03.bwa-mapping/bam.list");
+	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -outdir $outdir/04.bam-sort -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -86,13 +84,16 @@ if ($step == 4) {
 	print LOG "Done and elapsed time : ",time()-$time,"s\n";
 	print LOG "########################################\n";
 	$step++ if ($step ne $stop);
+	if ($RAD) {
+		$step++;
+	}
 }
 if ($step == 5) {
 	print LOG "########################################\n";
 	print LOG "bam mkdup\n"; my $time=time();
 	print LOG "########################################\n";
-	$bamlist=ABSOLUTE_DIR("$outdir/04.bwa-sort/bam.list");
-	my $job="perl $Bin/bin/step04.bam-mkdup.pl -bam $bamlist -outdir $outdir/05.bam-mkdup -dsh $outdir/work_sh";
+	my $bamlist=ABSOLUTE_DIR("$outdir/04.bam-sort/bam.list");
+	my $job="perl $Bin/bin/step05.bam-mkdup.pl -bam $bamlist -out $outdir/05.bam-mkdup -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -103,12 +104,32 @@ if ($step == 5) {
 }
 if ($step == 6) {
 	print LOG "########################################\n";
-	print LOG "bam mkdup\n"; my $time=time();
+	print LOG "map-stat\n"; my $time=time();
 	print LOG "########################################\n";
-	$bamlist=ABSOLUTE_DIR("$outdir/05.bwa-mkdup/bam.list");
-	$chr=ABSOLUTE_DIR("$outdir/02.ref-config/chr.list");
-
-	my $job="perl $Bin/bin/step06.bam-stat.pl -bam $bamlist -outdir $outdir/05.bam-mkdup -dsh $outdir/work_sh";
+	my $bamlist=ABSOLUTE_DIR("$outdir/05.bam-mkdup/bam.list");
+	if ($RAD) {
+		$bamlist=ABSOLUTE_DIR("$outdir/04.bam-sort/bam.list");
+	}
+	my $chr=ABSOLUTE_DIR("$outdir/02.ref-config/ref.chrlist");
+	my $metric=ABSOLUTE_DIR("$outdir/05.bam-mkdup/metric.list");
+	my $dict=ABSOLUTE_DIR("$outdir/02.ref-config/ref.dict");
+	my $job="perl $Bin/bin/step06.map-stat.pl -bam $bamlist -met $metric -dict $dict -chr $chr -out $outdir/06.map-stat -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 7) {
+	print LOG "########################################\n";
+	print LOG "haplotype\n"; my $time=time();
+	print LOG "########################################\n";
+	my $bamlist=ABSOLUTE_DIR("$outdir/05.bam-mkdup/bam.list");
+	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
+	my $dict=ABSOLUTE_DIR("$outdir/02.ref-config/ref.dict");
+	my $job="perl $Bin/bin/step07.haplotyper.pl -bam $bamlist -ref $ref -dict $dict -out $outdir/07.haplotype -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -118,6 +139,126 @@ if ($step == 6) {
 	$step++ if ($step ne $stop);
 }
 
+if ($step == 8) {
+	print LOG "########################################\n";
+	print LOG "gvcf typing\n"; my $time=time();
+	print LOG "########################################\n";
+	my $gvcf=ABSOLUTE_DIR("$outdir/07.haplotype/gvcf.list");
+	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
+	my $job="perl $Bin/bin/step08.gvcf-typing.pl -gvcf $gvcf -ref $ref  -out $outdir/08.gvcf-typing -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 9) {
+	print LOG "########################################\n";
+	print LOG "vcf-filter\n"; my $time=time();
+	print LOG "########################################\n";
+	my $vcf=ABSOLUTE_DIR("$outdir/08.gvcf-typing/pop.variant.vcf");
+	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
+	my $job="perl $Bin/bin/step09.vcf-filter.pl -vcf $vcf -ref $ref -out $outdir/09.vcf-filter -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 10) {
+	print LOG "########################################\n";
+	print LOG "annovar\n"; my $time=time();
+	print LOG "########################################\n";
+	my $vcf=ABSOLUTE_DIR("$outdir/09.vcf-filter/vcf.list");
+	my $con=ABSOLUTE_DIR("$outdir/02.ref-config/snpEff.config");
+	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
+	my $job="perl $Bin/bin/step10.annovar.pl -con $con -vcf $vcf -ref $ref -out $outdir/10.annovar -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+	if (!$SV) {
+		$step++;
+	}
+	if (!$CNV) {
+		$step++;
+	}
+}
+if ($step == 11) {
+	print LOG "########################################\n";
+	print LOG "sv call\n"; my $time=time();
+	print LOG "########################################\n";
+	my $bamlist=ABSOLUTE_DIR("$outdir/05.bam-mkdup/bam.list");
+	my $gff=ABSOLUTE_DIR("$outdir/02.ref-config/ref/genes.gff");
+	my $job="perl $Bin/bin/step11.sv-call.pl -bam $bamlist -gff $gff -out $outdir/11.sv-call -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 12) {
+	print LOG "########################################\n";
+	print LOG "cnv call\n"; my $time=time();
+	print LOG "########################################\n";
+	my $bamlist=ABSOLUTE_DIR("$outdir/05.bam-mkdup/bam.list");
+	my $job="perl $Bin/bin/step12.cnv-call.pl -bam $bamlist  -gff $gff -out $outdir/12.cnv-call -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 13) {
+	print LOG "########################################\n";
+	print LOG "variant stat\n"; my $time=time();
+	print LOG "########################################\n";
+	my $vcf=ABSOLUTE_DIR("$outdir/10.annovar/anno.list");
+	my $chr=ABSOLUTE_DIR("$outdir/02.ref-config/ref.chrlist");
+	my $gff=ABSOLUTE_DIR("$outdir/02.ref-config/ref/genes.gff");
+	my $job="perl $Bin/bin/step13.var-stat.pl -vcf $vcf -chr $chr -gff $gff  -out $outdir/13.variant-stat -dsh $outdir/work_sh -proc 20 ";
+	if ($SV) {
+		my $sv=ABSOLUTE_DIR("$outdir/11.sv-call/sv.filter.list");
+		$job.=" -sv $sv ";
+	}
+	if ($CNV) {
+		my $cnv=ABSOLUTE_DIR("$outdir/12.cnv-call/cnv.filter.list");
+		$job.=" -cnv $cnv ";
+	}
+	print $job;die;
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 14) {
+	print LOG "########################################\n";
+	print LOG "report generic\n"; my $time=time();
+	print LOG "########################################\n";
+	my $bamlist=ABSOLUTE_DIR("$outdir/05.bwa-mkdup/bam.list");
+	my $job="perl $Bin/bin/step14.report.pl -bam $bamlist -outdir $outdir/05.bam-mkdup -dsh $outdir/work_sh -proc 20";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
 
 close LOG;
 #######################################################################################
@@ -154,14 +295,31 @@ Description:
 Usage:
   Options:
   -fqlist	<file>	input file name
-  -out	<dir>	output dir
+  -outdir	<dir>	output dir
   -ref	<file>	reference file
   -gff	<file>	gff file
   -sv	sv calling default off 
-  -realign	indel realign default off
   -cnv	cnv calling default off 
   -RAD	RRL calling default off 
+
   -step	pipeline control
+  -stop	pipeline control
+		01 fastq qc
+		02 reference prepair
+		03 bwa mapping
+		04 bam sort
+		05 bam mkdup
+		06 map-stat
+		07 haplotype
+		08 gvcf typing
+		09 vcf-filter
+		10 annovar
+		11 sv call
+		12 cnv call
+		13 variant stat
+		14 report
+
+
   -h         Help
 
 USAGE

@@ -11,7 +11,6 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"vcf:s"=>\$vcflist,
-	"anno:s"=>\$annolist,
 	"proc:s"=>\$proc,
 	"sv:s"=>\$svlist,
 	"cnv:s"=>\$cnvlist,
@@ -25,7 +24,6 @@ mkdir $dOut if (!-d $dOut);
 mkdir $dShell if (!-d $dShell);
 $proc||=20;
 $vcflist=ABSOLUTE_DIR("$vcflist");
-$annolist=ABSOLUTE_DIR("$annolist");
 $dOut=ABSOLUTE_DIR("$dOut");
 $dShell=ABSOLUTE_DIR("$dShell");
 $svlist=ABSOLUTE_DIR("$svlist") if ($svlist);
@@ -63,13 +61,14 @@ if ($svlist) {
 		next if ($_ eq "" || /^$/);
 		my ($sampleID,$sv)=split(/\s+/,$_);
 		my $line=`wc -l $sv`;
+		$line=(split(/\s+/,$line))[0];
 		chomp $line;
 		if ($max < $line) {
 			$max=$line;
 			$pop{sv}=$sv;
 		}
 		print SH "perl $Bin/bin/sv.stat.pl -i $sv -o $dOut/$sampleID && ";
-		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sample.sv.len -o $dOut/$sample.sv.len\n";
+		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sampleID.sv.len -o $dOut/$sampleID.sv.len\n";
 	}
 	close In;
 }
@@ -81,13 +80,14 @@ if ($cnvlist) {
 		next if ($_ eq "" || /^$/);
 		my ($sampleID,$cnv)=split(/\s+/,$_);
 		my $line=`wc -l $cnv`;
+		$line=(split(/\s+/,$line))[0];
 		chomp $line;
 		if ($max < $line) {
 			$max=$line;
 			$pop{cnv}=$cnv;
 		}
 		print SH "perl $Bin/bin/cnv.stat.pl -i $cnv -o $dOut/$sampleID && ";
-		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sample.cnv.len -o $dOut/$sample.cnv.len\n";
+		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sampleID.cnv.len -o $dOut/$sampleID.cnv.len\n";
 	}
 	close In;
 }

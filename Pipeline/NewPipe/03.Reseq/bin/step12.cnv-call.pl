@@ -33,8 +33,8 @@ while (<In>) {
 	my ($sampleID,$bam)=split(/\s+/,$_);
 	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam &&";
 	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  $dOut/ &&";
-	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 &&";
-	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 -d $dOut/&&";
+	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 -d $dOut/ &&";
 	print SH "cnvnator -root $dOut/$sampleID.root -call 300 > $dOut/$sampleID.cnv &&";
 	print SH "perl $Bin/bin/cnv_anno.pl -i $dOut/$sampleID.cnv -g $gff -o $dOut/$sampleID.cnv.anno \n";
 	print Out "$sampleID\t$dOut/$sampleID.cnv.anno\n";
