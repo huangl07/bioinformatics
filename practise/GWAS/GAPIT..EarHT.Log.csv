@@ -1,0 +1,12 @@
+Model,Value
+Trait,c("279", "2")
+group.by ,10
+Trait name ,.EarHT
+Kinship,281:282
+Z Matrix,c(280, 280)
+Covariate,c(279, 11)
+SNP.P3D,TRUE
+Clustering algorithms,average
+Group kinship,Mean
+group.from ,281
+group.to ,281
