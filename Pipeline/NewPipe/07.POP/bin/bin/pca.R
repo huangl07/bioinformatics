@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript 
 times<-Sys.time()
-
+library("scatterplot3d")
 library('getopt');
 options(bitmapType='cairo')
 #-----------------------------------------------------------------
@@ -43,7 +43,7 @@ if ( is.null(opt$varfile) )	{ print_usage(spec) }
 
 pca.file<-read.table(opt$infile,header=TRUE)
 if (!is.null(opt$group)){
-	pop.list<-read.table(opt$group,header=TRUE)
+	pop.list<-read.table(opt$group,header=FALSE)
 	names(pop.list)=c("id","popid")
 	pop.id<-as.vector(unique(pop.list$popid));
 	color.list<-rainbow(length(pop.id));
@@ -57,7 +57,7 @@ if (!is.null(opt$group)){
 pdf(paste(opt$outfile,".pc1vspc2.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC2,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC1,pca.file$PC2,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
 }
@@ -65,7 +65,7 @@ dev.off();
 png(paste(opt$outfile,".pc1vspc2.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC2,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC1,pca.file$PC2,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
 }
@@ -73,7 +73,7 @@ dev.off();
 pdf(paste(opt$outfile,".pc1vspc3.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC3,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC1,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC1 vs PC3")
 }
@@ -81,7 +81,7 @@ dev.off();
 png(paste(opt$outfile,".pc1vspc3.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC3,col=pop.list$colour,xlab="PC1",ylab="PC3",main="PC1 vs PC3")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC1,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC1 vs PC3")
 }
@@ -89,19 +89,19 @@ dev.off();
 pdf(paste(opt$outfile,".pc2vspc3.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC2,pca.file$PC3,col=pop.list$colour,xlab="PC3",ylab="PC3",main="PC2 vs PC3")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC2,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC2 vs PC3")
 }
+dev.off()
 png(paste(opt$outfile,".pc2vspc3.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC2,pca.file$PC3,col=pop.list$colour,xlab="PC2",ylab="PC3",main="PC2 vs PC3")
-	legend("bottom",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
 }else{
 	plot(pca.file$PC2,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC2 vs PC3")
 }
 dev.off();
-
 value<-read.table(opt$varfile,header=FALSE);
 sum<-sum(value$V1)
 value$V1<-value$V1/sum*100
@@ -114,6 +114,22 @@ png(paste(opt$outfile,".val.png",sep=""),width=800,height=800);
 barplot(value$V1,col="blue",xlab="PCAs",ylab="Variance%",beside=FALSE,names.arg=c(1:valmax),border=TRUE,ylim=c(0,100),main="Variance of 
 PCAs")
 dev.off()
+pdf(paste(opt$outfile,".3D.pdf",sep=""))
+if (length(pop.id) >1){
+	scatterplot3d(pca.file$PC1,pca.file$PC2,pca.file$PC3,xlab=paste("PC",1,sep=""),ylab=paste("PC",2,sep=""),zlab=paste("PC",3,sep="") ,pch=20,color=pop.list$colour,cex=1,cex.lab=1.4, cex.axis=1.2,lwd=3,angle=55,scale.y=0.7)
+}else{
+	scatterplot3d(pca.file$PC1,pca.file$PC2,pca.file$PC3,xlab=paste("PC",1,sep=""),ylab=paste("PC",2,sep=""),zlab=paste("PC",3,sep="") ,pch=20,cex=1,cex.lab=1.4, cex.axis=1.2,lwd=3,angle=55,scale.y=0.7)
+}
+dev.off()
+png(paste(opt$outfile,".3D.png",sep=""))
+if (length(pop.id) >1){
+	scatterplot3d(pca.file$PC1,pca.file$PC2,pca.file$PC3,xlab=paste("PC",1,sep=""),ylab=paste("PC",2,sep=""),zlab=paste("PC",3,sep="") ,pch=20,color=pop.list$colour,cex=1,cex.lab=1.4, cex.axis=1.2,lwd=3,angle=55,scale.y=0.7)
+}else{
+	scatterplot3d(pca.file$PC1,pca.file$PC2,pca.file$PC3,xlab=paste("PC",1,sep=""),ylab=paste("PC",2,sep=""),zlab=paste("PC",3,sep="") ,pch=20,cex=1,cex.lab=1.4, cex.axis=1.2,lwd=3,angle=55,scale.y=0.7)
+}
+dev.off()
+
+
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
