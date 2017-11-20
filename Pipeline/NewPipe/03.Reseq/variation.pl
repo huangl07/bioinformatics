@@ -30,7 +30,6 @@ mkdir "$outdir/work_sh" if (!-d "$outdir/work_sh");
 $step||=1;
 $stop||=-1;
 open LOG,">$outdir/work_sh/Resequence.$BEGIN_TIME.log";
-my $prestep=$step;
 if ($step == 1) {
 	print LOG "########################################\n";
 	print LOG "fastq qc\n"; my $time=time();

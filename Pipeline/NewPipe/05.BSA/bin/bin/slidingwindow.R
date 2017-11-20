@@ -99,7 +99,7 @@ for (i in 1:(length(chrname))){
 	}else{
 		wmean1=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex1,x[1],x[2]));
 		wmean2=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex2,x[1],x[2]));
-		delta=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrdelta,x[1],x[2]));
+		delta=wmean1-wmean2
 		twin=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
 		print(twin)
 		info<-rbind(info,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=wmean3,total=twin))

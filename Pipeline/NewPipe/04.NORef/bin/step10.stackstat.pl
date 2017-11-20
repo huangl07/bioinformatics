@@ -1,32 +1,34 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dIn,$clist,$dOut,$dShell,$slist);
+my ($vcf,$dOut,$dShell,$slist);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"dIn:s"=>\$dIn,
-	"fqdir:s"=>\$fqdir,
+	"vcf:s"=>\$vcf,
+	"slist:s"=>\$slist,
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($dIn and $dOut and $dShell);
+&USAGE unless ($vcf and $dOut and $dShell and $slist);
 mkdir $dOut if (!-d $dOut);
-mkdir $dShell if(!-d $dShell);
+mkdir $dShell if (!-d $dShell);
 $dOut=ABSOLUTE_DIR($dOut);
-$dShell=ABSOLUTE_DIR($dShell);
-$dIn=ABSOLUTE_DIR($dIn);
-open SH,">$dShell/step07.genotype.sh";
-print SH "populations -P $dIn -t 8 -m 4 -O $dOut/ --vcf && ";
-print SH "sort_read_pairs.pl -p $dIn -s $fqdir -o $dOut/ -r 10"
+$vcf=ABSOLUTE_DIR($vcf);
+open SH,">$dShell/step10.stack-stat.sh";
+print SH "perl $Bin/bin/snp.stat.pl -i $vcf -o $dOut/snp.stat -m $dOut/snp.matrix && ";
+print SH "Rscript $Bin/bin/diff_matrix.R --m $dOut/snp.matrix --o $dOut/snp.diff\n";
+print SH "perl $Bin/bin/snp_qual.pl -i $vcf -o $dOut/snp.depth && ";
+print SH "Rscript $Bin/bin/snp_qual.R --dep $dOut/snp.depth --o $dOut/snp.depth\n";
+print SH "perl $Bin/bin/tag-stat.pl -i $slist -o $dOut/tags.stat\n";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 8 --Nodes 1 $dShell/step07.genotype.sh";
-print  "$job\n";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 1 --Nodes 1 $dShell/step10.stack-stat.sh";
+print "$job\n";
 `$job`;
 print "$job\tdone!\n";
 
@@ -64,10 +66,11 @@ Description:
 
 Usage:
   Options:
-	-dIn	<dir>	input dir
-	-out	<dir>	output dir
-	-dsh	<dir>	work shell dir
-	-h         Help
+  -vcf	<file>	input vcf file
+  -sstacks	<file>	sstacks list
+  -out	<dir>	split windows sh
+  -dsh	<dir>	output work sh	
+  -h         Help
 
 USAGE
         print $usage;

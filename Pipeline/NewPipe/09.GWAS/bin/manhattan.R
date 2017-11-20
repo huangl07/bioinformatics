@@ -18,7 +18,7 @@ Usage:
 	q(status=1);
 }
 if ( !is.null(opt$help) ) { print_usage(spec) }
-if ( is.null(opt$sliding)) { print_usage(spec)}
+if ( is.null(opt$input)) { print_usage(spec)}
 if ( is.null(opt$output)){ print_usage(spec) }
 times<-Sys.time()
 
@@ -27,14 +27,14 @@ library(qqman)
 pdf(paste(opt$output,".manhattan.pdf",sep=""),height=900,width=1600)
 manhattan(GWAS,chr="chr",bp="pos",p="p_value",logp=TRUE,col=rainbow(4))
 dev.off()
-pdf(paste(opt$output,".manhattan.png",sep=""),height=900,width=1600)
+png(paste(opt$output,".manhattan.png",sep=""),height=900,width=1600)
 manhattan(GWAS,chr="chr",bp="pos",p="p_value",logp=TRUE,col=rainbow(4))
 dev.off()
-pdf(paste(opt$output,".qq-plot.pdf",sep=""),height=800,width=600)
-qqman(GWAS$p_value)
+pdf(paste(opt$output,".qq-plot.pdf",sep=""))
+qq(GWAS$p_value)
 dev.off()
-pdf(paste(opt$output,".qq-plot.png",sep=""),height=800,width=600)
-qqman(GWAS$p_value)
+png(paste(opt$output,".qq-plot.png",sep=""))
+qq(GWAS$p_value)
 dev.off()
 
 escaptime=Sys.time()-times;

@@ -11,7 +11,6 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"ulist:s"=>\$ulist,
-	"group:s"=>\$group,
 	"clist:s"=>\$clist,
 	"slist:s"=>\$slist,
 	"out:s"=>\$dOut,
@@ -25,16 +24,17 @@ $dShell=ABSOLUTE_DIR($dShell);
 mkdir "$dOut/stacks" if (!-d "$dOut/stacks");
 
 open In,$ulist;
-my $Austacks;
+open Out,">$dOut/ustacks.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$ustacks)=split(/\s+/,$_);
 	`ln -s $ustacks* $dOut/stacks`;
 	my $ustack=basename($ustacks);
-	$Austacks.=" -s $dOut/$ustack ";
+	print Out "$sample $dOut/$ustacks\n";
 }
 close In;
+close Out;
 open In,$clist;
 while (<In>) {
 	chomp;
@@ -45,28 +45,19 @@ while (<In>) {
 close In;
 open In,$slist;
 open SH,">$dShell/step06.correct2.sh";
-open List,">$dOut/sstacks.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$sstacks)=split(/\s+/,$_);
 	`ln -s $sstacks* $dOut/stacks`;
-	print SH "sstacks -b 1 -c $dOut/batch_1 -s $dOut/$sample -o $dOut -p 8 --gapped\n";
-	print List "$sample\t$dOut/$sample\n";
 }
 close SH;
-close List;
 close In;
-open SH,">$dShell/step06.correct1.sh";
+open SH,">$dShell/step06.correct.sh";
 print SH "rxstacks -P $dOut/stacks/ --conf_lim 0.25 --prune_haplo --model_type bounded --bound_high 0.1 --lnl_lim -10.0 -t 16 -o $dOut/ && ";
-print SH "cstacks $Austacks/ -n 4 -p 16 --gapped -o $dOut\n";
 close SH;
 
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct1.sh";
-print  "$job\n";
-`$job`;
-print "$job\tdone!\n";
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct2.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct.sh";
 print  "$job\n";
 `$job`;
 print "$job\tdone!\n";

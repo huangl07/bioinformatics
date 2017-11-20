@@ -3,44 +3,52 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fqlist,$outdir,$dsh,$proc);
+my ($slist,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"fqlist:s"=>\$fqlist,
-	"out:s"=>\$outdir,
-	"dsh:s"=>\$dsh,
-	"proc:s"=>\$proc,
+	"i:s"=>\$slist,
+	"o:s"=>\$fOut
 			) or &USAGE;
-&USAGE unless ($fqlist and $outdir and $dsh);
-$proc||=20;
-mkdir $outdir if (!-d $outdir);
-$outdir = ABSOLUTE_DIR($outdir);
-mkdir $dsh if(!-d $dsh);
-$dsh = ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step03.ustacks.sh";
-open Out,">$outdir/ustacks.list";
-open In,$fqlist;
-my $n=0;
+&USAGE unless ($slist and $fOut );
+open In,$slist;
+my %catalog;
+my %depth;
+my %Total;
+my $TotalDep=0;
 while (<In>) {
-	chomp;
-	next if ($_ eq ""||/^$/);
-	my ($sample,$fq)=split(/\s+/,$_);
-	print SH "ustacks -f $fq -o $outdir/ -i $n --deleverage -M 6 -m 2 -p 8 --gapped\n";
-	print Out "$sample\t$outdir/$sample\n";
-	$n++;
+	next if ($_ eq "" ||/^$/);
+	my ($sample,$slist)=split(/\s+/,$_);
+	open Slist,"gunzip -c $slist|";
+	while (<Slist>) {
+		chomp;
+		next if ($_ eq "" ||/^$/ || /^#/);
+		my (undef,undef,$cata,undef,undef,undef,$dep,undef)=split;
+		$catalog{$sample}{$cata}=1;
+		$depth{$sample}+=$dep;
+		$Total{$cata}=1;
+		$TotalDep+=$dep;
+	}
+	close Slist;
 }
 close In;
+open Out,">$fOut";
+print Out "#sample\ttags Number\tAverage depth\n";
+foreach my $sample (sort keys %catalog) {
+	my @out;
+	push @out,$sample;
+	push @out,scalar keys %{$catalog{$sample}};
+	push @out,sprintf("%.4f",$depth{$sample}/scalar keys %{$catalog{$sample}});
+	print Out join("\t",@out),"\n";
+}
+print Out join("\t","Total",scalar keys %Total,$TotalDep/scalar keys %Total),"\n";
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=10G --CPU 8 --maxjob $proc $dsh/step03.ustacks.sh";
-print "$job\n";
-`$job`;
-print "$job\tdone!\n";
+
 #######################################################################################
-print SToutdir "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
+print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
 sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 {
@@ -73,10 +81,8 @@ Description:
 
 Usage:
   Options:
-  -fqlist	<file>	input fqlist file
-  -out	<dir>	split windows sh
-  -dsh	<dir>	output work sh	
-  -proc	<num>	max proc number for qsub
+  -i	<file>	input file name
+  -o	<file>	output file
   -h         Help
 
 USAGE

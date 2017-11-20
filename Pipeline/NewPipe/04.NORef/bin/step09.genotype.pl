@@ -1,33 +1,57 @@
-#!/usr/bin/env perl 
+#!/usr/bin/perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$dOut,$dShell,$slist);
+my ($ulist,$clist,$dOut,$dShell,$slist);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"vcf:s"=>\$vcf,
+	"ulist:s"=>\$ulist,
+	"clist:s"=>\$clist,
 	"slist:s"=>\$slist,
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dShell,
 			) or &USAGE;
-&USAGE unless ($vcf and $dOut and $dShell and $slist);
+&USAGE unless ($ulist and $clist and $slist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
-mkdir $dShell if (!-d $dShell);
+mkdir $dShell if(!-d $dShell);
 $dOut=ABSOLUTE_DIR($dOut);
-$vcf=ABSOLUTE_DIR($vcf);
-open SH,">$dShell/step05.stack-stat.sh";
-print SH "perl $Bin/bin/snp.stat.pl -i $vcf -o $dOut/snp.stat -m $dOut/snp.matrix && ";
-print SH "Rscript $Bin/bin/diff_matrix.R --m $dOut/snp.matrix --o $dOut/snp.diff\n";
-print SH "perl $Bin/bin/snp_qual.pl -i $vcf -o $dOut/snp.depth && ";
-print SH "Rscript $Bin/bin/snp_qual.R --dep $dOut/snp.depth --o $dOut/snp.depth\n";
-print SH "perl $Bin/bin/tagstat.pl -i $slist -o $dOut/tags.stat\n";
+$dShell=ABSOLUTE_DIR($dShell);
+open In,$ulist;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($sample,$ustacks)=split(/\s+/,$_);
+	`ln -s $ustacks* $dOut/`;
+	my $ustack=basename($ustacks);
+}
+close In;
+open In,$clist;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($sample,$cstacks)=split(/\s+/,$_);
+	`ln -s $cstacks* $dOut/`;
+}
+close In;
+open In,$slist;
+open SH,">$dShell/step09.genotype.sh";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($sample,$sstacks)=split(/\s+/,$_);
+	`ln -s $sstacks* $dOut/stacks`;
+}
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 16 --Nodes 1 $dShell/step05.stack-stat.sh";
+close In;
+open SH,">$dShell/step09.genotype.sh";
+print SH "populations -P $dOut -t 16 -m 4 -O $dOut/ --vcf && ";
+close SH;
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.genotype.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";
@@ -66,10 +90,12 @@ Description:
 
 Usage:
   Options:
-  -fqlist	<file>	input fqlist name
-  -out	<dir>	split windows sh
-  -dsh	<dir>	output work sh	
-  -h         Help
+	-ulist	<file>	ustacks list
+	-clist	<file>	cstacks	list
+	-slist	<file>	sstacks list
+	-out	<dir>	output dir
+	-dsh	<dir>	work shell dir
+	-h         Help
 
 USAGE
         print $usage;

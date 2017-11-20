@@ -36,7 +36,7 @@ while (<In>) {
 }
 close In;
 open Out,">$fOut";
-print Out "#sample\ttags Number\tAverage Number\n";
+print Out "#sample\ttags Number\tAverage depth\n";
 foreach my $sample (sort keys %catalog) {
 	my @out;
 	push @out,$sample;
