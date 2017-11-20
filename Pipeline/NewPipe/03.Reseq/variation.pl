@@ -293,32 +293,31 @@ Description:
 	perl $Script -fqlist -out -ref -gff
 
 Usage:
-  Options:
-  -fqlist	<file>	input file name
-  -outdir	<dir>	output dir
-  -ref	<file>	reference file
-  -gff	<file>	gff file
-  -sv	sv calling default off 
-  -cnv	cnv calling default off 
-  -RAD	RRL calling default off 
 
-  -step	pipeline control
-  -stop	pipeline control
-		01 fastq qc
-		02 reference prepair
-		03 bwa mapping
-		04 bam sort
-		05 bam mkdup
-		06 map-stat
-		07 haplotype
-		08 gvcf typing
-		09 vcf-filter
-		10 annovar
-		11 sv call
-		12 cnv call
-		13 variant stat
-		14 report
-
+	-fqlist	<file>	input file name
+	-outdir	<dir>	output dir
+	-ref	<file>	reference file
+	-gff	<file>	gff file
+	-sv	sv calling default off 
+	-cnv	cnv calling default off 
+	-RAD	RRL calling default off 
+	
+	-step	pipeline control
+          01 fastq qc
+          02 reference prepair
+          03 bwa mapping
+          04 bam sort
+          05 bam mkdup
+          06 map-stat
+          07 haplotype
+          08 gvcf typing
+          09 vcf-filter
+          10 annovar
+          11 sv call
+          12 cnv call
+          13 variant stat
+          14 report
+	-stop	pipeline control
 
   -h         Help
 
