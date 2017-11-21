@@ -90,13 +90,11 @@ while (<In>) {
 close In;
 close Flen;
 open Out,">$fmtrix";
-my @sample=sort keys %vcfstat;
+my @sample=@indi;
 print Out join("\t","",@sample),"\n";
 for (my $i=0;$i<@sample;$i++) {
-	next if ($sample[$i] eq "pop");
 	my @out;push @out,$sample[$i];
 	for (my $j=0;$j<@sample;$j++) {
-		next if ($sample[$j] eq "pop");
 		if (!exists $diff{$sample[$i]}{$sample[$j]}) {
 			push @out,0;
 		}else{

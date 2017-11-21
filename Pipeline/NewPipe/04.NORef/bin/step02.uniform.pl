@@ -45,7 +45,7 @@ foreach my $sample (sort keys %sample) {
 	my $fq2=join(" ",@{$fq2{$sample}});
 	print SH "cat $fq1 > $outdir/$sample.total.R1.fastq.gz && ";
 	print SH "cat $fq2 > $outdir/$sample.total.R2.fastq.gz && ";
-	print SH "$Bin/bin/fastq_length_uniform -1 $outdir/$sample.total.R1.fastq.gz -2 $outdir/$sample.total.R2.fastq.gz -l 120 -a $outdir/$sample\_R1.fastq.gz -b $outdir/$sample\_R2.fastq.gz && ";
+	print SH "$Bin/bin/ngsuniform -1 $outdir/$sample.total.R1.fastq.gz -2 $outdir/$sample.total.R2.fastq.gz -l 120 -a $outdir/$sample\_R1.fastq.gz -b $outdir/$sample\_R2.fastq.gz && ";
 	if ($method eq "GBS") {
 		print SH "cat $outdir/$sample\_R1.fastq.gz $outdir/$sample\_R2.fastq.gz > $outdir/$sample.fastq.gz \n";
 	}else{

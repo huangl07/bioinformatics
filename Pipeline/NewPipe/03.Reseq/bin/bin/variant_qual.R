@@ -67,35 +67,33 @@ for (i in samples){
 pdf(paste(opt$o,".pdf",sep=""),width=12,height=6)
 vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(1,11)))
-p<-ggplot(depth_in,aes(x=Depth,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))+xlim(0,100)
+pushViewport(viewport(layout = grid.layout(1,12)))
+p<-ggplot(depth_in,aes(x=Depth,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))+xlim(0,50)+theme(legend.position='none');
 p<-p+xlab("Depth")+ylab(paste(opt$str," Fraction(%)",sep=""))+ggtitle(paste("Cumulative ",opt$str," depth 
-distribution",sep=""))+guides(colour=guide_legend(title=NULL))
+distribution",sep=""))
 
-print(p, vp = vplayout(1, 1:5))
-p<-p+xlab("Depth")+ylab("SNP Fraction(%)")+ggtitle("Cumulative SNP depth distribution")+guides(colour=FALSE)
+print(p, vp = vplayout(1, 1:5.5))
 p1<-ggplot(qual,aes(x=GQvalue,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))
 p1<-p1+xlab("Quality")+ylab(paste(opt$str," Fraction(%)",sep=""))+ggtitle(paste("Cumulative ",opt$str," depth 
 distribution",sep=""))+guides(colour=guide_legend(title=NULL))
 
-print(p1,vp = vplayout(1, 6:11))
+print(p1,vp = vplayout(1, 6:12))
 dev.off();
 
 png(paste(opt$o,".png",sep=""),width=1200,height=600)
 vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(1,1100)))
-p<-ggplot(depth_in,aes(x=Depth,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))
+p<-ggplot(depth_in,aes(x=Depth,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))+xlim(0,50)+theme(legend.position='none');
 p<-p+xlab("Depth")+ylab(paste(opt$str," Fraction(%)",sep=""))+ggtitle(paste("Cumulative ",opt$str," depth 
 distribution",sep=""))+guides(colour=guide_legend(title=NULL))
 
 print(p, vp = vplayout(1, 1:500))
-p<-p+xlab("Depth")+ylab("SNP Fraction(%)")+ggtitle("Cumulative SNP depth distribution")+guides(colour=FALSE)
 p1<-ggplot(qual,aes(x=GQvalue,y=frac))+geom_line(aes(colour=sampleID,group=sampleID))
 p1<-p1+xlab("Quality")+ylab(paste(opt$str," Fraction(%)",sep=""))+ggtitle(paste("Cumulative ",opt$str," depth 
 distribution",sep=""))+guides(colour=guide_legend(title=NULL))
 
-print(p1,vp = vplayout(1, 600:1100))
+print(p1,vp = vplayout(1, 500:1100))
 dev.off();
 
 escaptime=Sys.time()-times;

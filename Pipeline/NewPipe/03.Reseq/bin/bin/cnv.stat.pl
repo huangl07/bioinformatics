@@ -17,24 +17,26 @@ GetOptions(
 open In,$fIn;
 my %stat;
 my %length;
+my %Alen;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/ || /^#/);
 	my ($chr1,$pos1,$pos2,$length,$type,$pvalue,$genenum,$geneinfo)=split;
 	$stat{$type}{total}++;
 	$stat{$type}{gene}++ if ($genenum !=0);
+	$Alen{$type}+=$length;
 	$length{$length}{$type}++;
 }
 close In;
-open Out,">$fOut";
-print Out "#CNVtype\ttotal\tgene\n";
+open Out,">$fOut.cnv.stat";
+print Out "#CNVtype\ttotal\tgene\talen\n";
 foreach my $type (sort keys %stat) {
 	$stat{$type}{total}||=0;
 	$stat{$type}{gene}||=0;
-	print Out $type,"\t",$stat{$type}{total},"\t",$stat{$type}{gene},"\n";
+	print Out $type,"\t",$stat{$type}{total},"\t",$stat{$type}{gene},"\t",$Alen{$type}/$stat{$type}{total},"\n";
 }
 close Out;
-open Out,">$fOut.length";
+open Out,">$fOut.cnv.lenth";
 print Out "#length\t",join("\t",sort keys %stat),"\n";
 foreach my $len (sort {$a<=>$b} keys %length) {
 	my @out;

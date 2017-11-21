@@ -3,23 +3,23 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($mapstat,$variant,$fvcflist,$fsvlist,$fcnvlist,$fannolist,$dOut);
+my ($fastqc,$mapstat,$variant,$fvcflist,$fsvlist,$fcnvlist,$fannolist,$dOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
+	"fastqc:s"=>\$fastqc,
 	"mapstat:s"=>\$mapstat,
 	"variant:s"=>\$variant,
 	"vcf:s"=>\$fvcflist,
 	"sv:s"=>\$fsvlist,
 	"cnv:s"=>\$fcnvlist,
-	"anno:s"=>\$fannolist,
 	"out:s"=>\$dOut,
 #	"proc:s"=>\$proc,
 			) or &USAGE;
-&USAGE unless ($mapstat and $variant and $fvcflist and $fannolist and $dOut);
+&USAGE unless ($mapstat and $variant and $fvcflist  and $dOut);
 #$proc||=20;
 $mapstat=ABSOLUTE_DIR($mapstat);
 $variant=ABSOLUTE_DIR($variant);
@@ -43,17 +43,6 @@ while (<In>) {
 	}
 }
 close In;
-open In,$fannolist;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($sample,$type,$vcf)=split(/\s+/,$_);
-	if ($type eq "snp") {
-		`ln -s $vcf $dData/SNP`;
-	}else{
-		`ln -s $vcf $dData/INDEL`;
-	}
-}
 close In;
 if ($fsvlist) {
 	mkdir "$dData/SV" if (!-d "$dData/SV");
@@ -77,6 +66,23 @@ if ($fcnvlist) {
 	}
 	close In;
 }
+my @fqstat=glob("$fastqc/*.stat");
+my %fqstat;
+foreach my $fqstat (@fqstat) {
+	open In,$fqstat;
+	while (<In>) {
+		chomp;
+		next if ($_ eq ""||/^$/ ||/!Total/ ||/#/);
+		my(undef,$sample,$readnum,$basenum,$a,$t,$g,$c,$n,$GC,$Q30,$Q20,undef)=split(/\s+/,$_);
+		my $sampleID=(split(/\:/,$sample))[0];
+		$fqstat{$sampleID}{readnum}+=$readnum;
+		$fqstat{$sampleID}{basenum}+=$basenum;
+		$fqstat{$sampleID}{GC}+=$GC*$basenum;
+		$fqstat{$sampleID}{Q30}+=$Q30*$basenum;
+	}
+	close In;
+}
+
 print "Data package Done!";
 print "map stat package\n";
 my @mapstat=glob("$mapstat/*.result.stat");
@@ -96,6 +102,19 @@ foreach my $mapstat (@mapstat) {
 	}
 	close In;
 }
+open Out,">$dOut/Table/3-3.xls";
+print Out "#sampleID\tclean Reads\tclean base\tGC(%)\tQ30(%)\n";
+foreach my $sample (sort keys %fqstat) {
+	my @out;
+	push @out,$sample;
+	push @out,$fqstat{$sample}{readnum};
+	push @out,$fqstat{$sample}{basenum};
+	push @out,sprintf("%.2f",$fqstat{$sample}{GC}/$fqstat{$sample}{basenum});
+	push @out,sprintf("%.2f",$fqstat{$sample}{Q30}/$fqstat{$sample}{basenum});
+	print Out join("\t",@out),"\n";
+}
+close Out;
+
 open Out,">$dOut/Table/3-4.xls";
 print Out "#sampleID\tclean Reads\tMapped Reads\tMapped Ratio(%)\tProperly Mapped(%)\tDuplicate Ratio(%)\n";
 foreach my $sample (sort keys %stat) {
@@ -121,40 +140,28 @@ foreach my $sample (sort keys %stat) {
 	print Out join("\t",@out),"\n";
 }
 close Out;
-`ln -s $mapstat/*.depth.pdf $dOut/Figure/`;
-`ln -s $mapstat/*.depth.png $dOut/Figure/`;
-`ln -s $mapstat/*.genome.coverage.pdf $dOut/Figure/`;
-`ln -s $mapstat/*.genome.coverage.png $dOut/Figure/`;
-`ln -s $mapstat/*.insert.pdf $dOut/Figure/`;
-`ln -s $mapstat/*.insert.png $dOut/Figure/`;
 print "map stat package Done\n";
 
-my @vcfstat=glob("$variant/*.stat");
-foreach my $vcfstat (@vcfstat) {
-	if ($vcfstat =~/snp/) {
-		open Out,">$dOut/Table/3-6.xls";
-		open In,$vcfstat;
-		while (<In>) {
-			chomp;
-			next if ($_ eq "" || /^$/);
-			my @out=split(/\t/,$_);
-			next if (/Total/);
-			print Out join("\t",@out[0..6]),"\n";
-		}
-		close Out;
-		close In;
-	}elsif ($vcfstat =~ /indel/) {
-		open Out,">$dOut/Table/3-9.xls";
-		open In,$vcfstat;
-		while (<In>) {
-			chomp;
-			next if ($_ eq "" || /^$/);
-			my @out=split(/\t/,$_);
-			print Out join("\t",@out[0..4]),"\n";
-		}
-		close Out;
-	}
+open Out,">$dOut/Table/3-6.xls";
+open In,"$variant/snp.stat";
+while (<In>) {
+	chomp;
+	next if ($_ eq "" || /^$/);
+	my @out=split(/\t/,$_);
+	next if (/Total/);
+	print Out join("\t",@out[0..6]),"\n";
 }
+close Out;
+close In;
+open Out,">$dOut/Table/3-9.xls";
+open In,"$variant/indel.stat";
+while (<In>) {
+	chomp;
+	next if ($_ eq "" || /^$/);
+	my @out=split(/\t/,$_);
+	print Out join("\t",@out[0..4]),"\n";
+}
+close Out;
 my @svstat=glob("$variant/*.sv.stat");
 if (scalar @svstat > 0) {
 	my %sv;
@@ -165,10 +172,11 @@ if (scalar @svstat > 0) {
 		open In,$sv;
 		while (<In>) {
 			chomp;
-			next if ($_ eq "" || /^$/);
-			my ($type,$total,$gene)=split;
+			next if ($_ eq "" || /^$/ || /^#/);
+			my ($type,$total,$gene,$alen)=split;
 			$sv{$type}{$id}{total}=$total;
-			$sv{$type}{$id}{gene}=$total;
+			$sv{$type}{$id}{gene}=$gene;
+			$sv{$type}{$id}{alen}=abs(sprintf("%.2f",$alen));
 		}
 		close In;
 	}
@@ -179,7 +187,9 @@ if (scalar @svstat > 0) {
 			push @out,$type;
 			foreach my $id (sort keys %sample) {
 				$sv{$type}{$id}{total}||=0;
-				push @out,$sv{$type}{$id}{total};
+				$sv{$type}{$id}{gene}||=0;
+				$sv{$type}{$id}{alen}||=0;
+				push @out,join(",",$sv{$type}{$id}{total},$sv{$type}{$id}{gene},$sv{$type}{$id}{alen});
 			}
 			print Out join("\t",@out),"\n";
 		}
@@ -195,10 +205,11 @@ if (scalar @svstat > 0) {
 		open In,$cnv;
 		while (<In>) {
 			chomp;
-			next if ($_ eq "" || /^$/);
-			my ($type,$total,$gene)=split;
+			next if ($_ eq "" || /^$/ || /^#/);
+			my ($type,$total,$gene,$alen)=split;
 			$cnv{$type}{$id}{total}=$total;
-			$cnv{$type}{$id}{gene}=$total;
+			$cnv{$type}{$id}{gene}=$gene;
+			$cnv{$type}{$id}{alen}=abs(sprintf("%.2f",$alen));
 		}
 		close In;
 	}
@@ -209,29 +220,39 @@ if (scalar @svstat > 0) {
 			push @out,$type;
 			foreach my $id (sort keys %sample) {
 				$cnv{$type}{$id}{total}||=0;
-				push @out,$cnv{$type}{$id}{total};
+				$cnv{$type}{$id}{gene}||=0;
+				$cnv{$type}{$id}{alen}||=0;
+				push @out,join(",",$cnv{$type}{$id}{total},$cnv{$type}{$id}{gene},$cnv{$type}{$id}{alen});
 			}
 			print Out join("\t",@out),"\n";
 		}
 	close Out;
 }
-if (-f "$variant/snp.position.xls") {
-	`cp $variant/snp.position.xls $dOut/3-14.xls`
+if (-f "$variant/snp.effects") {
+	`cp $variant/snp.effects $dOut/Table/3-8.xls`
 }
-if (-f "$variant/snp.function.xls") {
-	`cp $variant/snp.function.xls $dOut/3-15.xls`
+if (-f "$variant/snp.region") {
+	`cp $variant/snp.region $dOut/Table/3-7.xls`
 }
-if (-f "$variant/indel.position.xls") {
-	`cp $variant/indel.position.xls $dOut/3-16.xls`
+if (-f "$variant/indel.effects") {
+	`cp $variant/indel.effects $dOut/Table/3-10.xls`
 }
-if (-f "$variant/indel.function.xls") {
-	`cp $variant/indel.function.xls $dOut/3-17.xls`
+if (-f "$variant/indel.region") {
+	`cp $variant/indel.region $dOut/Table/3-11.xls`
 }
 
 
+mkdir "$dOut/Figure/variant" if (!-d "$dOut/Figure/variant");
+mkdir "$dOut/Figure/mapstat" if (!-d "$dOut/Figure/mapstat");
+mkdir "$dOut/Figure/fastqc" if (!-d "$dOut/Figure/fastqc");
+`ln -s $variant/*.pdf $dOut/Figure/variant`;
+`ln -s $variant/*.png $dOut/Figure/variant`;
+`ln -s $variant/*.svg $dOut/Figure/variant`;
+`ln -s $mapstat/*.pdf $dOut/Figure/mapstat;
+`ln -s $mapstat/*.png $dOut/Figure/mapstat`;
+`ln -s $fastqc/fig/*.pdf $dOut/Figure/fastqc;
+`ln -s $fastqc/fig/*.png $dOut/Figure/fastqc;
 
-`ln -s $variant/*.pdf $dOut/Figure`;
-`ln -s $variant/*.png $dOut/Figure`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -266,11 +287,11 @@ Description:
 
 Usage:
   Options:
+  -fastqc	<dir>	input fastq name
   -mapstat	<dir>	input mapstat name
   -variant	<dir>	input variant name
   -sv	<file>	sv list
   -cnv	<file>	cnv list
-  -anno	<file>	anno list
   -vcf	<file>	vcf list
   -out	<dir>	output dir
   -h         Help

@@ -30,6 +30,7 @@ mkdir "$outdir/work_sh" if (!-d "$outdir/work_sh");
 $step||=1;
 $stop||=-1;
 open LOG,">$outdir/work_sh/Resequence.$BEGIN_TIME.log";
+my $prestep=$step;
 if ($step == 1) {
 	print LOG "########################################\n";
 	print LOG "fastq qc\n"; my $time=time();
@@ -235,7 +236,6 @@ if ($step == 13) {
 		my $cnv=ABSOLUTE_DIR("$outdir/12.cnv-call/cnv.filter.list");
 		$job.=" -cnv $cnv ";
 	}
-	print $job;die;
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -248,8 +248,19 @@ if ($step == 14) {
 	print LOG "########################################\n";
 	print LOG "report generic\n"; my $time=time();
 	print LOG "########################################\n";
-	my $bamlist=ABSOLUTE_DIR("$outdir/05.bwa-mkdup/bam.list");
-	my $job="perl $Bin/bin/step14.report.pl -bam $bamlist -outdir $outdir/05.bam-mkdup -dsh $outdir/work_sh -proc 20";
+	my $fqdir=ABSOLUTE_DIR("$outdir/01.fastq-qc");
+	my $mapstat=ABSOLUTE_DIR("$outdir/06.map-stat");
+	my $varstat=ABSOLUTE_DIR("$outdir/13.variant-stat");
+	my $vcf=ABSOLUTE_DIR("$outdir/10.annovar/anno.list");
+	my $job="perl $Bin/bin/step14.report.pl -fastqc $fqdir -mapstat $mapstat -variant $varstat -vcf $vcf --out $outdir/14.report";
+	if ($SV) {
+		my $sv=ABSOLUTE_DIR("$outdir/11.sv-call/sv.filter.list");
+		$job.=" -sv $sv ";
+	}
+	if ($CNV) {
+		my $cnv=ABSOLUTE_DIR("$outdir/12.cnv-call/cnv.filter.list");
+		$job.=" -cnv $cnv ";
+	}
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

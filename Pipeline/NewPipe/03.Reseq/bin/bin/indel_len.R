@@ -36,13 +36,13 @@ pdf(file=paste(opt$o,"/",sample[i],".indel.pdf",sep=""))
 a=df[df[,1]%in%sample[i],2]
 xlim_max_num=10
 xlim_min_num=-10
-hist(a,breaks=length(unique(a)),col="blue",xlab="Indel Size (bp)",ylab="number",freq=TRUE,main="Indel size distribution",xaxt="n",xlim=c(xlim_min_num,xlim_max_num))
+hist(a,breaks=length(unique(a)),col="blue",xlab="Indel Lenth (bp)",ylab="number",freq=TRUE,main="Indel size distribution",xaxt="n",xlim=c(xlim_min_num,xlim_max_num))
 axis= axis(1,at=seq(xlim_min_num,xlim_max_num,5))
 box()
 dev.off()
 png(file=paste(opt$o,"/",sample[i],".indel.png",sep=""))
 a=df[df[,1]%in%sample[i],2]
-hist(a,breaks=length(unique(a)),col="blue",xlab="Indel Size (bp)",ylab="number",freq=TRUE,main="Indel size distribution",xaxt="n",xlim=c(xlim_min_num,xlim_max_num))
+hist(a,breaks=length(unique(a)),col="blue",xlab="Indel Lenth (bp)",ylab="number",freq=TRUE,main="Indel size distribution",xaxt="n",xlim=c(xlim_min_num,xlim_max_num))
 axis= axis(1,at=seq(xlim_min_num,xlim_max_num,5))
 box()
 dev.off()

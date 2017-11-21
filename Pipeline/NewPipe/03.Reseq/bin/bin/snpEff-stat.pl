@@ -21,7 +21,7 @@ while (<In>) {
 	next if ($_ eq ""||/^$/);
 	next if (!/Count by effects/ && !/Count by genomic region/);
 	if (/Count by effects/) {
-		open Out,">$fOut.effecits";
+		open Out,">$fOut.effects";
 		my @line=split(/\n/,$_);
 		foreach my $l (@line) {
 			my @info=split(/ \, /,$l);

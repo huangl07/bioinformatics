@@ -17,6 +17,7 @@ GetOptions(
 open In,$fIn;
 my %stat;
 my %length;
+my %Alen;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/ ||/^#/);
@@ -24,9 +25,23 @@ while (<In>) {
 	$stat{$type}{total}++;
 	$stat{$type}{gene}++ if ($genenum !=0);
 	$length{$length}{$type}++;
+	$Alen{$type}+=$length;
 }
 close In;
-open Out,">$fOut.length";
+open Out,">$fOut.sv.stat";
+print Out "#type\ttotal\tgene\talen\n";
+foreach my $type (sort keys %stat) {
+	my @out;
+	push @out,$type;
+	$stat{$type}{total}||=0;
+	$stat{$type}{gene}||=0;
+	push @out,$stat{$type}{total};
+	push @out,$stat{$type}{gene};
+	push @out,$Alen{$type}/$stat{$type}{total};
+	print Out join("\t",@out),"\n";
+}
+close Out;
+open Out,">$fOut.sv.lenth";
 print Out "#length\t",join("\t",sort keys %stat),"\n";
 foreach my $len (sort {$a<=>$b} keys %length) {
 	my @out;

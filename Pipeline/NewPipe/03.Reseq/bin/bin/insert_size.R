@@ -37,11 +37,11 @@ if (len < 1000){
 }else{
 	ymax<-max(a$V2[0:1000]);
 }
-plot(a[,1],a[,2],type='h',col="#0099FF",xlab="Insert Size(bp)",ylab="Reads Number",main="Insert Size Distribution",xlim=c(0,1000),ylim=c(0,ymax*1.2))
+plot(a[,1],a[,2],type='h',col="#0099FF",xlab="Insert Size(bp)",ylab="Reads Number",main="Insert Size Distribution",xlim=c(0,700),ylim=c(0,ymax*1.2))
 dev.off()
 pdffile=paste(opt$o,".png",sep="");
 png(file=pdffile)
-plot(a[,1],a[,2],type='h',col="#0099FF",xlab="Insert Size(bp)",ylab="Reads Number",main="Insert Size Distribution",xlim=c(0,1000),ylim=c(0,ymax*1.2))
+plot(a[,1],a[,2],type='h',col="#0099FF",xlab="Insert Size(bp)",ylab="Reads Number",main="Insert Size Distribution",xlim=c(0,700),ylim=c(0,ymax*1.2))
 dev.off()
 escaptime=Sys.time()-times;
 print("Done!")

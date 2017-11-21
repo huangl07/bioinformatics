@@ -49,7 +49,7 @@ while (<In>) {
 		print SH "Rscript $Bin/bin/diff_matrix.R --i $dOut/indel.matrix --o $dOut/indel.diff\n";
 		print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/indel.depth -o2 $dOut/indel.GQ && ";
 		print SH "Rscript $Bin/bin/variant_qual.R --GQ $dOut/indel.GQ --dep $dOut/indel.depth --o $dOut/indel.qual --str INDEL\n";
-		print SH "perl $Bin/bin/snpEff-stat.pl -i $annostat -o $dOut/snp\n";
+		print SH "perl $Bin/bin/snpEff-stat.pl -i $annostat -o $dOut/indel\n";
 	}
 }
 close In;
@@ -68,7 +68,7 @@ if ($svlist) {
 			$pop{sv}=$sv;
 		}
 		print SH "perl $Bin/bin/sv.stat.pl -i $sv -o $dOut/$sampleID && ";
-		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sampleID.sv.len -o $dOut/$sampleID.sv.len\n";
+		print SH "Rscript $Bin/bin/variant_len.R --input $dOut/$sampleID.sv.lenth --output $dOut/$sampleID.sv.len\n";
 	}
 	close In;
 }
@@ -87,12 +87,12 @@ if ($cnvlist) {
 			$pop{cnv}=$cnv;
 		}
 		print SH "perl $Bin/bin/cnv.stat.pl -i $cnv -o $dOut/$sampleID && ";
-		print SH "perl $Bin/bin/varintlen.R -i $dOut/$sampleID.cnv.len -o $dOut/$sampleID.cnv.len\n";
+		print SH "Rscript $Bin/bin/variant_len.R --input $dOut/$sampleID.cnv.lenth --output $dOut/$sampleID.cnv.len\n";
 	}
 	close In;
 }
 close In;
-print SH "perl $Bin/bin/draw.circos.pl --windows 100000 --snp $pop{snp} --indel $pop{indel} --chrlist $chr --gff $gff --outdir $dOut";
+print SH "perl $Bin/bin/draw.circos.pl --windows 100000 --snp $pop{snp} --indel $pop{indel} --chrlist $chr --gff $gff --outdir $dOut ";
 print SH "--sv $pop{sv} " if($svlist);
 print SH "--cnv $pop{cnv} " if($cnvlist);
 print SH "\n";

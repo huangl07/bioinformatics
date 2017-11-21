@@ -49,7 +49,7 @@ while (<In>) {
 	print SH "Rscript $Bin/bin/coverage_depth.R --i $dOut/$sampleID.coverage --o $dOut/$sampleID.depth \n";
 	print SH "samtools depth $bam > $dOut/$sampleID.depth && ";
 	print SH "$Bin/bin/depth_stat_windows -i $dOut/$sampleID.depth -o $dOut/$sampleID.depth.fordraw -w 100000 && ";
-	print SH "Rscript $Bin/bin/genomeCoveragehorizontalArea.r --infile $dOut/$sampleID.depth.fordraw  --idfile $chrlist --outfile $dOut/$sampleID.genome.coverage --group.col 1 --x.col 2 --y.col 3 --x.lab Sequence-Position --y.lab AverageDepth-log2 --skip 0 --unit 100kb --log2\n";
+	print SH "Rscript $Bin/bin/genomeCoveragehorizontalArea.R --infile $dOut/$sampleID.depth.fordraw  --idfile $chrlist --outfile $dOut/$sampleID.genome.coverage --group.col 1 --x.col 2 --y.col 3 --x.lab Sequence-Position --y.lab AverageDepth-log2 --skip 0 --unit 100kb --log2\n";
 }
 close In;
 close SH;

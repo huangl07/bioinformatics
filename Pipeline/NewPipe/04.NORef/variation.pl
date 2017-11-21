@@ -30,7 +30,7 @@ if ($step == 1) {
 	print LOG "########################################\n";
 	print LOG "fastq qc\n"; my $time=time();
 	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step01.fastqqc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

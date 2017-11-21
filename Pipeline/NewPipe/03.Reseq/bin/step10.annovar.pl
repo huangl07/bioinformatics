@@ -47,7 +47,7 @@ print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx20G -jar /mnt/ilustre/users/dna/.e
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
 `$job`;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
 `$job`;
 
 #######################################################################################

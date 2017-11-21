@@ -65,7 +65,7 @@ while(<CHR>){
 }
 my $chrnum=scalar keys %hash_chr_num;
 #open OUTT,">win.number.txt";
-my $gff_windows=$windows*10;
+my $gff_windows=$windows;
 while(<GFF>){
     next if /^#/;
     $_=~s/[\n\r]//g;
@@ -416,19 +416,19 @@ print Color "col2=rgb(0,255,0)\n";
 print Color "col3=rgb(0,0,255)\n";
 print Color "col4=rgb(0,255,255)\n";
 print Color "col5=rgb(255,0,255)\n";
-print Color "col6=rgb(255,255,0)\n";
+print Color "col6=rgb(255,165,0)\n";
 print Color "white=rgb(0,0,0)\n";
-print Color "black=rgb(255,255,255)\n";
-print Color "bandcol1=rgb(235,235,235)\n";
-print Color "bandcol2=rgb(225,225,225)\n";
-print Color "bandcol3=rgb(215,215,215)\n";
-print Color "bandcol4=rgb(205,205,205)\n";
-print Color "bandcol5=rgb(195,195,195)\n";
-print Color "bandcol6=rgb(185,185,185)\n";
-print Color "bandcol7=rgb(175,175,175)\n";
-print Color "bandcol8=rgb(165,165,165)\n";
-print Color "bandcol9=rgb(155,155,155)\n";
-print Color "bandcol10=rgb(145,145,145)\n";
+print Color "black=rgb(205,205,205)\n";
+print Color "bandcol1=rgb(195,195,195)\n";
+print Color "bandcol2=rgb(185,185,185)\n";
+print Color "bandcol3=rgb(175,175,175)\n";
+print Color "bandcol4=rgb(165,165,165)\n";
+print Color "bandcol5=rgb(155,155,155)\n";
+print Color "bandcol6=rgb(145,145,145)\n";
+print Color "bandcol7=rgb(135,135,135)\n";
+print Color "bandcol8=rgb(125,125,125)\n";
+print Color "bandcol9=rgb(115,115,115)\n";
+print Color "bandcol10=rgb(105,105,105)\n";
 close Color;
 system("circos -conf $outdir/draw.circos/draw.conf -outputfile circos -outputdir $outdir/ ");
 

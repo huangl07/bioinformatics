@@ -43,7 +43,7 @@ while (<In>) {
 }
 close In;
 close SH;
-my $job="perl $Bin/../tools/qsub-sge.pl --Resource mem=3G --CPU 1 --maxjob $proc $dsh/01.fastq-qc.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=3G --CPU 1 --maxjob $proc $dsh/01.fastq-qc.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

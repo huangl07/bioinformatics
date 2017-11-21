@@ -4,10 +4,9 @@ times<-Sys.time()
 library('getopt');
 options(bitmapType='cairo')
 spec = matrix(c(
-	'i','a',0,'character',
-	'o','b',0,'character',
-	'c','c',0,'character',
-	'help','c',0,'logical'
+	'input','i',0,'character',
+	'output','o',0,'character',
+	'help','h',0,'logical'
 	), byrow=TRUE, ncol=4);
 opt = getopt(spec);
 print_usage <- function(spec=NULL){
@@ -20,24 +19,29 @@ Usage example:
 Usage:
 	--i	insert_size file
 	--o	the output dir
-	--c	the col string
 	--help		usage
 \n")
 	q(status=1);
 }
 
 if ( !is.null(opt$help) ) { print_usage(spec) }
-if ( is.null(opt$i) ) { print_usage(spec) }
-if ( is.null(opt$o) ) { print_usage(spec) }
-df<-read.table(opt$i,header=FALSE)
-id<-df$V1;
+if ( is.null(opt$input) ) { print_usage(spec) }
+if ( is.null(opt$output) ) { print_usage(spec) }
+df<-read.table(opt$input,header=FALSE)
 col=length(colnames(df))
-tbl<-df[,2:col]/sum(df[,2:col])
-pdf(paste(opt$o,"pdf",sep=""))
-barplot(t(as.matrix(tbl)),names.arg=id, col=rainbow(col),xlab="length", ylab="percentage", border=NA,las=2)
+suml<-function(x,df){
+	a<-df[df$V1 ==x,2:col]
+	return(sum(a))
+}
+x=data.frame(id=df$V1);
+twin=apply(x,MARGIN=1,function(x,y) suml(x[1],df));
+tbl=data.frame(id=df$V1,num=twin);
+print(tbl);
+pdf(paste(opt$output,".pdf",sep=""))
+plot(tbl,type="l",main="length distribution",col="blue",xlim=c(0,5000))
 dev.off()
-png(paste(opt$o,"png",sep=""))
-barplot(t(as.matrix(tbl)),names.arg=id, col=rainbow(col),xlab="length", ylab="percentage", border=NA,las=2)
+png(paste(opt$output,".png",sep=""))
+plot(tbl,type="l",main="length distribution",col="blue",xlim=c(0,5000))
 dev.off()
 
 escaptime=Sys.time()-times;
