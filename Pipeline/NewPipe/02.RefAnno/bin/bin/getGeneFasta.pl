@@ -3,54 +3,35 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fGenome,$fOut,$Gff,$match);
+my ($ref,$out);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$fGenome,
+	"i:s"=>\$ref,
 	"o:s"=>\$fOut,
-	"g:s"=>\$Gff,
-	"f:s"=>\$match
 	) or &USAGE;
-&USAGE unless ($fGenome and $fOut and $Gff and $match);
-my %change;
-if (!$match) {
-	open In,$match;
-	while (<In>) {
-		chomp;
-		next if ($_ eq ""||/^$/);
-		my ($id,$change)=split(/\s+/,$_);
-		$change{$id}=$change;
-	}
-	close In;
-}
-open In,$fGenome;
-open Out,">$fOut.fa";
+&USAGE unless ($ref and $out and $Gff);
+my %enzyme=(
+	"EcoRI"=>"GAATTC",
+	"MseI"=>"TTAA",
+	"PstI"=>"CTGCAG",
+	"TaqaI"=>"TCGA",
+);
+my @enzyme=keys %enzyme;
+open In,$ref;
 $/=">";
-my $n=0;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/);
-	my ($info,@seq)=split(/\n/,$_);
-	my $id=(split(/\s+/,$info))[0];
-	if (!exists $change{$id}) {
-	}else{
-		$n++;
-		$change{$id}="sca$n";
-	}
-	print ">$change{$id}\n";
-	print join("\n",@seq),"\n";
+	next if ($_ eq "" ||/^$/);
+	my ($id,@seq)=split(/\n/,$_);
+	my $seq=join("",@seq);
+	
 }
 close In;
-close Out;
-open Out,">$fOut.changelog";
-foreach my $id (sort keys %change) {
-	print Out join("\t",$id,$change{$id}),"\n";
-}
-close Out;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -68,7 +49,6 @@ Usage:
   -i	<file>	input genome name,fasta format,
   -g	<file>	input genome gff file,
   -o	<str>	output file prefix
-  -f	<file>	chromosome change file
 
   -h         Help
 
