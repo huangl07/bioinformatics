@@ -43,7 +43,7 @@ if ($step == 2) {
 	print LOG "########################################\n";
 	print LOG "fastq uniform\n"; my $time=time();
 	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step02.uniform.pl -fqlist $fqlist -out $outdir/02.uniform -method $method -dsh $outdir/work_sh ";
+	my $job="perl $Bin/bin/step02.uniform.pl -fqlist $fqlist -out $outdir/02.uniform -method $method -dsh $outdir/work_sh  -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -71,7 +71,7 @@ if ($step == 4) {
 	print LOG "cstacks\n"; my $time=time();
 	print LOG "########################################\n";
 	my $ustacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
-	my $job="perl $Bin/bin/step04.cstacks.pl -ulist $ustacks -out $outdir/04.cstacks -dsh $outdir/work_sh -proc 20 ";
+	my $job="perl $Bin/bin/step04.cstacks.pl -ulist $ustacks -out $outdir/04.cstacks -dsh $outdir/work_sh ";
 	$job.="-sample $sample" if($sample);
 	print LOG "$job\n";
 	`$job`;
@@ -85,8 +85,8 @@ if ($step == 5) {
 	print LOG "########################################\n";
 	print LOG "sstacks\n"; my $time=time();
 	print LOG "########################################\n";
-	my $ustacks=ABSOLUTE_DIR("$outdir/04.cstacks/cstacks.list");
-	my $cstacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
+	my $cstacks=ABSOLUTE_DIR("$outdir/04.cstacks/cstacks.list");
+	my $ustacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
 	my $job="perl $Bin/bin/step05.sstacks.pl -ulist $ustacks -clist $cstacks -out $outdir/05.sstacks -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
@@ -100,10 +100,10 @@ if ($step == 6) {
 	print LOG "########################################\n";
 	print LOG "correct\n"; my $time=time();
 	print LOG "########################################\n";
-	my $ustacks=ABSOLUTE_DIR("$outdir/04.cstacks/cstacks.list");
-	my $cstacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
+	my $cstacks=ABSOLUTE_DIR("$outdir/04.cstacks/cstacks.list");
+	my $ustacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
 	my $sstacks=ABSOLUTE_DIR("$outdir/05.sstacks/sstacks.list");
-	my $job="perl $Bin/bin/step05.corrct.pl -ulist $ustacks -clist $cstacks -slist $sstacks -out $outdir/06.correct -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step06.correct.pl -ulist $ustacks -clist $cstacks -slist $sstacks -out $outdir/06.correct -dsh $outdir/work_sh";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

@@ -248,10 +248,10 @@ mkdir "$dOut/Figure/fastqc" if (!-d "$dOut/Figure/fastqc");
 `ln -s $variant/*.pdf $dOut/Figure/variant`;
 `ln -s $variant/*.png $dOut/Figure/variant`;
 `ln -s $variant/*.svg $dOut/Figure/variant`;
-`ln -s $mapstat/*.pdf $dOut/Figure/mapstat;
+`ln -s $mapstat/*.pdf $dOut/Figure/mapstat`;
 `ln -s $mapstat/*.png $dOut/Figure/mapstat`;
-`ln -s $fastqc/fig/*.pdf $dOut/Figure/fastqc;
-`ln -s $fastqc/fig/*.png $dOut/Figure/fastqc;
+`ln -s $fastqc/fig/*.pdf $dOut/Figure/fastqc`;
+`ln -s $fastqc/fig/*.png $dOut/Figure/fastqc`;
 
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

@@ -67,7 +67,7 @@ while (<In>) {
 			my @pos=sort {$a<=>$b} keys %pos;
 			my $str=join("\t",$enzyme[$i],$enzyme[$j]);
 			for (my $k=0;$k<@pos-1;$k++) {
-				my $len=$pos[$j+1]-$pos[$j];
+				my $len=$pos[$k+1]-$pos[$k];
 				$GBS{$str}{"330-380"}++ if ($len >= 330 and $len <=380);
 				$GBS{$str}{"380-430"}++ if ($len >= 380 and $len <=430);
 				$GBS{$str}{"430-480"}++ if ($len >= 430 and $len <=480);
@@ -79,6 +79,7 @@ while (<In>) {
 }
 close In;
 open Out,">$fOut";
+print Dumper %GBS;die;
 my @eGBS=keys %GBS;
 my @eRAD=keys %RAD;
 print Out join("\t","#enzyme",join("\t",@eGBS),join("\t",@eRAD)),"\n";
@@ -86,6 +87,7 @@ foreach my $range (keys %range) {
 	my @out;
 	push @out,$range;
 	foreach my $e (@eGBS) {
+		print $GBS{$e}{$range};die;
 		push @out,$GBS{$e}{$range};
 	}
 	foreach my $e (@eRAD) {

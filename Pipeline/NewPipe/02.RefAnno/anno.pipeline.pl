@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$dsh,$chr,$stop,$step);
+my ($ref,$out,$dsh,$chr,$stop,$step,$gff);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -11,16 +11,20 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"ref:s"=>\$ref,
-	"gff:s"=>\$out,
+	"gff:s"=>\$gff,
 	"chr:s"=>\$chr,
+	"out:s"=>\$out,
 	"step:s"=>\$step,
 	"stop:s"=>\$stop
 			) or &USAGE;
 &USAGE unless ($ref and $gff and $out);
 mkdir $out if (!-d $out);
+$out=ABSOLUTE_DIR($out);
 mkdir "$out/work_sh" if (!-d "$out/work_sh");
 $ref=ABSOLUTE_DIR($ref);
-$chr=ABSOLUTE_DIR($chr);
+if ($chr) {
+	$chr=ABSOLUTE_DIR($chr);
+}
 $gff=ABSOLUTE_DIR($gff);
 open Log,">$out/work_sh/anno.$BEGIN_TIME.log";
 $step=1;
@@ -28,7 +32,10 @@ if ($step == 1) {
 	print Log "########################################\n";
 	print Log "ref-rename \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step01.newref.pl -i $ref -g $gff -f $chr -o $out/01.newref";
+	my $job="perl $Bin/bin/step01.new-ref.pl -ref $ref -gff $gff -out $out/01.newref -dsh $out/work_sh";
+	if ($chr) {
+		$job .= " -chr $chr ";
+	}
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -41,8 +48,8 @@ if ($step == 2) {
 	print Log "########################################\n";
 	print Log "enzyme cut\n",my $time=time();
 	print Log "########################################\n";
-	my $ref=ABSOLUTE_DIR("$out/01.newref/ref.fasta");
-	my $job="perl $Bin/bin/step02.enzyme.pl -i $ref -o $out/02.enzyme";
+	my $fa=ABSOLUTE_DIR("$out/01.newref/ref.gene.fasta");
+	my $job="perl $Bin/bin/step02.fasta-split.pl -i $fa -o $out/02.split";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -53,11 +60,10 @@ if ($step == 2) {
 }
 if ($step == 3) {
 	print Log "########################################\n";
-	print Log "gene blast\n",my $time=time();
+	print Log "NR ANNO\n",my $time=time();
 	print Log "########################################\n";
-	my $ref=ABSOLUTE_DIR("$out/01.newref/ref.fasta");
-	my $gff=ABSOLUTE_DIR("$out/01.newref/ref.gff");
-	my $job="perl $Bin/bin/step02.blast.pl -i $ref -gff $gff -o $out/03.blast";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fa.list");
+	my $job="perl $Bin/bin/step03.nr-anno.pl -i $fa -o $out/03.NR";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -66,13 +72,67 @@ if ($step == 3) {
 	print Log "########################################\n";
 	$step++ ;
 }
-if ($step ==4) {
+if ($step == 4) {
 	print Log "########################################\n";
-	print Log "gene blast\n",my $time=time();
+	print Log "KEGG ANNO\n",my $time=time();
 	print Log "########################################\n";
-	my $ref=ABSOLUTE_DIR("$out/01.newref/ref.fasta");
-	my $gff=ABSOLUTE_DIR("$out/01.newref/ref.gff");
-	my $job="perl $Bin/bin/step02.blast.pl -i $ref -gff $gff -o $out/03.blast";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fa.list");
+	my $job="perl $Bin/bin/step02.kegg-anno.pl -i $fa -o $out/04.KEGG";
+	print Log "$job\n";
+	`$job`;
+	print Log "$job\tdone!\n";
+	print Log "########################################\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
+	print Log "########################################\n";
+	$step++ ;
+}
+if ($step == 5) {
+	print Log "########################################\n";
+	print Log "GO ANNO\n",my $time=time();
+	print Log "########################################\n";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fa.list");
+	my $job="perl $Bin/bin/step02.go-anno.pl -i $fa -o $out/05.GO";
+	print Log "$job\n";
+	`$job`;
+	print Log "$job\tdone!\n";
+	print Log "########################################\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
+	print Log "########################################\n";
+	$step++ ;
+}
+if ($step == 6) {
+	print Log "########################################\n";
+	print Log "Uniref ANNO\n",my $time=time();
+	print Log "########################################\n";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fa.list");
+	my $job="perl $Bin/bin/step02.uniref-anno.pl -i $fa -o $out/06.Uniref";
+	print Log "$job\n";
+	`$job`;
+	print Log "$job\tdone!\n";
+	print Log "########################################\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
+	print Log "########################################\n";
+	$step++ ;
+}
+if ($step == 7) {
+	print Log "########################################\n";
+	print Log "EGGNOG ANNO\n",my $time=time();
+	print Log "########################################\n";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fa.list");
+	my $job="perl $Bin/bin/step02.eggnog-anno.pl -i $fa -o $out/07.Eggnog";
+	print Log "$job\n";
+	`$job`;
+	print Log "$job\tdone!\n";
+	print Log "########################################\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
+	print Log "########################################\n";
+	$step++ ;
+}
+if ($step == 8) {
+	print Log "########################################\n";
+	print Log "REPORT\n",my $time=time();
+	print Log "########################################\n";
+	my $job="perl $Bin/bin/step08.report.pl -i $out/ -o $out/08.REPORT";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -111,19 +171,15 @@ sub USAGE {#
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
 Description:
-	tree	pca		structure	kinship
-	eg:
-	perl $Script -i -o -k -c
 
 Usage:
 
-	-vcf	<file>	input vcf files
+	-ref	<file>	input ref files
 	-out	<dir>	output dir
-	-gro	<file>	input group list
-	-maf	<num>	maf default 0.05
-	-mis	<num>	mis default 0.3
-	-dep	<num>	default 2 
-	-step		pipiline control
+	-gff	<file>	input gff file
+	-chr	<file>	input chr file
+	-step		pipeline control
+	-stop		pipeline control
 	-h			Help
 
 USAGE

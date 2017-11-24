@@ -3,34 +3,28 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($nr,$kegg,$go,$eggnog,$uniprot,$refdir,$out);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
+	"nr:s"=>\$nr,
+	"kegg:s"=>\$kegg,
+	"go:s"=>\$go,
+	"eggnog:s"=>\$eggnog,
+	"uniprot:s"=>\$uniprot,
+	"ref:s"=>\$refdir,
 	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
-	"dsh:s"=>\$dsh,
 	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
+&USAGE unless ($nr and $kegg and $go and $eggnog and $uniprot and $refdir and $out);
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
-mkdir $dsh if (!-d $dsh);
-$dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
-if ($chr) {
-	print "-f $chr ";
-}
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
-`$job`;
+`ln -s $refdir/ref.fa $out/ref.fa`;
+`ln -s $refdir/ref.gff $out/ref.gff`;
+`paste $nr $uniprot $kegg $go $eggnog|cut -f 1,2,3,5,6,8,9,11,12,14,15 > $out/anno.summary`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -62,11 +56,13 @@ Description:
 
 Usage:
   Options:
-  -ref	<file>	input genome name,fasta format,
-  -gff	<file>	input genome gff file,
-  -out	<dir>	output data prefix
-  -chr	<file>	chromosome change file
-  -dsh	<dir>	output work sh dir
+	"nr:s"=>\$nr,
+	"kegg:s"=>\$kegg,
+	"go:s"=>\$go,
+	"eggnog:s"=>\$eggnog,
+	"uniprot:s"=>\$uniprot,
+	"ref:s"=>\$refdir,
+	"out:s"=>\$out,
 
   -h         Help
 

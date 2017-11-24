@@ -15,9 +15,9 @@ GetOptions(
 	"g:s"=>\$Gff,
 	"f:s"=>\$match
 	) or &USAGE;
-&USAGE unless ($fGenome and $fOut and $Gff and $match);
+&USAGE unless ($fGenome and $fOut and $Gff);
 my %change;
-if (!$match) {
+if ($match) {
 	open In,$match;
 	while (<In>) {
 		chomp;
@@ -33,27 +33,25 @@ $/=">";
 my $n=0;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/);
+	next if ($_ eq ""||/^$/ ||/#/);
 	my ($info,@seq)=split(/\n/,$_);
 	my $id=(split(/\s+/,$info))[0];
 	if (!exists $change{$id}) {
-	}else{
 		$n++;
 		$change{$id}="sca$n";
 	}
-	print ">$change{$id}\n";
-	print join("\n",@seq),"\n";
+	print Out ">$change{$id}\n";
+	print Out join("\n",@seq),"\n";
 }
 close In;
 close Out;
 open In,$Gff;
 open Out,">$fOut.gff";
 $/="\n";
-my $n=0;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/);
-	my ($id,@info)=(split(/\s+/,$_))[0];
+	next if ($_ eq ""||/^$/||/^#/) ;
+	my ($id,@info)=split(/\s+/,$_);
 	die "gff && ref file doesn't match\n" if (!exists $change{$id});
 	print Out join("\t",$change{$id},@info),"\n";
 }

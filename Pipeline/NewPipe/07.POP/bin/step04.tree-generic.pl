@@ -25,7 +25,8 @@ my $id="pop";
 open SH,">$dsh/step04.tree-generic1.sh";
 print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id \n";
 open SH,">$dsh/step04.tree-generic2.sh";
-print SH "cd $out/ && raxml-ng --all --msa $out/$id.fa  --prefix $out/$id --bs-trees 1000 2> $out/$id.raxmlHPC.log && ";
+#print SH "cd $out/ && raxml-ng --all --msa $out/$id.fa  --prefix $out/$id --bs-trees 1000 2> $out/$id.raxmlHPC.log && ";
+print SH "cd $out/ && raxmlHPC -f a -x 12345 -T 16 -p 12345 -# 1000 -m GTRGAMMA -s $out/$id.phylip -n $id 2> $out/$id.raxmlHPC.log && ";
 print SH "ln -s $out/RAxML_bipartitionsBranchLabels.$id.tree $out/$id.ml.nwk && ";
 print SH "Rscript $Bin/bin/tree.R --infile $out/RAxML_bipartitionsBranchLabels.$id.tree  --outfile $out/$id.ml.tree --raxml 1 ";
 if ($gro) {

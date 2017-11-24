@@ -3,33 +3,28 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($fa,$out,$num,$chr,$dsh);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
+	"fa:s"=>\$fa,
 	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
 	"dsh:s"=>\$dsh,
+	"num:s"=>\$num,
 	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
+&USAGE unless ($fa and $out and $dsh );
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
-if ($chr) {
-	print "-f $chr ";
-}
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
+$fa=ABSOLUTE_DIR($fa);
+open SH,">$dsh/step02.fasplit.sh";
+print SH "perl $Bin/bin/splitFasta.pl -i $fa -o $out -n $num\n";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step02.fasplit.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -62,12 +57,10 @@ Description:
 
 Usage:
   Options:
-  -ref	<file>	input genome name,fasta format,
-  -gff	<file>	input genome gff file,
+  -fa	<file>	input genome name,fasta format,
   -out	<dir>	output data prefix
-  -chr	<file>	chromosome change file
   -dsh	<dir>	output work sh dir
-
+  -num	<num>	input split number
   -h         Help
 
 USAGE

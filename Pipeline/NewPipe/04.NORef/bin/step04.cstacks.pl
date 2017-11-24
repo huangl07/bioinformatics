@@ -41,7 +41,7 @@ if ($sample) {
 		my ($sample,$ustacks)=split(/\s+/,$_);
 		my $total++;
 		my $ndp++;
-		open Slist,"gunzip -c $ustacks|";
+		open Slist,"gunzip -c $ustacks.tags.tsv.gz|";
 		while (<Slist>) {
 			chomp;
 			next if ($_ eq ""||/^$/);

@@ -13,8 +13,11 @@ GetOptions(
 	"d:s"=>\$fIn,
 	"o:s"=>\$fOut,
 	"i:s"=>\$fa,
+	"hit:s"=>\$tophit,
+	"match:s"=>\$topmatch,
+	"evalue:s"=>\$eval,
 			) or &USAGE;
-&USAGE unless ($fIn and $fOut and $fa);
+&USAGE unless ($fIn and $fOut);
 open In,$fa;
 my %gene;
 while (<In>) {
@@ -36,8 +39,8 @@ close In;
 $tophit||=1;
 $topmatch||=1;
 $eval||="10e-5";
+my %anno;
 my @blast=glob("$fIn/*.blast");
-	my %anno;
 
 foreach my $blast (@blast) {
 	open In,$blast;
@@ -84,17 +87,13 @@ foreach my $blast (@blast) {
 				$annotation=~/^(\S+)\s.*/;
 				$hit = $1;
 				if ($hit_num<=$tophit && $match_num<=$topmatch && $e_value<=$eval) {
-					my @GOid;
-					my @detail;
-					while ($annotation =~ m/\[(GO:\d+) "([^\"\']*)" evidence=\w+\]/g) {
-						push @GOid,$1;
-						push @detail,$2;
+					$percent = sprintf("%.2f", $identity / $length * 100);
+					$percent = "$identity\/$length\($percent\)";
+					$annotation=~/^(\S+)\s.*/;
+					$hit = $1;
+					if ($hit_num<=$tophit && $match_num<=$topmatch && $e_value<=$eval) {
+						$anno{$query}=join("\t",$hitID,$annotation);
 					}
-					if (scalar @GOid == 0 || scalar @detail == 0) {
-						 $anno{$query}="--\t--";
-						next;
-					}
-					$anno{$query}=join("\t",join(",",@GOid),join(":",@detail));
 				}
 			}
 		}
@@ -103,12 +102,13 @@ foreach my $blast (@blast) {
 }
 
 open Out,">$fOut";
-print Out "#GeneID\tGOTERM\tGOANNO\n";
+print Out "#GeneID\tUniID\tUniANNO\n";
 foreach my $query (sort keys %gene) {
 	$anno{$query}||="--\t--";
 	print Out $query,"\t",$anno{$query},"\n";
 }
 close Out;
+close In;
 
 
 
@@ -121,13 +121,18 @@ sub USAGE {#
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
 Description:
+	So this program is written, to get the information and list them in lines saved in a file from the blast m0 format outfile
+	eg:
+	perl $Script -i $fIn -o $fOut
 
 Usage:
   Options:
 	-i	<file>	input file name
 	-o	<file>	output file name
-	-fa	<file>	input fasta file
-	-h         Help
+	-tophit	<num>	input set how many subjects for a query to be displayed,default 1
+	-topmatch	<num>	input set suits(results of one subject match one query) to be displayed.match number,defualt 1
+	-evalue	<num>	input max evalue,default 10e-5
+  -h         Help
 
 USAGE
         print $usage;

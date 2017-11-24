@@ -1,36 +1,48 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($fIn,$dOut,$Split,$Key);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
-	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
-	"dsh:s"=>\$dsh,
-	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
-mkdir $out if (!-d $out);
-$out=ABSOLUTE_DIR($out);
-mkdir $dsh if (!-d $dsh);
-$dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
-if ($chr) {
-	print "-f $chr ";
+	"i:s"=>\$fIn,
+	"o:s"=>\$dOut,
+	"n:s"=>\$Split,
+			) or &USAGE;
+&USAGE unless ($fIn and $dOut and $Split);
+$Split||=50;
+open In,$fIn;
+mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
+my %handsh;
+$/=">";
+my $nseq=0;
+open Falist,">$dOut/fasta.list";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	$nseq++;
+	my $filehand=$nseq % $Split;
+	if (!exists $handsh{$filehand}) {
+		open $handsh{$filehand},">$dOut/sub.$filehand.fa";
+		print Falist "$dOut/sub.$filehand.fa\n";
+	}
+	my ($id,@line)=split(/\n/,$_);
+	$id=(split(/\s+/,$id))[0];
+	print {$handsh{$filehand}} ">$id\n",join("\n",@line),"\n";
 }
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
-`$job`;
+close In;
+close Falist;
+foreach my $key (sort keys %handsh) {
+	close $handsh{$key};
+}
+
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -59,15 +71,16 @@ sub USAGE {#
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
 Description:
+	this Script will split fasta file into n files
+
+	eg:
+	perl $Script -i demo.fa -d Nr -o ./ -k demo
 
 Usage:
   Options:
-  -ref	<file>	input genome name,fasta format,
-  -gff	<file>	input genome gff file,
-  -out	<dir>	output data prefix
-  -chr	<file>	chromosome change file
-  -dsh	<dir>	output work sh dir
-
+  -i	<file>	input fa file name
+  -o	<dir>	output dir 
+  -n	<num>	split file number
   -h         Help
 
 USAGE

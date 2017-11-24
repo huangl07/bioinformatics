@@ -3,34 +3,50 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($fa,$out,$type,$chr,$dsh);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
+	"fa:s"=>\$fa,
+	"type:s"=>\$type,
 	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
 	"dsh:s"=>\$dsh,
 	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
+&USAGE unless ($fa and $out and $dsh);
+$type||="nuc";
+$fa=ABSOLUTE_DIR($fa);
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
-if ($chr) {
-	print "-f $chr ";
+my $dNR=" /mnt/ilustre/users/long.huang/DataBase/NR/2017-8-30/nr";
+if ($type eq "pro") {
+	$blast=" blastp";
+}else{
+	$blast=" blastx";
 }
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
+open SH,">$dsh/step03.nr1.sh";
+open In,"$fa";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my $fname=basename($_);
+	print SH "diamond ",$blast;
+	print SH " --db $dNR --query $_ --evalue 10e-10 --outfmt 5 --threads 8 --out $out/$fname.nr.blast\n";
+}
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
+close In;
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.nr1.sh";
 `$job`;
+open SH,">$dsh/step03.nr2.sh";
+print SH "perl $Bin/bin/NRanno.pl -i $fa -d $out/ -o $out/NR.anno\n";
+close SH;
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.nr2.sh";
+`$job`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -62,10 +78,8 @@ Description:
 
 Usage:
   Options:
-  -ref	<file>	input genome name,fasta format,
-  -gff	<file>	input genome gff file,
+  -fa	<file>	input genome fa
   -out	<dir>	output data prefix
-  -chr	<file>	chromosome change file
   -dsh	<dir>	output work sh dir
 
   -h         Help

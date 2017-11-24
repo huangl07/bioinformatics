@@ -36,7 +36,7 @@ while (<In>) {
 	$vcf .=" -V $gvcf ";
 }
 close In;
-print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx35G  -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $vcf -nt 8 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log && ";
+print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx35G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $vcf -nt 8 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=35G --CPU 8 --maxjob $proc $dShell/08.gvcf-typing.sh";

@@ -3,34 +3,46 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($fa,$out,$type,$dsh);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
+	"fa:s"=>\$fa,
+	"type:s"=>\$type,
 	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
 	"dsh:s"=>\$dsh,
 	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
+&USAGE unless ($fa and $out and $dsh );
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
-if ($chr) {
-	print "-f $chr ";
+ $type||="nuc";
+my $emapper="emapper.py --translate --dmnd_db /mnt/ilustre/users/dna/Environment/biotools/eggnog-mapper/data/NOG.fa.dmnd --dbtype seqdb";
+if ($type eq "proc") {
+	$emapper="emapper.py";
 }
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
+open SH,">$dsh/step06.EGGNOG1.sh";
+open In,$fa;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my $fname=basename($_);
+	print SH $emapper." -m diamond  --data_dir /mnt/ilustre/users/dna/Environment/biotools/eggnog-mapper/data/ -o $out/$fname.eggnog -i $_\n";
+}
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
+close In;
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.EGGNOG1.sh --maxjob=20 --CPU 8";
 `$job`;
+open SH,">$dsh/step06.EGGNOG2.sh";
+print SH "perl $Bin/bin/EGGanno.pl -i $fa -d $out/ -o $out/EGGNOG.anno\n";
+close SH;
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.EGGNOG2.sh";
+`$job`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

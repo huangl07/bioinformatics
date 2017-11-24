@@ -85,7 +85,7 @@ if ($step ==4) {
 	}else{
 		$gro=ABSOLUTE_DIR("$out/step02.structure-generic/group.list");
 	}
-	my $job="perl $Bin/bin/step04.tree-generic.pl -pop $vcf -out $out/step04.tree-generic -dsh $out/work_sh ";
+	my $job="perl $Bin/bin/step04.tree-generic.pl -vcf $vcf -out $out/step04.tree-generic -dsh $out/work_sh ";
 	$job.="-gro $gro\n" if ($gro);
 	print Log "$job\n";
 	`$job`;
@@ -100,7 +100,7 @@ if ($step ==5) {
 	print Log "kinship-generic \n",my $time=time();
 	print Log "########################################\n";
 	$vcf=ABSOLUTE_DIR("$out/step01.vcf-filter/pop.recode.vcf");
-	my $job="perl $Bin/bin/step05.kinship-generic.pl -pop $vcf -out $out/step05.kinship-generic -dsh $out/work_sh ";
+	my $job="perl $Bin/bin/step05.kinship-generic.pl -vcf $vcf -out $out/step05.kinship-generic -dsh $out/work_sh ";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

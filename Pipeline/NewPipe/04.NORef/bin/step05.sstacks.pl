@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ulist,$clist,$dOut,$dShell);
+my ($ulist,$clist,$dOut,$dShell,$proc);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -14,6 +14,7 @@ GetOptions(
 	"clist:s"=>\$clist,
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dShell,
+	"proc:s"=>\$proc,
 			) or &USAGE;
 &USAGE unless ($ulist and $clist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
@@ -44,7 +45,7 @@ while (<In>) {
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 8 --Nodes 1 $dShell/step05.sstacks.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 8 --Nodes 1 --Maxjob $proc $dShell/step05.sstacks.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";
