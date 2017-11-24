@@ -16,21 +16,20 @@ GetOptions(
 &USAGE unless ($slist and $fOut );
 open In,$slist;
 my %catalog;
-my %depth;
-my %Total;
-my $TotalDep=0;
 while (<In>) {
 	next if ($_ eq "" ||/^$/);
 	my ($sample,$slist)=split(/\s+/,$_);
-	open Slist,"gunzip -c $slist|";
+	open Slist,"gunzip -c $slist.tags.tsv.gz|";
 	while (<Slist>) {
 		chomp;
 		next if ($_ eq "" ||/^$/ || /^#/);
-		my (undef,undef,$cata,undef,undef,undef,$dep,undef)=split;
-		$catalog{$sample}{$cata}=1;
-		$depth{$sample}+=$dep;
-		$Total{$cata}=1;
-		$TotalDep+=$dep;
+		my (undef,undef,$cata,undef,undef,$type,undef,undef)=split(/\t/,$_);
+		if ($type =~ /consensus/) {
+			$catalog{$sample}{num}++;
+		}elsif ($type =~ /primary/ || $type =~ /secondary/) {
+			$catalog{$sample}{dep}++;
+		}
+		
 	}
 	close Slist;
 }
@@ -40,11 +39,10 @@ print Out "#sample\ttags Number\tAverage depth\n";
 foreach my $sample (sort keys %catalog) {
 	my @out;
 	push @out,$sample;
-	push @out,scalar keys %{$catalog{$sample}};
-	push @out,sprintf("%.4f",$depth{$sample}/scalar keys %{$catalog{$sample}});
+	push @out,$catalog{$sample}{num};
+	push @out,sprintf("%.4f",$catalog{$sample}{dep}/$catalog{$sample}{num});
 	print Out join("\t",@out),"\n";
 }
-print Out join("\t","Total",scalar keys %Total,$TotalDep/scalar keys %Total),"\n";
 close Out;
 
 #######################################################################################

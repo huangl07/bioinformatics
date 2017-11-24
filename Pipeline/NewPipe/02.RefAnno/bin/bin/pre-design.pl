@@ -79,7 +79,6 @@ while (<In>) {
 }
 close In;
 open Out,">$fOut";
-print Dumper %GBS;die;
 my @eGBS=keys %GBS;
 my @eRAD=keys %RAD;
 print Out join("\t","#enzyme",join("\t",@eGBS),join("\t",@eRAD)),"\n";
