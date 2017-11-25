@@ -99,21 +99,21 @@ while (<In>) {
 }
 close Out;
 close In;
-open Out,">$fOut.kegg.enrich";
+open Out,">$fOut.kegg.stat";
 foreach my $koid (sort keys %kdetail) {
 	$enrich{$koid}{enrich}||=0;
 	$enrich{$koid}{total}||=0;
 	print Out join("\t",$koid,$kdetail{$koid},$enrich{$koid}{enrich},$enrich{$koid}{total},scalar keys %eff,scalar keys %stat),"\n";
 }
 close Out;
-open Out,">$fOut.go.enrich";
+open Out,">$fOut.go.stat";
 foreach my $goid (sort keys %gdetail) {
 	$enrich{$goid}{enrich}||=0;
 	$enrich{$goid}{total}||=0;
 	print Out join("\t",$goid,$gdetail{$goid},$enrich{$goid}{enrich},$enrich{$goid}{total},scalar keys %eff,scalar keys %stat),"\n";
 }
 close Out;
-open Out,">$fOut.eggnog.enrich";
+open Out,">$fOut.eggnog.stat";
 foreach my $eggnog (sort keys %edetail) {
 	$enrich{$eggnog}{enrich}||=0;
 	$enrich{$eggnog}{total}||=0;

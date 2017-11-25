@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library('getopt');
 options(bitmapType='cairo')
 spec = matrix(c(
@@ -31,7 +32,10 @@ write.table(file=paste(opt$output,"detail",sep="."),outd);
 order<-order(outd$qvalue)[0:20]
 ymax=max(max(outd$eff[order]),max(outd$total[order]))
 pdf(paste(opt$output,"pdf",sep="."))
-barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8))
+barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8)+legend=c("enrich","total"))
+dev.off()
+png(paste(opt$output,"png",sep="."))
+barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8)+legend=c("enrich","total"))
 dev.off()
 
 

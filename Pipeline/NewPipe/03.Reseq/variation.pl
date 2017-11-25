@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fqlist,$outdir,$ref,$gff,$RAD,$step,$stop,$SV,$CNV,$realign);
+my ($fqlist,$outdir,$ref,$gff,$RAD,$step,$stop,$SV,$CNV,$realign,$anno);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,7 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"fqlist:s"=>\$fqlist,
 	"outdir:s"=>\$outdir,
+	"anno:s"=>\$anno,
 	"ref:s"=>\$ref,
 	"gff:s"=>\$gff,
 	"RAD"=>\$RAD,
@@ -24,6 +25,7 @@ GetOptions(
 mkdir $outdir if (!-d $outdir);
 $ref=ABSOLUTE_DIR($ref);
 $gff=ABSOLUTE_DIR($gff);
+$anno=ABSOLUTE_DIR($anno);
 $fqlist=ABSOLUTE_DIR($fqlist);
 $outdir=ABSOLUTE_DIR($outdir);
 mkdir "$outdir/work_sh" if (!-d "$outdir/work_sh");
@@ -176,7 +178,7 @@ if ($step == 10) {
 	my $vcf=ABSOLUTE_DIR("$outdir/09.vcf-filter/vcf.list");
 	my $con=ABSOLUTE_DIR("$outdir/02.ref-config/snpEff.config");
 	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
-	my $job="perl $Bin/bin/step10.annovar.pl -con $con -vcf $vcf -ref $ref -out $outdir/10.annovar -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step10.annovar.pl -con $con -vcf $vcf -ref $ref -anno $anno out $outdir/10.annovar -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
