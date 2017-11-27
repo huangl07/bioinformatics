@@ -16,6 +16,7 @@ GetOptions(
 	"num:s"=>\$num,
 	) or &USAGE;
 &USAGE unless ($fa and $out and $dsh );
+$num||=20;
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);

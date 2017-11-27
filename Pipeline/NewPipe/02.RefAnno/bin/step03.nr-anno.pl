@@ -23,6 +23,7 @@ $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
 my $dNR=" /mnt/ilustre/users/long.huang/DataBase/NR/2017-8-30/nr";
+my $blast="diamond";
 if ($type eq "pro") {
 	$blast=" blastp";
 }else{

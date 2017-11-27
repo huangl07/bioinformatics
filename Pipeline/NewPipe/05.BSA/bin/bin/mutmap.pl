@@ -31,7 +31,9 @@ if ($PID ne "") {
 	my ($P1,$P2)=split(/\,/,$PID);
 	$P2||=$P1;
 	$Indi{$P1}="P1";
-	$Indi{$P2}="P2";
+	if ($P1 ne $P2) {
+		$Indi{$P2}="P2";
+	}
 }
 $Indi{$BID}="B";
 if ($fIn =~ /gz/) {
@@ -76,10 +78,10 @@ while (<In>) {
 		next if ($p1 ne $p2);
 		next if ($p1 ne $b1 && $p1 ne $b2 && $b1 ne $b2);
 		my $mut=$b1;
-		if ($p1 eq $b1) {
+		if ($p1 == $b1) {
 			$mut=$b2;
 		}
-		if (exists $info{P2}) {
+		if (exists $info{P2} && exists $info{P1} ) {
 			my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
 			next if ($p3 ne $p4);
 			next if ($info{P1}{gt} ne $info{P2}{gt});

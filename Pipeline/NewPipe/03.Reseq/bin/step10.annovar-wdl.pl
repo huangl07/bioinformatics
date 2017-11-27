@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($proc,$con,$vcf,$dsh,$out,$ref,$anno);
+my ($proc,$con,$vcf,$dsh,$out,$ref,$anno,$dict);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,7 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"con:s"=>\$con,
 	"ref:s"=>\$ref,
+	"dict:s"=>\$dict,
 	"anno:s"=>\$anno,
 	"vcf:s"=>\$vcf,
 	"dsh:s"=>\$dsh,
@@ -30,7 +31,7 @@ my $data="$out/data/ref";
 open SH,">$dsh/10.annovar1.sh";
 open ANNOLIST,">$out/anno.list";
 open In,$vcf;
-my $VCF="";
+open VCF,">$out/vcf.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -38,21 +39,33 @@ while (<In>) {
 	print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar -v ref -csvStats $out/$id.anno.csv -c $con $vcfs > $out/$id.anno.primary.vcf && ";
 	print SH "vcftools --vcf $out/$id.anno.primary.vcf --recode-INFO ANN --recode-INFO LOF --recode-INFO NMD --recode --out $out/$id \n";
 	print ANNOLIST "$id\t$out/$id.recode.vcf\t$out/$id.anno.csv\n";
+	print VCF "$out/$id.recode.vcf";
 }
 close In;
 close SH;
+close VCF,
 close ANNOLIST;
+open Out,">$out/CombinesVCF.json\n";
+print Out "{\n";
+print Out "\"Combines.combines.VCFlist\": \"$out/vcf.list\",\n";
+print Out "\"Combines.combines.Refdict\": \"$dict\",\n";
+print Out "\"Combines.combines.Refindex\": \"$ref.fai\",\n";
+print Out "\"Combines.combines.workdir\": \"$out\",\n";
+print Out "\"Combines.combines.RefFasta\": \"$ref\"\n";
+print Out "}\n";
+close Out;
+
 open SH,">$dsh/10.annovar2.sh";
-print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.final.vcf --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
+print SH "cd $out/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/CombinesVCF.wdl -i $out/CombinesVCF.json &&  ";
 print SH "perl $Bin/bin/anno-count.pl -snp $out/snp.gene.txts -indel $out/indel.genes.txt -anno $anno -out $out/pop && ";
 print SH "Rscript --input $out/pop.kegg.stat --output $out/pop.kegg && ";
 print SH "Rscript --input $out/pop.go.stat --output $out/pop.go && ";
 print SH "Rscript --input $out/pop.eggnog.stat --output $out/pop.eggnog && ";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
-`$job`;
+#`$job`;
 $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
-`$job`;
+#`$job`;
 
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
