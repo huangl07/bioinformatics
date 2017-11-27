@@ -116,9 +116,9 @@ if ($step == 7) {
 	print LOG "########################################\n";
 	print LOG "rcstacks\n"; my $time=time();
 	print LOG "########################################\n";
-	my $ustacks=ABSOLUTE_DIR("$outdir/06.correct/cstacks.list");
+	my $ustacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
 	my $group=ABSOLUTE_DIR("$outdir/04.cstacks/sample.list");
-	my $job="perl $Bin/bin/step07.rcstacks.pl -ulist $ustacks -out $outdir/07.rcstacks -dsh $outdir/work_sh -proc 20 -sample $sample";
+	my $job="perl $Bin/bin/step07.rcstacks.pl -ulist $ustacks -out $outdir/07.rcstacks -dsh $outdir/work_sh -sample $group";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

@@ -26,7 +26,7 @@ print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
 if ($chr) {
 	print "-f $chr ";
 }
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $ref -o $out/ref.gene.fa -g $gff && ";
+print SH " && perl $Bin/bin/getGeneFasta.pl -i $out/ref.fa -o $out/ref.gene.fa -g $out/ref.gff && ";
 print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";

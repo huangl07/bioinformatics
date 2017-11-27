@@ -48,7 +48,7 @@ if ($step == 2) {
 	print Log "########################################\n";
 	print Log "enzyme cut\n",my $time=time();
 	print Log "########################################\n";
-	my $fa=ABSOLUTE_DIR("$out/01.newref/ref.gene.fasta");
+	my $fa=ABSOLUTE_DIR("$out/01.newref/ref.gene.fa");
 	my $job="perl $Bin/bin/step02.fasta-split.pl -i $fa -o $out/02.split";
 	print Log "$job\n";
 	`$job`;

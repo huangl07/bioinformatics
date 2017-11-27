@@ -31,7 +31,7 @@ while (<In>) {
 	my ($sample,$ustacks)=split(/\s+/,$_);
 	`ln -s $ustacks* $dOut/stacks`;
 	my $ustack=basename($ustacks);
-	print Out "$sample $dOut/$ustacks\n";
+	print Out "$sample $dOut/$ustack\n";
 }
 close In;
 close Out;
