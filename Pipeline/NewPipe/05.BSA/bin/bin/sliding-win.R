@@ -47,23 +47,21 @@ if(length(collist) ==3){
 	index2<-data[[as.numeric(collist[4])]]
 	delta<-data[[as.numeric(collist[5])]]
 }
+ewin<-function(pos,index,p1,p2){
+	a<-index[pos > p1 & pos < p2 & index > thres]
+	return(length(a))
+}
 twin<-function(pos,p1,p2){
 	a<-pos[pos > p1 & pos < p2]
-	if(is.null(a)){
-		return(0);
-	}
 	return(length(a))
 }
 mwin<-function(pos,index,p1,p2){
 	a<-index[pos > p1 & pos < p2]
-	if(is.null(a) || length(a)<10){
-		return(NULL);
-	}
 	return(mean(a))
 }
 print("sliding window")
 chrname=unique(chr)
-info<-NULL
+slid<-NULL
 for (i in 1:(length(chrname))){
 	print(chrname[i]);
 	chrpos=pos[which(chr==chrname[i])]
@@ -84,8 +82,8 @@ for (i in 1:(length(chrname))){
 	if (opt$method=="num"){
 		pos1[pos1 <= 0]=1;
 		pos2[pos2 >= chrlen]=chrlen;
-		pos1=backpos[pos1]
-		pos2=backpos[pos2]
+		pos1=backpos[pos1];
+		pos2=backpos[pos2];
 	}else{
 		pos1[pos1 < 0]=0;
 		pos2[pos2 > chrlen]=chrlen;
@@ -93,25 +91,60 @@ for (i in 1:(length(chrname))){
 	x=data.frame(pos1,pos2);
 	if(length(collist) ==3){
 		wmean=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex,x[1],x[2]));
-		twin=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
-		info<-rbind(info,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index=wmean,total=twin))
-		info<-na.omit(info);
+		total=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
+		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index=wmean,twin=total))
 	}else{
 		wmean1=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex1,x[1],x[2]));
 		wmean2=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex2,x[1],x[2]));
-		delta=wmean1-wmean2
-		twin=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
-		print(twin)
-		info<-rbind(info,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=wmean3,total=twin))
-		info<-na.omit(info);
+		delta=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrdelta,x[1],x[2]));
+		total=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
+		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=wmean3,twin=total))
 	}
 }
+slid<-subset(slid,slid$twin > 10);
+total<-length(chr);
+N=total
 if(length(collist) ==3){
-	write.table(file=paste(opt$outfile,".sliding",sep=""),info)
+	thres<-quantile(slid$index[slid$twin > 10],probs=0.999,na.rm=TRUE)
 }else{
-	write.table(file=paste(opt$outfile,".sliding",sep=""),info)
+	thres<-quantile(slid$delta[slid$twin > 10],probs=0.999,na.rm=TRUE)
 }
-
+M=length(index[index > thres])
+info<-NULL
+for (i in 1:(length(chrname))){
+	chrpos=pos[which(chr==chrname[i])]
+	backpos=chrpos;
+	if (opt$method=="num"){chrpos=c(1:length(chrpos))}
+	chrindex=index[which(chr==chrname[i])]
+	chrlen=max(chrpos);
+	win=ceiling(chrlen/as.numeric(opt$step));
+	ss=c(1:win)
+	pos1=ss*as.numeric(opt$step)-as.numeric(opt$win)/2;
+	pos2=ss*as.numeric(opt$step)+as.numeric(opt$win)/2;
+	if (opt$method=="num"){
+		pos1[pos1 <=0]=1;
+		pos2[pos2 > chrlen]=chrlen;
+		pos1=backpos[pos1]
+		pos2=backpos[pos2]
+	}else{
+		pos1[pos1 < 0]=0;
+		pos2[pos2 > chrlen]=chrlen;
+	}
+	x=data.frame(pos1,pos2);
+	k=apply(x,MARGIN=1,function(x,y,z,a) ewin(backpos,chrindex,x[1],x[2]));
+	n=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
+	pvalue=phyper(k,M,N-M,n,lower.tail=FALSE);
+	info<-rbind(info,data.frame(chrname[i],pos1,pos2,k,M,N-M,n,pvalue))
+}
+names(info)<-c("chr","pos1","pos2","k","M","N","n","Pvalue")
+write.table(file=paste(opt$outfile,".detail",sep=""),info)
+fdr=p.adjust(info$Pvalue,method="bonferroni")
+if(length(collist) ==3){
+	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index=slid$index,thres=thres,total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
+}else{
+	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index1=slid$index,index2=slid$index,delta=slid$delta,thres=thres,total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
+}
+write.table(file=paste(opt$outfile,".result",sep=""),df,row.names=FALSE)
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
