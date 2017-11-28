@@ -1,9 +1,10 @@
 library('getopt');
 options(bitmapType='cairo')
 spec = matrix(c(
-	'sliding','s',0,'character',
+	'input','i',0,'character',
 	'output','o',0,'character',
-	'help','m',0,'logical'
+	'col','c',0,'character',
+	'help','h',0,'logical'
 	), byrow=TRUE, ncol=4);
 opt = getopt(spec);
 print_usage <- function(spec=NULL){
@@ -11,8 +12,9 @@ print_usage <- function(spec=NULL){
 	cat("Usage example: \n")
 	cat("	
 Usage:
-	--sliding	the input sliding file
-	--output	the out file 
+	--input	the input file
+	--output	the out file \
+	--col	the col number for draw
 	--help		usage
 \n")
 	q(status=1);
@@ -22,24 +24,40 @@ if ( is.null(opt$sliding)) { print_usage(spec)}
 if ( is.null(opt$output)){ print_usage(spec) }
 times<-Sys.time()
 
-sliding<-read.table(opt$sliding,stringsAsFactors=FALSE)
+data<-read.table(opt$input,stringsAsFactors=FALSE)
 library(qqman)
-names(sliding)<-c("chr","pos1","pos2","index1","index2","index3","snpnum")
-chrlab=unique(sliding$chr)
-for (i in (1:length(chrlab))){sliding$chr[which(sliding$chr==chrlab[i])]=i}
-sliding$chr=as.numeric(sliding$chr);
-pdf(paste(opt$output,".pdf",sep=""),height=900,width=1600)
-par(mfrow = c(3, 1))
-manhattan(sliding,chr="chr",bp="pos2",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index 1",ylim=c(0,1),logp=FALSE)
-manhattan(sliding,chr="chr",bp="pos2",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index 2",ylim=c(0,1),logp=FALSE)
-manhattan(sliding,chr="chr",bp="pos2",p="index3",col=rainbow(4),chrlabs=chrlab,ylab="delta SNP-index",ylim=c(-1,1),logp=FALSE)
-dev.off()
-png(paste(opt$output,".png",sep=""),height=900,width=1600)
-par(mfrow = c(3, 1))
-manhattan(sliding,chr="chr",bp="pos2",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index 1",ylim=c(0,1),logp=FALSE)
-manhattan(sliding,chr="chr",bp="pos2",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index 2",ylim=c(0,1),logp=FALSE)
-manhattan(sliding,chr="chr",bp="pos2",p="index3",col=rainbow(4),chrlabs=chrlab,ylab="delta SNP-index",ylim=c(-1,1),logp=FALSE)
-dev.off()
+collist <- unlist(strsplit(opt$col, split=","))
+if(length(collist) ==3){
+	chr<-data[[as.numeric(collist[1])]]
+	pos<-data[[as.numeric(collist[2])]]
+	index<-data[[as.numeric(collist[3])]]
+	df<-data.frame(chr=chr,pos=pos,index=index)
+	pdf(paste(opt$output,".pdf",sep=""),height=900,width=1600)
+	manhattan(df,chr="chr",bp="pos",p="index",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index",ylim=c(0,1),logp=FALSE)
+	dev.off()
+	png(paste(opt$output,".png",sep=""),height=900,width=1600)
+	manhattan(df,chr="chr",bp="pos",p="index",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index",ylim=c(0,1),logp=FALSE)
+	dev.off()
+}else{
+	chr<-data[[as.numeric(collist[1])]]
+	pos<-data[[as.numeric(collist[2])]]
+	index1<-data[[as.numeric(collist[3])]]
+	index2<-data[[as.numeric(collist[4])]]
+	delta<-data[[as.numeric(collist[5])]]
+	df<-data.frame(chr=chr,pos=pos,index1=index1,index2=index2,delta=delta)
+	pdf(paste(opt$output,".pdf",sep=""),height=900,width=1600)
+	par(mfrow = c(3, 1))
+	manhattan(df,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)
+	manhattan(df,chr="chr",bp="pos",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 2",ylim=c(0,1),logp=FALSE)
+	manhattan(df,chr="chr",bp="pos",p="delta",col=rainbow(4),chrlabs=chrlab,ylab="Delta SNP-index",ylim=c(-1,1),logp=FALSE)
+	dev.off()
+	png(paste(opt$output,".png",sep=""),height=900,width=1600)
+	par(mfrow = c(3, 1))
+	manhattan(df,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)
+	manhattan(df,chr="chr",bp="pos",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 2",ylim=c(0,1),logp=FALSE)
+	manhattan(df,chr="chr",bp="pos",p="delta",col=rainbow(4),chrlabs=chrlab,ylab="Delta SNP-index",ylim=c(-1,1),logp=FALSE)
+	dev.off()
+}
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)

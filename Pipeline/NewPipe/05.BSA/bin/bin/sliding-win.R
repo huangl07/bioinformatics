@@ -101,11 +101,7 @@ for (i in 1:(length(chrname))){
 		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=wmean3,twin=total))
 	}
 }
-if(length(collist) ==3){
-	write.table(file=paste(opt$outfile,".sliding",sep=""),slid)
-}else{
-	write.table(file=paste(opt$outfile,".sliding",sep=""),slid)
-}
+slid<-subset(slid,slid$twin > 10);
 total<-length(chr);
 N=total
 if(length(collist) ==3){
@@ -144,29 +140,11 @@ names(info)<-c("chr","pos1","pos2","k","M","N","n","Pvalue")
 write.table(file=paste(opt$outfile,".detail",sep=""),info)
 fdr=p.adjust(info$Pvalue,method="bonferroni")
 if(length(collist) ==3){
-	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,total=slid$twin,rich=info$k,index=slid$index,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
+	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index=slid$index,thres=thres,total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
 }else{
-	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,total=slid$twin,rich=info$k,index1=slid$index,index2=slid$index,delta=slid$delta,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
+	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index1=slid$index,index2=slid$index,delta=slid$delta,thres=thres,total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
 }
-
-write.table(file=paste(opt$outfile,".enrich",sep=""),df)
-df$chr=as.character(df$chr)
-chrlab=unique(df$chr)
-for (i in (1:length(chrlab))){df$chr[df$chr==chrlab[i]]=i}
-df$chr=as.numeric(df$chr);
-drawdf<-data.frame(chr=df$chr[df$fdr!=0 & df$total > 10],pos1=df$pos1[df$fdr!=0 & df$total > 10],fdr=df$fdr[df$fdr!=0 & df$total > 10])
-png(paste(opt$outfile,".pvalue.png",sep=""))
-manhattan(drawdf,chr="chr",bp="pos1",p="fdr",col=rainbow(4),chrlabs=chrlab,ylab="log p value",xlab="chromosome",sub=paste("thresold = ",thres,sep=""),logp=TRUE,suggestiveline=0.05/total,genomewideline=FALSE)
-dev.off()
-thres=head(sort(df$fdr[df$fdr !=0]),20)
-print(thres[20]);
-if(length(collist) ==3){
-	region<-data.frame(chr=df$chr[df$fdr < thres[20]& df$total > 10 ],pos1=df$pos1[df$fdr < thres[20] & df$total > 10],pos2=df$pos2[df$fdr < thres[20] & df$total > 10],total=df$total[df$fdr < thres[20] & df$total > 10],index=df$index[df$fdr < thres[20] & df$total > 10])
-}else{
-	region<-data.frame(chr=df$chr[df$fdr < thres[20]& df$total > 10 ],pos1=df$pos1[df$fdr < thres[20] & df$total > 10],pos2=df$pos2[df$fdr < thres[20] & df$total > 10],total=df$total[df$fdr < thres[20] & df$total > 10],delta=df$delta[df$fdr < thres[20] & df$total > 10])
-}
-write.table(file=paste(opt$outfile,".region",sep=""),region)
-
+write.table(file=paste(opt$outfile,".result",sep=""),df,row.names=FALSE)
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
