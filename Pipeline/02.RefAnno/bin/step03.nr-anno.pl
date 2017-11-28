@@ -82,7 +82,7 @@ Usage:
   -fa	<file>	input genome fa
   -out	<dir>	output data prefix
   -dsh	<dir>	output work sh dir
-
+  -type	<str>	sequence type pro or nuc
   -h         Help
 
 USAGE

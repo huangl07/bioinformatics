@@ -56,13 +56,14 @@ Description:
 
 Usage:
   Options:
-	"nr:s"=>\$nr,
-	"kegg:s"=>\$kegg,
-	"go:s"=>\$go,
-	"eggnog:s"=>\$eggnog,
-	"uniprot:s"=>\$uniprot,
-	"ref:s"=>\$refdir,
-	"out:s"=>\$out,
+
+	-nr	<file>	nr anno result
+	-kegg	<file>	kegg anno result
+	-go	<file>	go anno result
+	-eggnog	<file>	eggnog anno result
+	-uniprot	<file>	uniprot anno result
+	-refdir	<dir>	ref dir
+	-out	<output>	output dir
 
   -h         Help
 
