@@ -65,12 +65,14 @@ while (<In>) {
 	}else{
 		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
 		$info{$id}||=join("\t",$id,"--","--","--");
-		my $info=$info{$id};
+		my @ids=split(/:/,$id);
+		my $pos=join("\t",$ids[1],$ids[2],$ids[3]);
+		my $info=$info{$ids[0]};
 		$stat{$info}{high}||=0;
 		$stat{$info}{low}||=0;
 		$stat{$info}{middle}||=0;
 		$stat{$info}{unknow}||=0;
-		print Out join("\t",$info,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno),"\n";
+		print Out join("\t",$info,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno),"\n";
 		my @koid=split(/:/,$koid);
 		my @kdetail=split(/:/,$koanno);
 		for (my $i=0;$i<@koid;$i++) {

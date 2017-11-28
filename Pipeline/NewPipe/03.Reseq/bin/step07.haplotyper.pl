@@ -51,7 +51,7 @@ while (<In>) {
 	print Out "}\n";
 	close Out;
 	print List join("\t",$sampleID,"$dOut/$sampleID.gvcfs"),"\n";
-;	print SH "cd $Out/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/HaplotypeCaller.wdl -i $dOut/$sampleID.json \n";
+;	print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/HaplotypeCaller.wdl -i $dOut/$sampleID.json \n";
 }
 close In;
 close SH;

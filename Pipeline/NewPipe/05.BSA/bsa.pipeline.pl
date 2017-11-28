@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fqlist,$outdir,$ref,$gff,$RAD,$step,$stop,$SV,$CNV,$realign);
+my ($vcf,$out,$pid,$bid,$popt);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,57 +12,43 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"vcf:s"=>\$vcf,
 	"out:s"=>\$out,
-	"anno:s"=>\$anno,
-	"step:s"=>\$step,
-	"stop:s"=>\$stop,
+	"ann:s"=>\$ann,
+	"pid:s"=>\$pid,
+	"bid:s"=>\$bid,
+	"popt:s"=>\$popt,
 			) or &USAGE;
-&USAGE unless ($vcf and $out and $anno);
+&USAGE unless ($vcf and $out and $bid and $ann);
 mkdir $out if (!-d $out);
+$popt||="F2";
+$out=ABSOLUTE_DIR($out);
 $vcf=ABSOLUTE_DIR($vcf);
-$anno=ABSOLUE_DIR($anno);
-my $dsh="$outdir/work_sh";
-mkdir $dsh if (!-d $dsh);
-open LOG,">$outdir/work_sh/BSA.$BEGIN_TIME.log";
-if ($step == 1) {
-	print LOG "########################################\n";
-	print LOG "index calc\n"; my $time=time();
-	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
-	print LOG "$job\n";
-	`$job`;
-	print LOG "$job\tdone!\n";
-	print LOG "########################################\n";
-	print LOG "Done and elapsed time : ",time()-$time,"s\n";
-	print LOG "########################################\n";
-	$step++ if ($step ne $stop);
+$ann=ABSOLUTE_DIR($ann);
+mkdir "$out/work_sh" if (!-d $out);
+open SH,">$out/work_sh/bsa.sh";
+my @bid=split(/\,/,$bid);
+if (scalar @bid == 1) {
+	print SH "perl $Bin/bin/mutmap.pl -vcf $vcf -out $out/index-calc.result -bid $bid ";
+	if ($pid) {
+		print SH "-pid $pid && ";
+	}else{
+		print SH "&& "
+	}
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,10 --win 2000000 --step 10000 method bp && "
+	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5 && "
+	print SH "perl $Bin/bin/region-mutmap.pl -i $out/sliding-win.threshold.select -o $out/region.out -a $out/index-calc.result";
+}else{
+	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt "
+	if ($pid) {
+		print SH "-pid $pid && ";
+	}else{
+		print SH "&& "
+	}
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,14,15,16 --win 2000000 --step 10000 method bp && "
+	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5,6 && "
+	print SH "perl $Bin/bin/region-qtl.pl -i $out/sliding-win.threshold.select -o $out/region.out -a $out/index-calc.result";
 }
-if ($step == 1) {
-	print LOG "########################################\n";
-	print LOG "sliding window\n"; my $time=time();
-	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
-	print LOG "$job\n";
-	`$job`;
-	print LOG "$job\tdone!\n";
-	print LOG "########################################\n";
-	print LOG "Done and elapsed time : ",time()-$time,"s\n";
-	print LOG "########################################\n";
-	$step++ if ($step ne $stop);
-}
-if ($step == 1) {
-	print LOG "########################################\n";
-	print LOG "region abstract\n"; my $time=time();
-	print LOG "########################################\n";
-	my $job="perl $Bin/bin/step01.fastq-qc.pl -fqlist $fqlist -outdir $outdir/01.fastq-qc -dsh $outdir/work_sh -proc 20";
-	print LOG "$job\n";
-	`$job`;
-	print LOG "$job\tdone!\n";
-	print LOG "########################################\n";
-	print LOG "Done and elapsed time : ",time()-$time,"s\n";
-	print LOG "########################################\n";
-	$step++ if ($step ne $stop);
-}
-close LOG;
+
+close SH;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -91,36 +77,17 @@ sub USAGE {#
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
 Description:
+	fq thanslate to fa format
 	eg:
-	perl $Script -fqlist -out -ref -gff
+	perl $Script -i -o -k -c
 
 Usage:
-
-	-fqlist	<file>	input file name
-	-outdir	<dir>	output dir
-	-ref	<file>	reference file
-	-gff	<file>	gff file
-	-sv	sv calling default off 
-	-cnv	cnv calling default off 
-	-RAD	RRL calling default off 
-	
-	-step	pipeline control
-          01 fastq qc
-          02 reference prepair
-          03 bwa mapping
-          04 bam sort
-          05 bam mkdup
-          06 map-stat
-          07 haplotype
-          08 gvcf typing
-          09 vcf-filter
-          10 annovar
-          11 sv call
-          12 cnv call
-          13 variant stat
-          14 report
-	-stop	pipeline control
-
+  Options:
+  -vcf	<file>	input vcf file
+  -out	<dir>	output dir
+  -pid	<id>	input p id
+  -bid	<id>	input b id
+  -ann	<file>	input ann file
   -h         Help
 
 USAGE

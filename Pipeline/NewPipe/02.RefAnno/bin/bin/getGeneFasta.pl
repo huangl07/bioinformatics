@@ -42,7 +42,7 @@ while (<In>) {
 	}
 	my $pos=join("\t",$chr,$start,$end);
 	next if (exists $out{$pos});
-	print Out ">$id\n";
+	print Out ">$id:$chr:$start:$end\n";
 	print Out substr($seq{$chr},$start,$end-$start+1),"\n";
 	$out{$pos}=1;
 }
