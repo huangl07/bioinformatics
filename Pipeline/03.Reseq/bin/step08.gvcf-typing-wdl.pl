@@ -26,12 +26,12 @@ $ref=ABSOLUTE_DIR($ref);
 $dict=ABSOLUTE_DIR($dict);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dShell/08.gvcf-typing.sh";
 open In,$gvcflist;
-open Out,">$dOut/gvcf.list";
+open Out,">$dOut/total.gvcf.list";
+open SH,">$dShell/08.gvcf-typing1.sh";
 my $vcf;
 my $number=0;
-my $nct=8;
+my %handfile;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
@@ -39,19 +39,38 @@ while (<In>) {
 	if (!-f $gvcf) {
 		die "check $gvcf!";
 	}
-	print Out $gvcf,"\n";
+	$number++;
+	my $handfile=$number % 20;
+	if (!exists $handfile{$handfile}) {
+		open $handfile{$handfile},">$handfile.gvcf.list";
+		open Out,">$dOut/handfile.json\n";
+		print Out "{\n";
+		print Out "\"CombinesGVCF.CombineVCF.inputVCFs\": \"$dOut/$handfile.gvcf.list\",\n";
+		print Out "\"CombinesGVCF.CombineVCF.Refdict\": \"$dict\",\n";
+		print Out "\"CombinesGVCF.CombineVCF.Refindex\": \"$ref.fai\",\n";
+		print Out "\"CombinesGVCF.CombineVCF.workdir\": \"$dOut\",\n";
+		print Out "\"CombinesGVCF.CombineVCF.RefFasta\": \"$ref\",\n";
+		print Out "\"CombinesGVCF.CombineVCF.Output\": \"$handfile\"\n";
+		print Out "}\n";
+		close Out;
+		print Out "$dOut/$handfile.gvcf.list","\n";
+		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/handfild.json \n";
+	}
+	print {$handfile{$handfile}} "$gvcf\n";
 }
 close In;
+close SH;
 close Out;
 open Out,">$dOut/Gvcftyping.json\n";
 print Out "{\n";
-print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/gvcf.list\",\n";
+print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
 print Out "\"Gvcftyping.gvcftyping.Refdict\": \"$dict\",\n";
 print Out "\"Gvcftyping.gvcftyping.Refindex\": \"$ref.fai\",\n";
 print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
 print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\"\n";
 print Out "}\n";
 close Out;
+open SH,">$dShell/08.gvcf-typing2.sh";
 print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/Gvcftyping.json && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
