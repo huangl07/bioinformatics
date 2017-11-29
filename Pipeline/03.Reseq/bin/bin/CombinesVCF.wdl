@@ -18,6 +18,6 @@ task combines {
 	-log $out/pop.merge.log
   }
   output {
-    File rawVCF = "${workdir}/${sampleName}.gvcfs"
+    File rawVCF = "${workdir}/pop.final.vcf"
   }
 }

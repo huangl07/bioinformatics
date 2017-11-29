@@ -15,35 +15,63 @@ GetOptions(
 	"out:s"=>\$fOut,
 			) or &USAGE;
 &USAGE unless ($fregion and $gff and $anno and $fOut );
-open In,$fregion;
+open In,$select;
 my %region;
-my $region;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/ || /^#/);
-	if (/^@/) {
-		my ($chr,$pos1,$pos2)=split(/\s+/,$_);
-		$region=join("\t",$pos1,$pos2);
-	}else{
-		$region{$chr}{$region}{eff}{$_}=1;
+	next if ($_ eq ""||/^$/ ||/#/);
+	s/\"//g;
+	my ($chr,$pos1,$pos2,undef)=split(/\s+/,$_);
+	next if ($chr eq "chr");
+	my $regioned=0;
+	foreach my $chr (sort keys %region) {
+		foreach my $region (sort keys %{$region{$chr}}) {
+			my ($pos3,$pos4)=split(/\s+/,$region);
+			#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
+			if ($pos1 > $pos3 && $pos1 < $pos4) {
+				my $newregion=join("\t",$pos1,$pos4);
+				delete $region{$chr}{$region};
+				$region{$chr}{$newregion}++;
+				$regioned=1;
+			}
+		}
+	}
+	if ($regioned == 0) {
+		$region{$chr}{join("\t",$pos1,$pos2)}++;
 	}
 }
 close In;
 open In,$anno;
-open Out,">$fOut.summary";
 my %kdetail;
 my %gdetail;
 my %enrich;
 my %edetail;
+my %info;
+my %stat;
+my $head;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/ || /^#/);
-	my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
-	my ($id,$chr,$pos1,$pos2)=split(/\:/,$id);
+	next if ($_ eq ""||/^$/);
+	if (/^#/) {
+		$head=$_;
+		next;
+	}
+	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$Chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
 	my $regioned=0;
 	foreach my $region (sort keys $region{$chr}) {
 		my ($pos3,$pos4)=split(/\t/,$region);
-		if (($pos1 > $pos3 && $pos1 < $pos4)||($pos2 > $pos3 && $pos2 < $pos4)||($pos1 > $pos3 && $pos2 < $pos4)) {
+		if (($Pos1 > $pos3 && $Pos1 <$pos4) ||($Pos2 > $pos3 && $Pos2 < $pos4) || ($pos3 > $Pos1 && $pos3 < $Pos2) || ($pos4 > $Pos1 && $pos4 < $Pos2)) {
+			push @{$info{$chr}{$region}},$_;
+			$stat{$chr}{$region}{totalnr}++ if($nrid ne "--");
+			$stat{$chr}{$region}{totaluni}++ if($uniid ne "--");
+			$stat{$chr}{$region}{totalkegg}++ if($koid ne "--");
+			$stat{$chr}{$region}{totalgo}++ if($goid ne "--");
+			$stat{$chr}{$region}{totaleggnog}++ if($eid ne "--");
+			$stat{$chr}{$region}{effnr}++ if($nrid ne "--" || $High+$Moderate > 0);
+			$stat{$chr}{$region}{effuni}++ if($uniid ne "--" || $High+$Moderate > 0 );
+			$stat{$chr}{$region}{effkegg}++ if($koid ne "--"|| $High+$Moderate > 0);
+			$stat{$chr}{$region}{effgo}++ if($goid ne "--"|| $High+$Moderate > 0);
+			$stat{$chr}{$region}{effeggnog}++ if($eid ne "--"|| $High+$Moderate > 0);
 			$regioned=1;
 		}
 	}
@@ -73,8 +101,27 @@ while (<In>) {
 		$edetail{$eid[$i]}=$edetail[$i];
 	}
 }
-close Out;
 close In;
+open Out,">$fOut.gene.summary";
+print Out "#\@chr\tpos1\tpos2\ttotalnr\ttotaluni\ttotalkegg\ttotalgo\ttotaleggnog\teffnr\teffuni\teffkegg\teffgo\teffeggnog\n";
+print Out "$head\n";
+foreach my $chr (sort keys %region) {
+	foreach my $region (sort keys %{$region{$chr}}) {
+		$stat{$chr}{$region}{totalnr}||=0
+		$stat{$chr}{$region}{totaluni}||=0
+		$stat{$chr}{$region}{totalkegg}||=0
+		$stat{$chr}{$region}{totalgo}||=0
+		$stat{$chr}{$region}{totaleggno}||=0
+		$stat{$chr}{$region}{effnr}||=0
+		$stat{$chr}{$region}{effuni}||=0
+		$stat{$chr}{$region}{effkegg}||=0
+		$stat{$chr}{$region}{effgo}||=0
+		$stat{$chr}{$region}{effeggnog}||=0
+		print Out join("\t","\@$chr",$region,$stat{$chr}{$region}{totalnr},$stat{$chr}{$region}{totaluni},$stat{$chr}{$region}{totalkegg},$stat{$chr}{$region}{totalgo},$stat{$chr}{$region}{totaleggno},$stat{$chr}{$region}{effnr},$stat{$chr}{$region}{effuni},$stat{$chr}{$region}{effkegg},$stat{$chr}{$region}{effgo},$stat{$chr}{$region}{effeggnog}),"\n";
+		print Out join("\n",@{$info{$chr}{$region}}),"\n";
+	}
+}
+close Out;
 open Out,">$fOut.kegg.stat";
 foreach my $koid (sort keys %kdetail) {
 	$enrich{$koid}{enrich}||=0;

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$pid,$bid,$popt);
+my ($vcf,$out,$pid,$bid,$popt,$ann);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -23,29 +23,30 @@ $popt||="F2";
 $out=ABSOLUTE_DIR($out);
 $vcf=ABSOLUTE_DIR($vcf);
 $ann=ABSOLUTE_DIR($ann);
-mkdir "$out/work_sh" if (!-d $out);
+mkdir "$out/work_sh" if (!-d "$out/work_sh");
 open SH,">$out/work_sh/bsa.sh";
 my @bid=split(/\,/,$bid);
 if (scalar @bid == 1) {
-	print SH "perl $Bin/bin/mutmap.pl -vcf $vcf -out $out/index-calc.result -bid $bid ";
+	print SH "perl $Bin/bin/bin/mutmap.pl -vcf $vcf -out $out/index-calc.result -bid $bid ";
 	if ($pid) {
 		print SH "-pid $pid && ";
 	}else{
-		print SH "&& "
+		print SH "&& ";
 	}
-	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,10 --win 2000000 --step 10000 method bp && "
-	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5 && "
-	print SH "perl $Bin/bin/region-mutmap.pl -i $out/sliding-win.threshold.select -o $out/region.out -a $out/index-calc.result";
+	print SH "Rscript $Bin/bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,10 --win 2000000 --step 10000 --method bp && ";
+	print SH "Rscript $Bin/bin/bin/manhattan.R --input $out/sliding-win.result --output $out/bsa --col 1,3,4,5 && ";
+	print SH "perl $Bin/bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.out -r $out/sliding-win.threshold.select\n";
+	print SH "perl $Bin/bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.fdr.out -r $out/sliding-win.fdr.select\n";
 }else{
-	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt "
+	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt ";
 	if ($pid) {
 		print SH "-pid $pid && ";
 	}else{
-		print SH "&& "
+		print SH "&& ";
 	}
-	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,14,15,16 --win 2000000 --step 10000 method bp && "
-	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5,6 && "
-	print SH "perl $Bin/bin/region-qtl.pl -i $out/sliding-win.threshold.select -o $out/region.out -a $out/index-calc.result";
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,14,15,16 --win 2000000 --step 10000 method bp && ";
+	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5,6 && ";
+	print SH "perl $Bin/bin/region-variant.pl -i $out/sliding-win.threshold.select -o $out/region.out -a $out/index-calc.result";
 }
 
 close SH;

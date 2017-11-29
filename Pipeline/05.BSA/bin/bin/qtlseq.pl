@@ -56,7 +56,7 @@ while (<In>) {
 		my %info;
 		my @format=split(/:/,$format);
 		my $ann="$ids";
-		if($info=~/ANN=([^\;]*)/){$ann=$1;my @ann=split(/\|/,$ann);$ann=join(/,/,$ann[1],$ann[2],$ann[3],$ann[4])}
+		if($info=~/ANN=([^\;]*)/){$ann=$1;my @ann=split(/\|/,$ann);$ann=join(/|/,$ann[1],$ann[2],$ann[3],$ann[4])}
 		for (my $i=0;$i<@indi;$i++) {
 			next if (!exists $Indi{$indi[$i]});
 			my $id=$Indi{$indi[$i]};

@@ -45,7 +45,7 @@ while (<In>) {
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 8 --Nodes 1 --Maxjob $proc $dShell/step05.sstacks.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=100G --CPU 8 --Nodes 1 --Maxjob $proc $dShell/step05.sstacks.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";

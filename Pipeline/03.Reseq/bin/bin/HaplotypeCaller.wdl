@@ -15,7 +15,7 @@ task haplotypeCaller {
         -T HaplotypeCaller \
         -R ${RefFasta} \
         -I ${inputBAM} \
-        -o ${workdir}/${sampleName}.gvcfs \
+        -o ${workdir}/${sampleName}.g.vcf \
 		-nct 8 \
 		--genotyping_mode DISCOVERY \
 		--emitRefConfidence GVCF \
@@ -28,6 +28,6 @@ task haplotypeCaller {
 		-log ${workdir}/${sampleName}.gvcf.log
   }
   output {
-    File rawVCF = "${workdir}/${sampleName}.gvcfs"
+    File rawVCF = "${workdir}/${sampleName}.g.vcf"
   }
 }

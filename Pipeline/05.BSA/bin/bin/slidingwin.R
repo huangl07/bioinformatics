@@ -32,7 +32,6 @@ if ( is.null(opt$outfile)){ print_usage(spec) }
 if ( is.null(opt$win)){opt$win=2000000;}
 if ( is.null(opt$step)){opt$step=opt$win/40}
 if ( is.null(opt$method)){opt$method="bp"}
-library(qqman)
 
 data<-read.table(opt$infile,head=FALSE);
 collist <- unlist(strsplit(opt$col, split=","))
@@ -145,9 +144,8 @@ if(length(collist) ==3){
 }
 write.table(file=paste(opt$outfile,".result",sep=""),df,row.names=FALSE)
 
-if(length(collist) ==3){
+if(length(collist) == 3){
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$index > df$threhold),row.names=FALSE)
-	print(0.01/N)
 	write.table(file=paste(opt$outfile,".fdr.select",sep=""),subset(df,df$fdr < 0.01/N),row.names=FALSE)
 }else{
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$index > df$threhold),row.names=FALSE)

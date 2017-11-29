@@ -44,14 +44,14 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$sstacks)=split(/\s+/,$_);
-	`ln -s $sstacks* $dOut/stacks`;
+	`ln -s $sstacks* $dOut/`;
 }
 close SH;
 close In;
 open SH,">$dShell/step09.genotype.sh";
 print SH "populations -P $dOut -t 16 -m 4 -O $dOut/ --vcf && ";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.genotype.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step09.genotype.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";

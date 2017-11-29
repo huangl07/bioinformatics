@@ -3,55 +3,50 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($slist,$fOut);
+my ($fIn,$fOut,$region);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$slist,
-	"o:s"=>\$fOut
+	"i:s"=>\$fIn,
+	"r:s"=>\$region,
+	"o:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($slist and $fOut );
-open In,$slist;
-my %catalog;
+&USAGE unless ($fIn and $fOut and $region);
+open In,$region;
+my %region;
 while (<In>) {
-	next if ($_ eq "" ||/^$/);
-	my ($sample,$slist)=split(/\s+/,$_);
-	my $dep=0;
-	my $total=0;
-	my $read;
-	open Slist,"gunzip -c $slist.tags.tsv.gz|";
-	while ($read=<Slist>) {
-		chomp($read);
-		next if ($read eq "" || $read=~/^$/ ||$read=~ /^#/);
-		print $read,"\n";
-		my (undef,undef,$cata,undef,undef,$type,undef,undef)=split(/\t/,$read);
-		if ($type =~ /consensus/) {
-			$total++;
-		}elsif ($type =~ /primary/ || $type =~ /secondary/) {
-			$dep++;
+	chomp;
+	next if ($_ eq ""||/^$/ ||/#/);
+	my ($chr,$pos1,$pos2)=split(/\t/,$_);
+	$region{$chr}{join("\t",$pos1,$pos2)}=1;;
+}
+close In;
+open In,$fIn;
+my %info;
+my $head;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	if (/^#/) {
+		$head=$_;
+	}else{
+		my ($chr,$pos,undef)=split(/\t/,$_);
+		foreach my $posi (sort keys %{$region{$chr}}) {
+			my ($pos1,$pos2)=split(/\t/,$posi);
+			if ($pos > $pos1 && $pos < $pos2) {
+				push @{$info{$chr}{$posi}},$_;
+			}
 		}
 	}
-	close Slist;
-	$catalog{$sample}{num}=$total;
-	$catalog{$sample}{dep}=$dep;
-	print $sample,"\t",time()-$BEGIN_TIME,"s\n";
-
 }
 close In;
 open Out,">$fOut";
-print Out "#sample\ttags Number\tAverage depth\n";
-foreach my $sample (sort keys %catalog) {
-	my @out;
-	push @out,$sample;
-	push @out,$catalog{$sample}{num};
-	push @out,sprintf("%.4f",$catalog{$sample}{dep}/$catalog{$sample}{num});
-	print Out join("\t",@out),"\n";
-}
+print Out "#\@chr\tpos1\tpos2";
+print Out 
 close Out;
-
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -87,7 +82,8 @@ Description:
 Usage:
   Options:
   -i	<file>	input file name
-  -o	<file>	output file
+  -o	<file>	output file name
+  -r	<file>	input region file
   -h         Help
 
 USAGE

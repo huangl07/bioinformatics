@@ -89,7 +89,13 @@ while (<In>) {
 			$mut=$p3;
 		}
 		my @dp=split(/\,/,$info{B}{ad});
-		my $snpindex=$dp[$mut]/$info{B}{dp};
+		my $sum=0;
+		if ($b1 eq $b2) {
+			$sum=$dp[$b1];
+		}else{
+			$sum=$dp[$b1]+$dp[$b2];
+		}
+		my $snpindex=$dp[$mut]/$sum;
 		$info{P1}{gt}||="--";
 		$info{P1}{ad}||="--";
 		$info{B}{gt}||="--";
