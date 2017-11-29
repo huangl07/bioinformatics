@@ -77,7 +77,7 @@ if ($step == 4) {
 	print Log "KEGG ANNO\n",my $time=time();
 	print Log "########################################\n";
 	my $fa=ABSOLUTE_DIR("$out/02.split/fasta.list");
-	my $job="perl $Bin/bin/step02.kegg-anno.pl -fa $fa -out $out/04.KEGG -dsh $out/work_sh";
+	my $job="perl $Bin/bin/step04.kegg-anno.pl -fa $fa -out $out/04.KEGG -dsh $out/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -91,7 +91,7 @@ if ($step == 5) {
 	print Log "GO ANNO\n",my $time=time();
 	print Log "########################################\n";
 	my $fa=ABSOLUTE_DIR("$out/02.split/fasta.list");
-	my $job="perl $Bin/bin/step02.go-anno.pl -fa $fa -out $out/05.GO -dsh $out/work_sh";
+	my $job="perl $Bin/bin/step05.go-anno.pl -fa $fa -out $out/05.GO -dsh $out/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -105,7 +105,7 @@ if ($step == 6) {
 	print Log "Uniref ANNO\n",my $time=time();
 	print Log "########################################\n";
 	my $fa=ABSOLUTE_DIR("$out/02.split/fasta.list");
-	my $job="perl $Bin/bin/step02.uniref-anno.pl -fa $fa -out $out/06.Uniref -dsh $out/work_sh";
+	my $job="perl $Bin/bin/step06.uniref-anno.pl -fa $fa -out $out/06.Uniref -dsh $out/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -119,7 +119,7 @@ if ($step == 7) {
 	print Log "EGGNOG ANNO\n",my $time=time();
 	print Log "########################################\n";
 	my $fa=ABSOLUTE_DIR("$out/02.split/fasta.list");
-	my $job="perl $Bin/bin/step02.eggnog-anno.pl -fa $fa -out $out/07.Eggnog -dsh $out/work_sh";
+	my $job="perl $Bin/bin/step07.eggnog-anno.pl -fa $fa -out $out/07.Eggnog -dsh $out/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

@@ -79,7 +79,7 @@ if ($step == 4) {
 	print LOG "bam sort\n"; my $time=time();
 	print LOG "########################################\n";
 	my $bamlist=ABSOLUTE_DIR("$outdir/03.bwa-mapping/bam.list");
-	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -out $outdir/04.bam-sort -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -outdir $outdir/04.bam-sort -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -96,7 +96,7 @@ if ($step == 5) {
 	print LOG "bam mkdup\n"; my $time=time();
 	print LOG "########################################\n";
 	my $bamlist=ABSOLUTE_DIR("$outdir/04.bam-sort/bam.list");
-	my $job="perl $Bin/bin/step05.bam-mkdup.pl -bam $bamlist -out $outdir/05.bam-mkdup -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step05.bam-mkdup-wdl.pl -bam $bamlist -out $outdir/05.bam-mkdup -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -148,7 +148,7 @@ if ($step == 8) {
 	print LOG "########################################\n";
 	my $gvcf=ABSOLUTE_DIR("$outdir/07.haplotype/gvcf.list");
 	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
-	my $job="perl $Bin/bin/step08.gvcf-typing.pl -gvcf $gvcf -ref $ref  -out $outdir/08.gvcf-typing -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step08.gvcf-typing-wdl.pl -gvcf $gvcf -ref $ref  -out $outdir/08.gvcf-typing -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -163,7 +163,7 @@ if ($step == 9) {
 	print LOG "########################################\n";
 	my $vcf=ABSOLUTE_DIR("$outdir/08.gvcf-typing/pop.variant.vcf");
 	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
-	my $job="perl $Bin/bin/step09.vcf-filter.pl -vcf $vcf -ref $ref -out $outdir/09.vcf-filter -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step09.vcf-filter-wdl.pl -vcf $vcf -ref $ref -out $outdir/09.vcf-filter -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -179,7 +179,7 @@ if ($step == 10) {
 	my $vcf=ABSOLUTE_DIR("$outdir/09.vcf-filter/vcf.list");
 	my $con=ABSOLUTE_DIR("$outdir/02.ref-config/snpEff.config");
 	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
-	my $job="perl $Bin/bin/step10.annovar.pl -con $con -vcf $vcf -ref $ref -anno $anno out $outdir/10.annovar -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step10.annovar-wdl.pl -con $con -vcf $vcf -ref $ref -anno $anno out $outdir/10.annovar -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
