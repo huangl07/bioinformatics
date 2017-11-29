@@ -11,7 +11,7 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"bam:s"=>\$bamlist,
-	"outdir:s"=>\$outdir,
+	"out:s"=>\$outdir,
 	"proc:s"=>\$proc,
 	"dsh:s"=>\$dsh
 			) or &USAGE;

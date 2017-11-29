@@ -31,6 +31,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
+	if (!-f $bam) {
+		die "check $bam!";
+	}
 	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam &&";
 	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  $dOut/ &&";
 	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 -d $dOut/&&";

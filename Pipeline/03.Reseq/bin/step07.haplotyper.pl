@@ -37,6 +37,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
+	if (!-f $bam) {
+		die "check $bam!";
+	}
 	my $bai=$bam;
 	$bai=~s/bam$/bai/;
 	open Out,">$dOut/$sampleID.json\n";
@@ -95,10 +98,9 @@ Usage:
   -bam	<file>	input bamlist file
   -ref	<file>	input reference file
   -dict	<file>	input dict file
-  -proc <num>	number of process for qsub,defaulr
+  -proc <num>	number of process for qsub,default 20
   -out	<dir>	output dir
   -dsh	<dir>	output shell dir
-  -split	<num>	split files for speed default 20
   -h         Help
 
 USAGE

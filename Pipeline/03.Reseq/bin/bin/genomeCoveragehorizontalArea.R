@@ -5,6 +5,7 @@
 library('getopt');
 library(ggplot2);
 library(methods);
+options(bitmapType='cairo');
 
 
 #-----------------------------------------------------------------

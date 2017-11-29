@@ -57,11 +57,12 @@ my %kdetail;
 my %gdetail;
 my %enrich;
 my %edetail;
+print Out join("\t","#Gene_name","Gene_id","Transcript_id","Bio_Type","Chr","Pos1","Pos2","High","Moderate","Low","Modifier","NR-ID","NR-ANNO","Uni-ID","Uni-ANNO","KEGG-ID","KEGG-ANNO","GO-ID","GO-ANNO","EggNOG-ID","EggNOG-ANNO"),"\n";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	if (/^#/) {
-		print Out $_;
+		next;	
 	}else{
 		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
 		$info{$id}||=join("\t",$id,"--","--","--");
@@ -102,6 +103,7 @@ while (<In>) {
 close Out;
 close In;
 open Out,">$fOut.kegg.stat";
+print Out join("\t","#koid","ko_detail","eff_variant","all_gene","total_eff","total_gene"),"\n";
 foreach my $koid (sort keys %kdetail) {
 	$enrich{$koid}{enrich}||=0;
 	$enrich{$koid}{total}||=0;
@@ -109,6 +111,7 @@ foreach my $koid (sort keys %kdetail) {
 }
 close Out;
 open Out,">$fOut.go.stat";
+print Out join("\t","#goid","go_detail","eff_variant","all_gene","total_eff","total_gene"),"\n";
 foreach my $goid (sort keys %gdetail) {
 	$enrich{$goid}{enrich}||=0;
 	$enrich{$goid}{total}||=0;
@@ -116,6 +119,7 @@ foreach my $goid (sort keys %gdetail) {
 }
 close Out;
 open Out,">$fOut.eggnog.stat";
+print Out join("\t","#eggnogid","eggnog_detail","eff_variant","all_gene","total_eff","total_gene"),"\n";
 foreach my $eggnog (sort keys %edetail) {
 	$enrich{$eggnog}{enrich}||=0;
 	$enrich{$eggnog}{total}||=0;

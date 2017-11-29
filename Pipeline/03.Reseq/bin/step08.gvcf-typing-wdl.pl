@@ -36,6 +36,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$gvcf)=split(/\s+/,$_);
+	if (!-f $gvcf) {
+		die "check $gvcf!";
+	}
 	print Out $gvcf,"\n";
 }
 close In;
@@ -89,6 +92,7 @@ Usage:
   Options:
   -gvcf	<file>	input bamlist file
   -ref	<file>	input reference file
+  -dict	<file>	input reference dict
   -out	<dir>	output dir
   -proc <num>	number of process for qsub,default
   -dsh	<dir>	output shell dir

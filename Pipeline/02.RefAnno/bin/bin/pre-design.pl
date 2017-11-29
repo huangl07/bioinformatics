@@ -47,12 +47,11 @@ while (<In>) {
 		my @pos=sort {$a<=>$b} keys %pos;
 		for (my $j=0;$j<@pos-1;$j++) {
 			my $l=$pos[$j+1]-$pos[$j];
-			$RAD{$enzyme[$i]}{"330-380"}++ if($l > 330);
-			$RAD{$enzyme[$i]}{"380-430"}++ if($l > 380);
-			$RAD{$enzyme[$i]}{"430-480"}++ if($l > 430);
-			$RAD{$enzyme[$i]}{"480-530"}++ if($l > 480);
-			$RAD{$enzyme[$i]}{"530-580"}++ if($l > 530);
-
+			$RAD{$enzyme[$i]}{"330-380"}++ if($l >= 330);
+			$RAD{$enzyme[$i]}{"380-430"}++ if($l >= 380);
+			$RAD{$enzyme[$i]}{"430-480"}++ if($l >= 430);
+			$RAD{$enzyme[$i]}{"480-530"}++ if($l >= 480);
+			$RAD{$enzyme[$i]}{"530-580"}++ if($l >= 530);
 		}
 	}
 	for (my $i=0;$i<@enzyme;$i++) {
@@ -65,7 +64,7 @@ while (<In>) {
 				$pos{$pos}=1;
 			}
 			my @pos=sort {$a<=>$b} keys %pos;
-			my $str=join("\t",$enzyme[$i],$enzyme[$j]);
+			my $str=join("-",$enzyme[$i],$enzyme[$j]);
 			for (my $k=0;$k<@pos-1;$k++) {
 				my $len=$pos[$k+1]-$pos[$k];
 				$GBS{$str}{"330-380"}++ if ($len >= 330 and $len <=380);
@@ -82,11 +81,10 @@ open Out,">$fOut";
 my @eGBS=keys %GBS;
 my @eRAD=keys %RAD;
 print Out join("\t","#enzyme",join("\t",@eGBS),join("\t",@eRAD)),"\n";
-foreach my $range (keys %range) {
+foreach my $range (sort keys %range) {
 	my @out;
 	push @out,$range;
 	foreach my $e (@eGBS) {
-		print $GBS{$e}{$range};die;
 		push @out,$GBS{$e}{$range};
 	}
 	foreach my $e (@eRAD) {

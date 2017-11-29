@@ -22,6 +22,7 @@ GetOptions(
 	"stop:s"=>\$stop,
 			) or &USAGE;
 &USAGE unless ($fqlist and $outdir and $ref and $gff);
+$anno||="./";
 mkdir $outdir if (!-d $outdir);
 $ref=ABSOLUTE_DIR($ref);
 $gff=ABSOLUTE_DIR($gff);
@@ -78,7 +79,7 @@ if ($step == 4) {
 	print LOG "bam sort\n"; my $time=time();
 	print LOG "########################################\n";
 	my $bamlist=ABSOLUTE_DIR("$outdir/03.bwa-mapping/bam.list");
-	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -outdir $outdir/04.bam-sort -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step04.bam-sort.pl -bam $bamlist -out $outdir/04.bam-sort -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

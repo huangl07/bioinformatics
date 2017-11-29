@@ -31,6 +31,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
+	if (!-f $bam) {
+		die "check $bam!";
+	}
 	print SH "bam2cfg.pl -v 5 $bam > $dOut/$sampleID.cfg && ";
 	print SH "breakdancer-max -y 50 -r 10 -a -d $dOut/$sampleID.ctx $dOut/$sampleID.cfg > $dOut/$sampleID.sv && ";
 	print SH "perl $Bin/bin/sv_anno.pl -i $dOut/$sampleID.sv -g $gff -o $dOut/$sampleID.sv.anno\n";

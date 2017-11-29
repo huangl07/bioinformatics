@@ -32,6 +32,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
+	if (!-f $bam) {
+		die "check $bam!";
+	}
 	print Out "$sampleID\t$dOut/$sampleID.mkdup.bam\n";
 	print Metric "$sampleID\t$dOut/$sampleID.metric\n";
 	open JSON,">$dOut/$sampleID.json";

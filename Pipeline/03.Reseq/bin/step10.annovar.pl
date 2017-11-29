@@ -35,6 +35,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($id,$vcfs)=split(/\s+/,$_);
+	if (!-f $vcfs) {
+		die "check $vcfs!";
+	}
 	print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar -v ref -csvStats $out/$id.anno.csv -c $con $vcfs > $out/$id.anno.primary.vcf && ";
 	print SH "vcftools --vcf $out/$id.anno.primary.vcf --recode-INFO ANN --recode-INFO LOF --recode-INFO NMD --recode --out $out/$id \n";
 	print ANNOLIST "$id\t$out/$id.recode.vcf\t$out/$id.anno.csv\n";

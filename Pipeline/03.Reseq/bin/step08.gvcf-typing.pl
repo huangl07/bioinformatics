@@ -33,6 +33,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$gvcf)=split(/\s+/,$_);
+	if (!-f $gvcf) {
+		die "check $gvcf!";
+	}
 	$vcf .=" -V $gvcf ";
 }
 close In;
