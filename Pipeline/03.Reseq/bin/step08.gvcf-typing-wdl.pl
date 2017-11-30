@@ -27,7 +27,7 @@ $dict=ABSOLUTE_DIR($dict);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 open In,$gvcflist;
-open Out,">$dOut/total.gvcf.list";
+open List,">$dOut/total.gvcf.list";
 open SH,">$dShell/08.gvcf-typing1.sh";
 my $vcf;
 my $number=0;
@@ -43,7 +43,7 @@ while (<In>) {
 	my $handfile=$number % 20;
 	if (!exists $handfile{$handfile}) {
 		open $handfile{$handfile},">$handfile.gvcf.list";
-		open Out,">$dOut/handfile.json\n";
+		open Out,">$dOut/$handfile.json\n";
 		print Out "{\n";
 		print Out "\"CombinesGVCF.CombineVCF.inputVCFs\": \"$dOut/$handfile.gvcf.list\",\n";
 		print Out "\"CombinesGVCF.CombineVCF.Refdict\": \"$dict\",\n";
@@ -53,12 +53,12 @@ while (<In>) {
 		print Out "\"CombinesGVCF.CombineVCF.Output\": \"$handfile\"\n";
 		print Out "}\n";
 		close Out;
-		print Out "$dOut/$handfile.gvcf.list","\n";
-		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/handfild.json \n";
+		print List "$dOut/$handfile.gvcf.list","\n";
+		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/$handfile.json \n";
 	}
 	print {$handfile{$handfile}} "$gvcf\n";
 }
-close In;
+close List;
 close SH;
 close Out;
 open Out,">$dOut/Gvcftyping.json\n";
@@ -75,7 +75,7 @@ print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-29.j
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=35G --CPU 8 --maxjob $proc $dShell/08.gvcf-typing.sh";
-`$job`;
+#`$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

@@ -40,9 +40,13 @@ while (<In>) {
 	if ($info =~/ID=([^;]*)/) {
 		$id=$1;
 	}
+	if ($info =~/Name=([^;]*)/) {
+		$gname=$1;
+	}
+	$gname||=$id;
 	my $pos=join("\t",$chr,$start,$end);
 	next if (exists $out{$pos});
-	print Out ">$id:$chr:$start:$end\n";
+	print Out ">$id:$gname:$chr:$start:$end\n";
 	print Out substr($seq{$chr},$start,$end-$start+1),"\n";
 	$out{$pos}=1;
 }

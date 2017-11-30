@@ -3,18 +3,18 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($gff , $anno , $fOut ,$fregion);
+my ($gff , $anno , $fOut ,$select);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"region:s"=>\$fregion,
+	"select:s"=>\$select,
 	"anno:s"=>\$anno,
 	"out:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($fregion and $gff and $anno and $fOut );
+&USAGE unless ($select and $anno and $fOut );
 open In,$select;
 my %region;
 while (<In>) {
@@ -56,9 +56,9 @@ while (<In>) {
 		$head=$_;
 		next;
 	}
-	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$Chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
+	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
 	my $regioned=0;
-	foreach my $region (sort keys $region{$chr}) {
+	foreach my $region (sort keys %{$region{$chr}}) {
 		my ($pos3,$pos4)=split(/\t/,$region);
 		if (($Pos1 > $pos3 && $Pos1 <$pos4) ||($Pos2 > $pos3 && $Pos2 < $pos4) || ($pos3 > $Pos1 && $pos3 < $Pos2) || ($pos4 > $Pos1 && $pos4 < $Pos2)) {
 			push @{$info{$chr}{$region}},$_;
@@ -72,10 +72,16 @@ while (<In>) {
 			$stat{$chr}{$region}{effkegg}++ if($koid ne "--"|| $High+$Moderate > 0);
 			$stat{$chr}{$region}{effgo}++ if($goid ne "--"|| $High+$Moderate > 0);
 			$stat{$chr}{$region}{effeggnog}++ if($eid ne "--"|| $High+$Moderate > 0);
+			$stat{totalkegg}++ if($koid ne "--");
+			$stat{totalgo}++ if($goid ne "--");
+			$stat{totaleggnog}++ if($eid ne "--");
+			$stat{effkegg}++ if($koid ne "--"|| $High+$Moderate > 0);
+			$stat{effgo}++ if($goid ne "--"|| $High+$Moderate > 0);
+			$stat{effeggnog}++ if($eid ne "--"|| $High+$Moderate > 0);
+
 			$regioned=1;
 		}
 	}
-	my $info=$info{$id};
 	my @koid=split(/:/,$koid);
 	my @kdetail=split(/:/,$koanno);
 	for (my $i=0;$i<@koid;$i++) {
@@ -107,17 +113,18 @@ print Out "#\@chr\tpos1\tpos2\ttotalnr\ttotaluni\ttotalkegg\ttotalgo\ttotaleggno
 print Out "$head\n";
 foreach my $chr (sort keys %region) {
 	foreach my $region (sort keys %{$region{$chr}}) {
-		$stat{$chr}{$region}{totalnr}||=0
-		$stat{$chr}{$region}{totaluni}||=0
-		$stat{$chr}{$region}{totalkegg}||=0
-		$stat{$chr}{$region}{totalgo}||=0
-		$stat{$chr}{$region}{totaleggno}||=0
-		$stat{$chr}{$region}{effnr}||=0
-		$stat{$chr}{$region}{effuni}||=0
-		$stat{$chr}{$region}{effkegg}||=0
-		$stat{$chr}{$region}{effgo}||=0
-		$stat{$chr}{$region}{effeggnog}||=0
+		$stat{$chr}{$region}{totalnr}||=0;
+		$stat{$chr}{$region}{totaluni}||=0;
+		$stat{$chr}{$region}{totalkegg}||=0;
+		$stat{$chr}{$region}{totalgo}||=0;
+		$stat{$chr}{$region}{totaleggno}||=0;
+		$stat{$chr}{$region}{effnr}||=0;
+		$stat{$chr}{$region}{effuni}||=0;
+		$stat{$chr}{$region}{effkegg}||=0;
+		$stat{$chr}{$region}{effgo}||=0;
+		$stat{$chr}{$region}{effeggnog}||=0;
 		print Out join("\t","\@$chr",$region,$stat{$chr}{$region}{totalnr},$stat{$chr}{$region}{totaluni},$stat{$chr}{$region}{totalkegg},$stat{$chr}{$region}{totalgo},$stat{$chr}{$region}{totaleggno},$stat{$chr}{$region}{effnr},$stat{$chr}{$region}{effuni},$stat{$chr}{$region}{effkegg},$stat{$chr}{$region}{effgo},$stat{$chr}{$region}{effeggnog}),"\n";
+		next if (!defined $info{$chr}{$region});
 		print Out join("\n",@{$info{$chr}{$region}}),"\n";
 	}
 }
@@ -126,21 +133,21 @@ open Out,">$fOut.kegg.stat";
 foreach my $koid (sort keys %kdetail) {
 	$enrich{$koid}{enrich}||=0;
 	$enrich{$koid}{total}||=0;
-	print Out join("\t",$koid,$kdetail{$koid},$enrich{$koid}{enrich},$enrich{$koid}{total},scalar keys %eff,scalar keys %stat),"\n";
+	print Out join("\t",$koid,$kdetail{$koid},$enrich{$koid}{enrich},$enrich{$koid}{total},$stat{effkegg},$stat{totalkegg}),"\n";
 }
 close Out;
 open Out,">$fOut.go.stat";
 foreach my $goid (sort keys %gdetail) {
 	$enrich{$goid}{enrich}||=0;
 	$enrich{$goid}{total}||=0;
-	print Out join("\t",$goid,$gdetail{$goid},$enrich{$goid}{enrich},$enrich{$goid}{total},scalar keys %eff,scalar keys %stat),"\n";
+	print Out join("\t",$goid,$gdetail{$goid},$enrich{$goid}{enrich},$enrich{$goid}{total},$stat{effgo},$stat{totalgo}),"\n";
 }
 close Out;
 open Out,">$fOut.eggnog.stat";
 foreach my $eggnog (sort keys %edetail) {
 	$enrich{$eggnog}{enrich}||=0;
 	$enrich{$eggnog}{total}||=0;
-	print Out join("\t",$eggnog,$edetail{$eggnog},$enrich{$eggnog}{enrich},$enrich{$eggnog}{total},scalar keys %eff,scalar keys %stat),"\n";
+	print Out join("\t",$eggnog,$edetail{$eggnog},$enrich{$eggnog}{enrich},$enrich{$eggnog}{total},$stat{effeggnog},$stat{totaleggno}),"\n";
 }
 close Out;
 
@@ -175,8 +182,7 @@ Description:
 
 Usage:
   Options:
-  -snp	<file>	input snp file name
-  -indel	<file>	input indel file name
+  -select	<file>	input select file name
   -anno	<file>	input anno file name
   -out	<key>	output keys of file name
   -h         Help

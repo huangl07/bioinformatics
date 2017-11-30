@@ -128,6 +128,26 @@ if ($step == 7) {
 	print Log "########################################\n";
 	$step++ ;
 }
+if ($step == 8) {
+	print Log "########################################\n";
+	print Log "merge ANNO\n",my $time=time();
+	print Log "########################################\n";
+	my $fa=ABSOLUTE_DIR("$out/02.split/fasta.list");
+	my $nr=ABSOLUTE_DIR("$out/03.NR/NR.anno");
+	my $kegg=ABSOLUTE_DIR("$out/04.KEGG/KEGG.anno");
+	my $go=ABSOLUTE_DIR("$out/05.GO/GO.anno");
+	my $uniprot=ABSOLUTE_DIR("$out/06.Uniref/Uni.anno");
+	my $eggnog=ABSOLUTE_DIR("$out/07.Eggnog/EGGNOG.anno");
+	my $ref=ABSOLUTE_DIR("$out/01.newref");
+	my $job="perl $Bin/bin/step08.merge-result.pl -nr $nr -kegg $kegg -go $go -eggnog $eggnog -uniprot $uniprot -ref $ref -out 08.result\n";
+	print Log "$job\n";
+	`$job`;
+	print Log "$job\tdone!\n";
+	print Log "########################################\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
+	print Log "########################################\n";
+	$step++ ;
+}
 
 
 #######################################################################################

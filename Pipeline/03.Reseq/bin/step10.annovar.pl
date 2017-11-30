@@ -49,7 +49,7 @@ open SH,">$dsh/10.annovar2.sh";
 print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.merge.vcf --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
 print SH "vcftools --vcf $out/pop.final.vcf --recode-INFO ANN --recode-INFO LOF --recode-INFO NMD --recode --out $out/$id \n";
 print SH "perl $Bin/bin/anno-count.pl -snp $out/snp.anno.genes.txt -indel $out/indel.anno.genes.txt -anno $anno -out $out/pop && ";
-print SH "Rscript --input $out/pop.kegg.stat --output $out/pop.kegg && ";
+print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.kegg.stat --output $out/pop.kegg && ";
 print SH "Rscript --input $out/pop.go.stat --output $out/pop.go && ";
 print SH "Rscript --input $out/pop.eggnog.stat --output $out/pop.eggnog && ";
 close SH;

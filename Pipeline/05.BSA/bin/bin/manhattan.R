@@ -59,6 +59,7 @@ if(length(collist) ==4){
 	index1<-data[[as.numeric(collist[3])]]
 	index2<-data[[as.numeric(collist[4])]]
 	delta<-data[[as.numeric(collist[5])]]
+	thres<-data[[as.numeric(collist[6])]]
 	chrlab=unique(chr);
 	for (i in 1:length(chrlab)){chr[chr==chrlab[i]]=i}
 	df<-data.frame(chr=as.numeric(chr),pos=as.numeric(pos),index1=as.numeric(index1),index2=as.numeric(index2),delta=as.numeric(delta))

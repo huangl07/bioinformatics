@@ -56,7 +56,7 @@ while (<In>) {
 		my %info;
 		my @format=split(/:/,$format);
 		my $ann="$ids";
-		if($info=~/ANN=([^\;]*)/){$ann=$1;my @ann=split(/\|/,$ann);$ann=join(/|/,$ann[1],$ann[2],$ann[3],$ann[4])}
+		if($info=~/ANN=([^\;]*)/){$ann=$1;my @ann=split(/|/,$ann);$ann=join("|",$ann[1],$ann[2],$ann[3],$ann[4])}
 		for (my $i=0;$i<@indi;$i++) {
 			next if (!exists $Indi{$indi[$i]});
 			my $id=$Indi{$indi[$i]};
@@ -72,6 +72,11 @@ while (<In>) {
 		my @b2=split(/\/|\|/,$info{B2}{gt});
 		my @ad1=split(/\,/,$info{B1}{ad});
 		my @ad2=split(/\,/,$info{B2}{ad});
+		my $sum1=$ad1[$b1[0]];
+		my $sum2=$ad2[$b2[0]];
+		$sum1+=$ad1[$b1[1]] if($b1[1] ne $b1[0]);
+		$sum2+=$ad2[$b2[1]] if($b2[1] ne $b2[0]);
+		next if ($sum1 == 0 || $sum2 == 0);
 		my %stat;
 		$stat{$b1[0]}++;
 		$stat{$b1[1]}++;
@@ -84,8 +89,8 @@ while (<In>) {
 		if ($popt eq "F2") {
 			next if (scalar @geno!=2);
 			if ($PID eq "") {
-				$index1=$ad1[$geno[0]]/$info{B1}{dp};
-				$index2=$ad2[$geno[0]]/$info{B2}{dp};
+				$index1=$ad1[$geno[0]]/$sum1;
+				$index2=$ad2[$geno[0]]/$sum2;
 				$delta=abs($index1-$index2);
 			}else{
 				my ($p1,$p2)=split(/\/|\|/,$info{P1}{gt});
@@ -99,12 +104,13 @@ while (<In>) {
 					}
 				}
 				my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
-				next if ($p1 ne $p2 || $p3 ne $p4);
+				next if ($p1 ne $p2 || $p3 ne $p4 || $p1 eq "." || $p2 eq ".");
+				next if ($info{P1}{gt} eq "./." || $info{P2}{gt} eq "./.");
 				next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
 				next if ($p1 eq $p3);
 				next if (!exists $stat{$p1} || !exists $stat{$p3});
-				$index1=$ad1[$p1]/$info{B1}{dp};
-				$index2=$ad2[$p1]/$info{B2}{dp};
+				$index1=$ad1[$p1]/$sum1;
+				$index2=$ad2[$p1]/$sum2;
 				$delta=$index1-$index2;
 			}
 		}else{
@@ -115,12 +121,12 @@ while (<In>) {
 			next if ($p1 ne $p2 || $p3 eq $p4);
 			next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
 			if ($p3 eq $p1 && $p1 eq $p2) {#nnxnp
-				$index1=$ad1[$p1]/$info{B1}{dp};
-				$index1=$ad2[$p1]/$info{B2}{dp};
+				$index1=$ad1[$p1]/$sum1;
+				$index2=$ad2[$p1]/$sum2;
 				$delta=$index1-$index2;
 			}elsif ($p3 eq $4 && $p3 eq $p1) {#lmxll
-				$index1=$ad1[$p2]/$info{B1}{dp};
-				$index2=$ad2[$p2]/$info{B1}{dp};
+				$index1=$ad1[$p2]/$sum1;
+				$index2=$ad2[$p2]/$sum2;
 				$delta=$index1-$index2;
 			}else{
 				next;

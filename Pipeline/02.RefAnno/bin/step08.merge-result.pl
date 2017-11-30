@@ -23,6 +23,7 @@ mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
 `ln -s $refdir/ref.fa $out/ref.fa`;
 `ln -s $refdir/ref.gff $out/ref.gff`;
+`ln -s $refdir/ref.predesign $out/ref.pre-design`;
 `paste $nr $uniprot $kegg $go $eggnog|cut -f 1,2,3,5,6,8,9,11,12,14,15 > $out/anno.summary`;
 
 #######################################################################################

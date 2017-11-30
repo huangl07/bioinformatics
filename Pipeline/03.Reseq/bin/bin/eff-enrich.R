@@ -23,8 +23,9 @@ if ( is.null(opt$input)) { print_usage(spec)}
 if ( is.null(opt$output)){ print_usage(spec) }
 times<-Sys.time()
 
-data<-read.table(opt$input,sep="\t",comment.char="^")
+data<-read.table(opt$input,sep="\t",comment.char="^",head=TRUE)
 names(data)<-c("id","description","k","M","n","N");
+data<-na.omit(data)
 pvalue<-phyper(data$k,data$M,data$N-data$M,data$n,lower.tail=FALSE);
 qvalue<-p.adjust(pvalue,method="fdr")
 outd<-data.frame(id=data$id,des=data$description,eff=data$k/data$n,total=data$M/data$N,pvalue=pvalue,qvalue=qvalue)
@@ -32,10 +33,10 @@ write.table(file=paste(opt$output,"detail",sep="."),outd);
 order<-order(outd$qvalue)[0:20]
 ymax=max(max(outd$eff[order]),max(outd$total[order]))
 pdf(paste(opt$output,"pdf",sep="."))
-barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8)+legend=c("enrich","total"))
+barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"))
 dev.off()
 png(paste(opt$output,"png",sep="."))
-barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8)+legend=c("enrich","total"))
+barplot(rbind(outd$eff[order],outd$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"))
 dev.off()
 
 

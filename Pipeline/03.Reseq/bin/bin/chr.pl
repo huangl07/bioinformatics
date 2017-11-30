@@ -27,10 +27,14 @@ while (<In>) {
 close In;
 open Out,">$fOut";
 if (exists $chr{chr1}) {
+	my %order;
 	foreach my $id (keys %chr) {
-		if ($id =~ /chr\d+/) {
-			print Out $id,"\t",$chr{$id},"\n";
+		if ($id =~ /chr(\d+)/) {
+			$order{$1}=$id;
 		}
+	}
+	foreach my $id (sort {$a<=>$b} keys %order) {
+		print $order{$id},"\n"
 	}
 }else{
 	my $n=0;

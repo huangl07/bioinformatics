@@ -26,8 +26,7 @@ while (<In>) {
 	while ($read=<Slist>) {
 		chomp($read);
 		next if ($read eq "" || $read=~/^$/ ||$read=~ /^#/);
-		print $read,"\n";
-		my (undef,undef,$cata,undef,undef,$type,undef,undef)=split(/\t/,$read);
+		my (undef,undef,$cata,undef,undef,undef,$type,undef,undef)=split(/\t/,$read);
 		if ($type =~ /consensus/) {
 			$total++;
 		}elsif ($type =~ /primary/ || $type =~ /secondary/) {
@@ -35,6 +34,9 @@ while (<In>) {
 		}
 	}
 	close Slist;
+	if ($total ==0) {
+		die $slist;
+	}
 	$catalog{$sample}{num}=$total;
 	$catalog{$sample}{dep}=$dep;
 	print $sample,"\t",time()-$BEGIN_TIME,"s\n";

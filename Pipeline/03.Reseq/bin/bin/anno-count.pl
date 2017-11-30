@@ -65,9 +65,9 @@ while (<In>) {
 		next;	
 	}else{
 		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
-		$info{$id}||=join("\t",$id,"--","--","--");
 		my @ids=split(/:/,$id);
-		my $pos=join("\t",$ids[1],$ids[2],$ids[3]);
+		my $pos=join("\t",$ids[2],$ids[3],$ids[4]);
+		$info{$ids[0]}||=join("\t",$ids[1],$ids[0],"--","--");
 		my $info=$info{$ids[0]};
 		$stat{$info}{high}||=0;
 		$stat{$info}{low}||=0;
