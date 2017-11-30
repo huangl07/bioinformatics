@@ -1,0 +1,17 @@
+
+KingMap v1.8 -- A software for constructing genetic maps of CP population 
+-------------------------------------------------------------------------
+
+VERSION: 1.8
+
+HISTORY:
+  Version 1.0: initial release 
+  ~Version 1.7: fix bugs (undocumented)
+ 
+NOTES:
+  - This version supports Linux_x86 machine
+  - This version requires GNU scientific library 
+  - This version is for CP population only 
+  - This version still has bug of over-estimated map distance
+
+
