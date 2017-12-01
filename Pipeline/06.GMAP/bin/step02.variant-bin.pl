@@ -11,7 +11,7 @@ my $version="1.0.0";
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($marker,$dir,$dShell,$position,$winsize,$stepsize,$popt);
+my ($marker,$dir,$dShell,$winsize,$stepsize,$popt);
 GetOptions(
 				"help|?" =>\&USAGE,
 				"marker:s"=>\$marker,
@@ -22,9 +22,8 @@ GetOptions(
 				"out:s"=>\$dir,
 				"dsh:s"=>\$dShell,
 				) or &USAGE;
-&USAGE unless ($marker and $position and $dir and $dShell);
+&USAGE unless ($marker and $dir and $dShell);
 $marker=ABSOLUTE_DIR($marker);
-$position=ABSOLUTE_DIR($position);
 mkdir $dir if (!-d $dir);
 mkdir $dShell if (!-d $dShell);
 $dir=ABSOLUTE_DIR($dir);
@@ -95,9 +94,9 @@ if ($step == 4) {
 	print Log "########################################\n";
 	open SH,">$dShell/step02-4.merge.sh";
 	if ($popt eq "CP") {
-		print SH "perl $Bin/bin/binCP-merge.pl -f $dir/$Key.female.phase -m $dir/$Key.male.phase -o $dir -k $Key";
+		print SH "perl $Bin/bin/binCP-merge.pl -f $dir/$Key.female.bin.phase -m $dir/$Key.male.bin.phase -o $dir -k $Key";
 	}else{
-		print SH "perl $Bin/bin/binNOCP-merge.pl -f $dir/$Key.female.phase -m $dir/$Key.male.phase -o $dir -k $Key";
+		print SH "perl $Bin/bin/binNOCP-merge.pl -f $dir/$Key.female.bin.phase -m $dir/$Key.male.bin.phase -o $dir -k $Key";
 	}
 	close SH;
 	my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=3G --CPU 1 $dShell/step02-4.merge.sh";

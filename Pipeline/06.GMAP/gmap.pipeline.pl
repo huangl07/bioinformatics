@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$popt,$out,$bin,$pid,$mid,$nchr,$bin);
+my ($vcf,$popt,$out,$bin,$pid,$mid,$nchr,$ref,$step);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -17,34 +17,38 @@ GetOptions(
 	"out:s"=>\$out,
 	"pid:s"=>\$pid,
 	"mid:s"=>\$mid,
-	"bin:s"=>\$bin,
+	"bin"=>\$bin,
+	"ref"=>\$ref,
+	"step:s"=>\$step,
 			) or &USAGE;
-&USAGE unless ($vcf and $popt and $out and $pid and $mid);
+&USAGE unless ($vcf and $popt and $out and $pid and $mid and $nchr);
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
+$vcf=ABSOLUTE_DIR($vcf);
 my $dsh="$out/work_sh";
 mkdir $dsh if (!-d $dsh);
-open LOG,">$out/work_sh/gmap.$BEGIN_TIME.log";
-my $step=1;
+open Log,">$out/work_sh/gmap.$BEGIN_TIME.log";
+$step||=1;
 if ($step == 1) {
 	print Log "########################################\n";
 	print Log "variant-convert \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step01.variant-convert.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid  -dsh $dsh\n";
+	my $job="perl $Bin/bin/step01.variant-convert.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid -dsh $dsh\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
 	print Log "########################################\n";
-	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
+	print Log "Done and elapsed time : ",time()-$time,"s\n";
 	print Log "########################################\n";
 	$step++ ;
+	$step++ if (!$bin);
 }
 if ($step == 2) {
 	print Log "########################################\n";
 	print Log "binner-calculate \n",my $time=time();
 	print Log "########################################\n";
-	my $marker=ABSOLUTE_DIR("$out/01.vcf--convert/pop.marker");
-	my $job="perl $Bin/bin/step02.variant-bin.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid -dsh $dsh\n";
+	my $marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
+	my $job="perl $Bin/bin/step02.variant-bin.pl -marker $marker -popt $popt -out $out/02.binner -dsh $dsh\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -59,10 +63,11 @@ if ($step == 3) {
 	print Log "########################################\n";
 	my $marker;
 	if ($bin) {
-		$marker=ABSOLUTE_DIR("$out/02.vcf--convert/Total.bin.marker");
+		$marker=ABSOLUTE_DIR("$out/02.binner/Total.bin.marker");
 	}else{
-		my $marker=ABSOLUTE_DIR("$out/01.vcf--convert/pop.marker");
+		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
+	print $marker;die;
 	my $job="perl $Bin/bin/step03.mlod-calc.pl -input $marker -out $out/03.mlod-calc -dsh $dsh \n";
 	print Log "$job\n";
 	`$job`;
@@ -81,11 +86,11 @@ if ($step == 4) {
 	if ($bin) {
 		$marker=ABSOLUTE_DIR("$out/02.vcf--convert/Total.bin.marker");
 	}else{
-		my $marker=ABSOLUTE_DIR("$out/01.vcf--convert/pop.marker");
+		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	my $job="perl $Bin/bin/step04.grouping.pl -marker $marker -popt $popt -out $out/04.grouping -nchr $nchr -dsh $dsh ";
+	my $job="perl $Bin/bin/step04.grouping.pl -marker $marker -mlod $mlod -out $out/04.grouping -nchr $nchr -popt $popt -dsh $dsh ";
 	if ($ref ) {
-		$jobs.= "-ref";
+		$job.= "-ref";
 	}
 	print Log "$job\n";
 	`$job`;
@@ -99,7 +104,8 @@ if ($step == 5) {
 	print Log "########################################\n";
 	print Log "map cycle1 \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step05.markerOrder.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $gen=ABSOLUTE_DIR("$out/04.grouping/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -112,7 +118,8 @@ if ($step == 6) {
 	print Log "########################################\n";
 	print Log "map cycle2 \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step05.markerOrder.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $gen=ABSOLUTE_DIR("$out/05.map-cycle1/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/06.map-cycle2 -dsh $dsh -cycle 2\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -125,7 +132,8 @@ if ($step == 7) {
 	print Log "########################################\n";
 	print Log "map cycle3 \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step05.markerOrder.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $gen=ABSOLUTE_DIR("$out/06.map-cycle2/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle3 -dsh $dsh -cycle 3\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -136,9 +144,10 @@ if ($step == 7) {
 }
 if ($step == 8) {
 	print Log "########################################\n";
-	print Log "map cycle8 \n",my $time=time();
+	print Log "map cycle4 \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step05.markerOrder.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $gen=ABSOLUTE_DIR("$out/07.map-cycle3/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/08.map-cycle4 -dsh $dsh -cycle 4\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -149,9 +158,10 @@ if ($step == 8) {
 }
 if ($step == 9) {
 	print Log "########################################\n";
-	print Log "map cycle9 \n",my $time=time();
+	print Log "map cycle5 \n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step05.markerOrder.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $gen=ABSOLUTE_DIR("$out/08.map-cycle4/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/09.map-cycle5 -dsh $dsh -cycle 5\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -175,7 +185,7 @@ if ($step == 10) {
 	$step++ ;
 }
 
-close LOG;
+close Log;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -213,7 +223,11 @@ Usage:
   -vcf	<file>	input file name
   -out	<dir>	output dir of filename
   -popt	<str>	population type CP/BCi/Fi/Rix/
+  -nchr	<num>	number of chromosome number
+  -pid	<str>	paternal id
+  -mid	<str>	maternal id
   -bin		binmap or not 
+  -ref		ref base or not
   -h         Help
 
 USAGE

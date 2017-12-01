@@ -36,7 +36,7 @@ while (<In>) {
 }
 close In;
 my $split= int(scalar @Marker / $only);
-open SH,">$dsh/step02.mlod.sh";
+open SH,">$dsh/step03.mlod.sh";
 for (my $i=0;$i<$split;$i++) {
 	open Out,">$dOut/sub.$i.genotype";
 	print Out $head,"\n";
@@ -51,7 +51,7 @@ for (my $i=0;$i<$split;$i++) {
 	}
 }
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step02.mlod.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step03.mlod.sh";
 print $job;
 `$job`;
 `cat $dOut/sub*.mlod > $dOut/Total.mlod`;

@@ -24,8 +24,9 @@ $homo||="aa";
 $mis||=0.3;
 $seg||=0.05;
 open In,$fIn;
-open Out,">$fOut.filtered.marker";
+open Out,">$fOut.marker.stat";
 print Out "#MarkerID\ttype\tNind\tNmiss\tGeno\tNGeno\tSegretion\n";
+open Geno,">$fOut.filtered.marker";
 my %stat;
 while (<In>) {
 	chomp;

@@ -41,7 +41,7 @@ while (<In>) {
 }
 close SH;
 close In;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step04.KEGG1.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step04.KEGG1.sh --CPU 8 --Resource mem=8G --maxjob=20";
 `$job`;
 open SH,">$dsh/step04.KEGG2.sh";
 print SH "perl $Bin/bin/KEGGanno.pl -i $fa -d $out/ -o $out/KEGG.anno\n";

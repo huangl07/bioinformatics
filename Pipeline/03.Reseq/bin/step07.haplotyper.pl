@@ -59,7 +59,7 @@ while (<In>) {
 close In;
 close SH;
 close List;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=30G --CPU 8 --maxjob $proc $dShell/07.haplotyper.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=50G --CPU 8 --maxjob $proc $dShell/07.haplotyper.sh";
 print $job;
 `$job`;
 #######################################################################################

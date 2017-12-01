@@ -61,21 +61,21 @@ while (<In>) {
 			if ($info{$indi[$i]}{gt} eq "./.") {
 				$info{$indi[$i]}{ad}=0;
 				$info{$indi[$i]}{dp}=0;
-			}elsif (!exists $info{$indi[$i]}{ad}) {
+			}elsif (!exists $info{$indi[$i]}{ad} && exists $info{$indi[$i]}{dp}) {
 				my @gt=split(/\//,$info{$indi[$i]}{gt});
 				my $max=(sort{$a<=>$b} @gt)[-1];
 				my @dep;
 				if ($gt[0] eq $gt[1]) {
-					for (my $i=0;$i < $max;$i++) {
-						if ($i eq $gt[0]) {
+					for (my $j=0;$j <= $max;$j++) {
+						if ($j eq $gt[0]) {
 							push @dep,$info{$indi[$i]}{dp};
 						}else{
 							push @dep,0;
 						}
 					}
 				}else{
-					for (my $i=0;$i < $max;$i++) {
-						if ($i eq $gt[0] || $i eq $gt[1]) {
+					for (my $j=0;$j <= $max;$j++) {
+						if ($j eq $gt[0] || $j eq $gt[1]) {
 							push @dep,$info{$indi[$i]}{dp}/2;
 						}else{
 							push @dep,0;
@@ -88,11 +88,11 @@ while (<In>) {
 		next if ($info{$PID}{gt} eq "./." ||$info{$MID}{gt} eq "./." );#missing parent
 		my ($p1,$p2)=split(/\//,$info{$PID}{gt});
 		my ($m1,$m2)=split(/\//,$info{$MID}{gt});
-		next if ($p1 eq $p2 && $m1 eq $m2 && $m1 eq $m2);#aaxaa
+		next if ($p1 eq $p2 && $m1 eq $m2 && $m1 eq $p2);#aaxaa
 		my @pd=split(/\,/,$info{$PID}{ad});
 		my @md=split(/\,/,$info{$MID}{ad});
 		my $sum1=$pd[$p1];$sum1+=$pd[$p2] if($p1 ne $p2);
-		my $sum2=$pd[$p1];$sum2+=$md[$p2] if($m1 ne $m2);
+		my $sum2=$md[$m1];$sum2+=$md[$m2] if($m1 ne $m2);
 		next if ($sum1 < $ParentDepth || $sum2 < $ParentDepth);
 		my %geno;
 		$geno{$p1}++;

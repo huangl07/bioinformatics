@@ -46,16 +46,16 @@ close In;
 close SH;
 close ANNOLIST;
 open SH,">$dsh/10.annovar2.sh";
-print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx20G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.merge.vcf --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
+print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx50G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.merge.vcf --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
 print SH "vcftools --vcf $out/pop.final.vcf --recode-INFO ANN --recode-INFO LOF --recode-INFO NMD --recode --out $out/$id \n";
 print SH "perl $Bin/bin/anno-count.pl -snp $out/snp.anno.genes.txt -indel $out/indel.anno.genes.txt -anno $anno -out $out/pop && ";
 print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.kegg.stat --output $out/pop.kegg && ";
 print SH "Rscript --input $out/pop.go.stat --output $out/pop.go && ";
 print SH "Rscript --input $out/pop.eggnog.stat --output $out/pop.eggnog && ";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=50G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
 `$job`;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=50G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
 `$job`;
 
 #######################################################################################

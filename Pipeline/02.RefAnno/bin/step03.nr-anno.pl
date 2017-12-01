@@ -45,7 +45,7 @@ my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.nr1.sh";
 open SH,">$dsh/step03.nr2.sh";
 print SH "perl $Bin/bin/NRanno.pl -i $fa -d $out/ -o $out/NR.anno\n";
 close SH;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.nr2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step03.nr2.sh --CPU 8 --Resource mem=12G --maxjob=20";
 `$job`;
 
 #######################################################################################

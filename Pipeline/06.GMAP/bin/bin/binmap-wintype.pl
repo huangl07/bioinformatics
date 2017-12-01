@@ -11,13 +11,12 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"i:s"=>\$fgeno,
-	"p:s"=>\$fpos,
 	"o:s"=>\$dir,
 	"k:s"=>\$Key,
 	"win:s"=>\$winsize,
 	"step:s"=>\$stepsize,
 			) or &USAGE;
-&USAGE unless ($fgeno and $fpos and $dir and $Key);
+&USAGE unless ($fgeno and $dir and $Key);
 mkdir $dir if (!-d $dir);
 $winsize||=500;
 $stepsize||=$winsize/5;
@@ -27,6 +26,7 @@ $stepsize = $stepsize * 1000;
 open In,$fgeno;
 my @Head;
 my %Phase;
+my %pos;
 while (<In>) {#��ȡmatrix�����ÿ�������Դ
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -35,20 +35,20 @@ while (<In>) {#��ȡmatrix�����ÿ�������Դ
 	}else{
 		my ($id,$type,@info)=split(/\t/,$_);
 		my ($chr,$pos)=split(/\_/,$id);
-		if ($position - $stepsize < 0) {
-			$pos{$chr}{0}{$id}=$position;
-		}elsif ($position - $winsize < 0) {
-			my $end=int($position/$stepsize)+1;
+		if ($pos - $stepsize < 0) {
+			$pos{$chr}{0}{$id}=$pos;
+		}elsif ($pos - $winsize < 0) {
+			my $end=int($pos/$stepsize)+1;
 			for (my $i=0;$i<$end;$i++) {
-				$pos{$chr}{$i}{$id}=$position;
+				$pos{$chr}{$i}{$id}=$pos;
 			}
 		}else{
-			my $a=$position-$winsize;
+			my $a=$pos-$winsize;
 			$a =0 if ($a < 0);
 			my $start=int(($a+$stepsize)/$stepsize);
-			my $end=int($position/$stepsize)+1;
+			my $end=int($pos/$stepsize)+1;
 			for (my $i=$start;$i<$end;$i++) {
-				$pos{$chr}{$i}{$id}=$position;
+				$pos{$chr}{$i}{$id}=$pos;
 			}
 		}
 		for (my $i=0;$i<@info;$i++) {
@@ -132,8 +132,6 @@ Usage:
   Options:
   -i	<file>	input genotype file name
 			#MakrerID\tTYPE\tSample
-  -p	<file>	input pos file
-			#MarkerID\tCHR\tPos
   -o	<dir>	output dir
   -k	<str>	output file name 
   -win	<num>	input window size(kb)	default 500

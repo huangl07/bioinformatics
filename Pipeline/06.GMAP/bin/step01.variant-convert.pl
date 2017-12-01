@@ -19,7 +19,7 @@ GetOptions(
 				"out:s"=>\$out,
 				"dsh:s"=>\$dsh,
 				"pid:s"=>\$pid,
-				"mid:s"=>\$pid,
+				"mid:s"=>\$mid,
 				) or &USAGE;
 &USAGE unless ($vcf and $out and $dsh and $popt);
 mkdir $out if (!-d $out);

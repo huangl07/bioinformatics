@@ -14,14 +14,15 @@ GetOptions(
 	"out:s"=>\$out,
 	"dsh:s"=>\$dsh,
 	"popt:s"=>\$popt,
+	"cycle:s"=>\$cycle,
 			) or &USAGE;
-&USAGE unless ($fIn and $out and $dsh and $popt);
+&USAGE unless ($fIn and $out and $dsh and $popt and $cycle);
 mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
 open In,$fIn;
-open SH,">$dsh/step05.markerOrder.sh";
+open SH,">$dsh/step05-$cycle.markerOrder.sh";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);

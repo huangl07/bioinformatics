@@ -65,9 +65,9 @@ print SH "Rscript --input $out/pop.kegg.stat --output $out/pop.kegg && ";
 print SH "Rscript --input $out/pop.go.stat --output $out/pop.go && ";
 print SH "Rscript --input $out/pop.eggnog.stat --output $out/pop.eggnog && ";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=50G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
 #`$job`;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=30G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=50G -CPU 1 --maxjob $proc $dsh/10.annovar2.sh";
 #`$job`;
 
 #######################################################################################

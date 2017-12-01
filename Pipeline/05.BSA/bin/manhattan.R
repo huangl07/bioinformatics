@@ -43,11 +43,11 @@ if(length(collist) ==4){
 	manhattan(df,chr="chr",bp="pos",p="index",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main="SNP INDEX DISTRIBUTION")
 	dev.off()
 	for (i in 1:length(chrlab)){
-		pdf(paste(chrlab[i],".pdf",sep=""),height=900,width=1600)
+		pdf(paste(opt$output,chrlab[i],".pdf",sep=""),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
 		dev.off()
-		png(paste(chrlab[i],".png",sep=""),height=900,width=1600)
+		png(paste(opt$output,chrlab[i],".png",sep=""),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
 		dev.off()
@@ -63,27 +63,27 @@ if(length(collist) ==4){
 	chrlab=unique(chr);
 	for (i in 1:length(chrlab)){chr[chr==chrlab[i]]=i}
 	df<-data.frame(chr=as.numeric(chr),pos=as.numeric(pos),index1=as.numeric(index1),index2=as.numeric(index2),delta=as.numeric(delta))
-	pdf(paste(opt$output,".pdf",sep=""),height=900,width=1600)
+	pdf(paste(opt$output,"bsa.pdf",sep=""),height=900,width=1600)
 	par(mfrow = c(3, 1))
 	manhattan(df,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)
 	manhattan(df,chr="chr",bp="pos",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 2",ylim=c(0,1),logp=FALSE)
 	manhattan(df,chr="chr",bp="pos",p="delta",col=rainbow(4),chrlabs=chrlab,ylab="Delta SNP-index",ylim=c(-1,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)))
 	dev.off()
-	png(paste(opt$output,".png",sep=""),height=900,width=1600)
+	png(paste(opt$output,"bsa.png",sep=""),height=900,width=1600)
 	par(mfrow = c(3, 1))
 	manhattan(df,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)
 	manhattan(df,chr="chr",bp="pos",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 2",ylim=c(0,1),logp=FALSE)
 	manhattan(df,chr="chr",bp="pos",p="delta",col=rainbow(4),chrlabs=chrlab,ylab="Delta SNP-index",ylim=c(-1,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)))
 	dev.off()
 	for (i in 1:length(chrlab)){
-		pdf(paste(chrlab[i],".pdf",sep=""),height=900,width=1600)
+		pdf(paste(opt$output,chrlab[i],".pdf",sep=""),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		par(mfrow = c(3, 1))
 		manhattan(newdf,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)
 		manhattan(newdf,chr="chr",bp="pos",p="index2",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 2",ylim=c(0,1),logp=FALSE)
 		manhattan(newdf,chr="chr",bp="pos",p="delta",col=rainbow(4),chrlabs=chrlab,ylab="Delta SNP-index",ylim=c(-1,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)))
 		dev.off()
-		png(paste(chrlab[i],".png",sep=""),height=900,width=1600)
+		png(paste(opt$output,chrlab[i],".png",sep=""),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		par(mfrow = c(3, 1))
 		manhattan(newdf,chr="chr",bp="pos",p="index1",col=rainbow(4),chrlabs=chrlab,ylab="Bulk SNP-index 1",ylim=c(0,1),logp=FALSE)

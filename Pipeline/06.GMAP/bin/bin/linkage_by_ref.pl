@@ -17,7 +17,7 @@ my $day=$Times[3];
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($dOut,$fPosi,$Key,$lchr,$mlod);
+my ($dOut,$marker,$Key,$lchr,$mlod);
 GetOptions(
 				"help|?" =>\&USAGE,
 				"i:s"=>\$mlod,
@@ -25,21 +25,25 @@ GetOptions(
 				"2:s"=>\$marker,
 				"k:s"=>\$Key,
 				) or &USAGE;
-&USAGE unless ($mlod and $dOut and $fPosi and $lchr);
-open In,$fPosi;
+&USAGE unless ($mlod and $dOut and $marker );
+open In,$marker;
 my %pos;
 my %LG;
 my %sca;
+my %chrID;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($id,undef,undef)=split;
 	if ($id =~ /chr(\d+)/) {
-		$LG{$chr}{$id}=$1;
+		my $chr="chr$1";
+		$chrID{$chr}=1;
+		$LG{$chr}{$id}=1;
 		$pos{$id}=$1;
 	}
 	if ($id =~ /sca(\d+)/) {
-		$sca{$chr}{$id}=$1;
+		my $chr="sca$1";
+		$sca{$chr}{$id}=1;
 		$pos{$id}=$1
 	}
 }
@@ -130,8 +134,7 @@ sub USAGE {#
 	Contact:Huang Long <huangl\@biomarker.com.cn>
 	Options:
 		-i	<file>	input mlod file
-		-2	<file>	input posi file
-		-l	<file>	chr list file
+		-2	<file>	input marker file
 		-o	<dir>	output file
 		-k	<str>	output keys of filename
 		-h	Help
