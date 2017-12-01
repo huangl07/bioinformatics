@@ -50,7 +50,7 @@ print SH "Rscript $Bin/bin/findGSE.R -i $dOut/jellyfish.freq -k 17 --out $dOut/j
 print SH "kmer_freq_hash -k 17 -q 33 -l $dOut/gce.fqlist -c -t 8 -p $dOut/gce 2>$dOut/gce.kmerfreq.log && ";
 print SH "Rscript $Bin/bin/findGSE.R -i $dOut/gce.freq -k 17 --out $dOut/gce \n";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource --mem-100G --cpu 8 $dsh/step01.kmer-count.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=100G --cpu 8 $dsh/step01.kmer-count.sh";
 print $job;
 `$job`;
 #######################################################################################

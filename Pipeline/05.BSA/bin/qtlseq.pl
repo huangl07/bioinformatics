@@ -140,7 +140,7 @@ while (<In>) {
 		$info{P1}{ad}||="--";
 		$info{P2}{gt}||="--";
 		$info{P2}{ad}||="--";
-		print Out join("\t",$chr,$pos,$ref,$alt,$ann,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B2}{ad},$info{B1}{gt},$info{B2}{ad},$index1,$index2,$delta),"\n";
+		print Out join("\t",$chr,$pos,$ref,$alt,$ann,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B1}{ad},$info{B2}{gt},$info{B2}{ad},$index1,$index2,$delta),"\n";
 	}
 }
 close In;
