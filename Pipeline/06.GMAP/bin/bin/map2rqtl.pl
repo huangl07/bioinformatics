@@ -3,28 +3,59 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fmap,$out,$dsh,$popt,$fmarker);
+my ($loc,$map,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"map:s"=>\$fmap,
-	"marker:s"=>\$fmarker
-	"out:s"=>\$out,
-	"dsh:s"=>\$dsh,
-	"popt:s"=>\$popt,
+	"l:s"=>\$loc,
+	"m:s"=>\$map,
+	"o:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($fIn and $out and $dsh and $popt);
-mkdir $out if (!-d $out);
-mkdir $dsh if (!-d $dsh);
-$out=ABSOLUTE_DIR($out);
-$dsh=ABSOLUTE_DIR($dsh);
-open In,$fIn;
-open SH,">$dsh/step06.mapEvaluation.sh";
+&USAGE unless ($loc and $map and $fOut);
+open In,$map;
+my $groupID;
+my %Marker;
+my %LG;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/ ||/^;/) ;
+	if (/group/) {
+		$groupID=(split(/\s+/,$_))[1];
+		$LG{$groupID}=1;
+		$groupID=scalar keys %LG;
+	}else{
+		my ($id,$pos)=split(/\s+/,$_);
+		$Marker{$id}=join(",",$groupID,$pos);
+	}
+}
 close In;
-close SH;
+open In,$loc;
+open Out,">$fOut";
+my $head;
+my %info;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""|| /^$/);
+	next if (!/Marker/);
+	if (/MarkerID/) {
+		(undef,$head)=split(/\s+/,$_,2);
+		$head=~s/\t/,/g;
+		my @head=split(/\,/,$head);
+		my @trt=split(//,"1" x scalar @head);
+		print Out "id,,,$head\n";
+	}else{
+		my ($id,$info)=split(/\s+/,$_,2);
+		$info=~s/\t/,/g;
+		$info=~s/X/H/g;
+		$info=~s/U/-/g;
+		print Out join(",",$id,$Marker{$id},$info),"\n"
+	}
+}
+close In;
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -59,10 +90,9 @@ Description:
 
 Usage:
   Options:
-  -gen	<file>	input gen file
-  -out	<dir>	output dir
-  -dsh	<dir>	worksh dir
-  -popt	<srt>	population type
+  -l	<file>	input loc file name
+  -m	<file>	input map file
+  -o	<file>	split windows sh
   -h         Help
 
 USAGE
