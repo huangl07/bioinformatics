@@ -36,10 +36,12 @@ draw<-data.frame(id=data$id,des=data$description,eff=data$k/data$n,total=data$M/
 ymax=max(max(draw$eff[order]),max(draw$total[order]))
 
 pdf(paste(opt$output,"pdf",sep="."))
-barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"))
+barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"),main=("Enrichment Analysis"))
+box()
 dev.off()
 png(paste(opt$output,"png",sep="."))
-barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"))
+barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"),main=("Enrichment Analysis"))
+box()
 dev.off()
 
 

@@ -38,18 +38,22 @@ if(length(collist) ==4){
 	df<-data.frame(chr=as.numeric(chr),pos=as.numeric(pos),index=as.numeric(index))
 	pdf(paste(opt$output,"pdf",sep="."),height=900,width=1600)
 	manhattan(df,chr="chr",bp="pos",p="index",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main="SNP INDEX DISTRIBUTION")
+	box()
 	dev.off()
 	png(paste(opt$output,"png",sep="."),height=900,width=1600)
 	manhattan(df,chr="chr",bp="pos",p="index",col=rainbow(4),chrlabs=chrlab,ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main="SNP INDEX DISTRIBUTION")
+	box()
 	dev.off()
 	for (i in 1:length(chrlab)){
 		pdf(paste(opt$output,chrlab[i],"pdf",sep="."),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
+		box()
 		dev.off()
 		png(paste(opt$output,chrlab[i],"png",sep="."),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
 		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
+		box()
 		dev.off()
 	}
 

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fastqc,$mapstat,$variant,$fvcflist,$fsvlist,$fcnvlist,$fannolist,$dOut);
+my ($fastqc,$mapstat,$variant,$fvcflist,$fsvlist,$fcnvlist,$fannolist,$dOut,$annotate);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -13,6 +13,7 @@ GetOptions(
 	"fastqc:s"=>\$fastqc,
 	"mapstat:s"=>\$mapstat,
 	"variant:s"=>\$variant,
+	"annotate:s"=>\$annotate,
 	"vcf:s"=>\$fvcflist,
 	"sv:s"=>\$fsvlist,
 	"cnv:s"=>\$fcnvlist,
@@ -23,6 +24,7 @@ GetOptions(
 #$proc||=20;
 $mapstat=ABSOLUTE_DIR($mapstat);
 $variant=ABSOLUTE_DIR($variant);
+$annotate=ABSOLUTE_DIR($annotate);
 mkdir $dOut if (!-d $dOut);
 mkdir "$dOut/Figure" if (!-d "$dOut/Figure");
 mkdir "$dOut/Table" if (!-d "$dOut/Table");
@@ -240,11 +242,15 @@ if (-f "$variant/indel.effects") {
 if (-f "$variant/indel.region") {
 	`cp $variant/indel.region $dOut/Table/3-11.xls`
 }
-
+mkdir "$dOut/Result/Eff" if (!-d "$dOut/Result/Eff");
+`ln -s $annotate/pop.summary $dOut/Result/Eff/pop.summary`;
+`ln -s $annotate/pop.final.vcf $dOut/Result/Eff/pop.final.vcf`;
+`ln -s $annotate/pop.*.stat  $dOut/Result/Eff/`;
 
 mkdir "$dOut/Figure/variant" if (!-d "$dOut/Figure/variant");
 mkdir "$dOut/Figure/mapstat" if (!-d "$dOut/Figure/mapstat");
 mkdir "$dOut/Figure/fastqc" if (!-d "$dOut/Figure/fastqc");
+mkdir "$dOut/Figure/eff" if (!-d "$dOut/Figure/eff");
 `ln -s $variant/*.pdf $dOut/Figure/variant`;
 `ln -s $variant/*.png $dOut/Figure/variant`;
 `ln -s $variant/*.svg $dOut/Figure/variant`;
@@ -252,7 +258,8 @@ mkdir "$dOut/Figure/fastqc" if (!-d "$dOut/Figure/fastqc");
 `ln -s $mapstat/*.png $dOut/Figure/mapstat`;
 `ln -s $fastqc/fig/*.pdf $dOut/Figure/fastqc`;
 `ln -s $fastqc/fig/*.png $dOut/Figure/fastqc`;
-
+`ln -s $annotate/*.pdf $dOut/Figure/eff`;
+`ln -s $annotate/*.png $dOut/Figure/eff`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
