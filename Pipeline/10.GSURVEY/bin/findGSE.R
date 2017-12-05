@@ -2,7 +2,6 @@
 times<-Sys.time();
 library('getopt');
 options(bitmapType='cairo');
-library('findGSE')
 spec = matrix(c(
 	'input','i',0,'character',
 	'output','o',0,'character',
@@ -31,7 +30,10 @@ if ( is.null(opt$input) ) { print_usage(spec) }
 if ( is.null(opt$output) ) { print_usage(spec) }
 if ( is.null(opt$kmer) ) { print_usage(spec) }
 if(dir.exists(opt$output)){dir.create(opt$output)} 
+library(findGSE)
+
 findGSE(histo=opt$input,sizek=opt$kmer, outdir=opt$output)
+
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)

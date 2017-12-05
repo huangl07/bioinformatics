@@ -67,9 +67,6 @@ if (!is.null(opt$outgroup)){
 	raxml<-root(raxml,which(raxml$tip.label %in% as.list(strsplit(opt$outgroup, split=","))[[1]]))
 }
 
-
-
-
 g<-ggtree(raxml,size=.2,layout="rectangular")+geom_tiplab(size=1,align=TRUE,linesize=.2)
 if (!is.null(opt$raxml)){
 g<-g+geom_text2(size=1,color="black",aes(subset=!isTip, label=bootstrap,color="black"))

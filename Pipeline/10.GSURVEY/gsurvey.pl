@@ -45,7 +45,7 @@ close JF;
 close GCE;
 open SH,">$dsh/step01.kmer-count.sh";
 print SH "jellyfish count -m 17 -s 1000M -t 8 -g $dOut/jellyfish.fqlist -C -o $dOut/jellyfish.kmer.hash && ";
-print SH "jellyfish histo -h 255 -o $dOut/jellyfish.freq.stat $dOut/jellyfish.kmer.hash && ";
+print SH "jellyfish histo -h 255 -o $dOut/jellyfish.freq $dOut/jellyfish.kmer.hash && ";
 print SH "Rscript $Bin/bin/findGSE.R -i $dOut/jellyfish.freq -k 17 --out $dOut/jellyfish\n";
 print SH "kmer_freq_hash -k 17 -q 33 -l $dOut/gce.fqlist -c -t 8 -p $dOut/gce 2>$dOut/gce.kmerfreq.log && ";
 print SH "Rscript $Bin/bin/findGSE.R -i $dOut/gce.freq -k 17 --out $dOut/gce \n";

@@ -58,10 +58,8 @@ close In;
 my %merge;
 open Bin,">$dOut/$Key.merge.detail";
 print Bin "#chr\tpos\ttype\t",join("\t",@Head),"\n";
-open Geno,">$dOut/$Key.bin.genotype";
+open Geno,">$dOut/$Key.bin.marker";
 print Geno "#MarkerID\ttype\t",join("\t",@Head),"\n";
-open Pos,">$dOut/$Key.bin.pos";
-print Pos "#MarkerID\tchr\tpos\n";
 foreach my $chr (sort keys %pos) {
 	my @pos=sort {$a<=>$b} keys %{$pos{$chr}};
 	#shift @pos;pop @pos;
@@ -90,8 +88,7 @@ foreach my $chr (sort keys %pos) {
 				}
 			}
 			print Bin $chr,"\t",$bin,"\t","nnxnp","\t",join("\t",@out),"\n";
-			print Geno "Bin$binID\tnnxnp\t",join("\t",@outG),"\n";
-			print Pos "Bin$binID\t$chr\t$pos\n";
+			print Geno "$chr\_$bin\tnnxnp\t",join("\t",@outG),"\n";
 		}
 	}elsif (scalar @fpos ==0 && scalar @mpos !=0) {#单个scaffold上面只有lmxll型
 		pop @fpos;
@@ -114,8 +111,7 @@ foreach my $chr (sort keys %pos) {
 				}
 			}
 			print Bin $chr,"\t",$bin,"\t","lmxll","\t",join("\t",@out),"\n";
-			print Geno "Bin$binID\tlmxll\t",join("\t",@outG),"\n";
-			print Pos "Bin$binID\t$chr\t$pos\n";
+			print Geno "$chr\_$bin\tlmxll\t",join("\t",@outG),"\n";
 		}
 	}else{
 		my %mtest;
@@ -172,8 +168,7 @@ foreach my $chr (sort keys %pos) {
 					}
 				}
 				print Bin $chr,"\t",$bin,"\t","lmxll","\t",join("\t",@out),"\n";
-				print Geno "Bin$binID\tlmxll\t",join("\t",@outG),"\n";
-				print Pos "Bin$binID\t$chr\t$bin\n";
+				print Geno "$chr\_$bin\tlmxll\t",join("\t",@outG),"\n";
 			}elsif (!exists $merge{$chr}{$bin}{male} && exists $merge{$chr}{$bin}{female}) {#某个window中只包含父本数据，未包含母本数据
 				my ($phase1,@g1)=split(/\t/,$merge{$chr}{$bin}{female});
 				for (my $i=0;$i<@g1;$i++) {
@@ -189,8 +184,7 @@ foreach my $chr (sort keys %pos) {
 					}
 				}
 				print Bin $chr,"\t",$bin,"\t","nnxnp","\t",join("\t",@out),"\n";
-				print Geno "Bin$binID\tnnxnp\t",join("\t",@outG),"\n";
-				print Pos "Bin$binID\t$chr\t$bin\n";
+				print Geno "$chr\_$bin\tnnxnp\t",join("\t",@outG),"\n";
 			}elsif (!exists $merge{$chr}{$bin}{male} && !exists $merge{$chr}{$bin}{female}) {#某个bin中父本母本均无数据
 				next;
 			}else{
@@ -216,8 +210,7 @@ foreach my $chr (sort keys %pos) {
 				}
 			#	print Bin scalar @out,"\t";
 				print Bin $chr,"\t",$bin,"\t","abxcd","\t",join("\t",@out),"\n";
-				print Geno "Bin$binID\tabxcd\t",join("\t",@outG),"\n";
-				print Pos "Bin$binID\t$chr\t$bin\n";
+				print Geno "$chr\_$bin\tabxcd\t",join("\t",@outG),"\n";
 			}
 		}
 	}

@@ -162,9 +162,9 @@ if ($step == 10) {
 	print LOG "########################################\n";
 	print LOG "stacks stat\n"; my $time=time();
 	print LOG "########################################\n";
-	my $sstacks=ABSOLUTE_DIR("$outdir/05.sstacks/sstacks.list");
+	my $sstacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
 	my $vcf=ABSOLUTE_DIR("$outdir/09.genotype/batch_1.vcf");
-	my $job="perl $Bin/bin/step10.stackstat.pl -slist $sstacks -vcf $vcf -out $outdir/10.stacksstat -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step10.stackstat.pl -ulist $sstacks -vcf $vcf -out $outdir/10.stacksstat -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

@@ -23,20 +23,30 @@ $popt||="F2";
 $out=ABSOLUTE_DIR($out);
 $vcf=ABSOLUTE_DIR($vcf);
 $ann=ABSOLUTE_DIR($ann);
+mkdir "$out/fig" if (!-d "$out/fig");
 mkdir "$out/work_sh" if (!-d "$out/work_sh");
 open SH,">$out/work_sh/bsa.sh";
 my @bid=split(/\,/,$bid);
 if (scalar @bid == 1) {
-	print SH "perl $Bin/bin/bin/mutmap.pl -vcf $vcf -out $out/index-calc.result -bid $bid ";
+	print SH "perl $Bin/bin/mutmap.pl -vcf $vcf -out $out/index-calc.result -bid $bid ";
 	if ($pid) {
 		print SH "-pid $pid && ";
 	}else{
 		print SH "&& ";
 	}
-	print SH "Rscript $Bin//bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,10 --win 2000000 --step 10000 --method bp && ";
-	print SH "Rscript $Bin//bin/manhattan.R --input $out/sliding-win.result --output $out/bsa --col 1,3,4,5 && ";
-	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.out -r $out/sliding-win.threshold.select && ";
-	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.fdr.out -r $out/sliding-win.fdr.select ";
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,10 --win 2000000 --step 10000 --method bp && ";
+	print SH "Rscript $Bin/bin/manhattan.R --input $out/sliding-win.result --output $out/fig/bsa --col 1,3,4,5 && ";
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
+	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.threshold.gene -i $out/sliding-win.threshold.select && ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat -- output $out/region.threshold.gene.kegg.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat -- output $out/region.threshold.gene.go.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat -- output $out/region.threshold.gene.eggnog.stat && "
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.fdr.variant -r $out/sliding-win.fdr.select && ";
+	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.fdr.gene -i $out/sliding-win.fdr.select ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.kegg.stat -- output $out/region.fdr.gene.kegg.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.go.stat -- output $out/region.fdr.gene.go.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.eggnog.stat -- output $out/region.fdr.gene.eggnog.stat && "
+
 }else{
 	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt ";
 	if ($pid) {
@@ -46,8 +56,16 @@ if (scalar @bid == 1) {
 	}
 	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 1,2,14,15,16 --win 2000000 --step 10000 method bp && ";
 	print SH "Rscript $Bin/bin/manhattan.R --infile $out/sliding-win.result --outfile $out/bsa --col 1,3,4,5,6 && ";
-	print SH "perl $Bin//bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.out -r $out/sliding-win.threshold.select && ";
-	print SH "perl $Bin//bin/region-variant.pl -i $out/index-calc.result -o $out/region.fdr.out -r $out/sliding-win.fdr.select ";
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
+	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.threshold.gene -i $out/sliding-win.threshold.select && ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat -- output $out/region.threshold.gene.kegg.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat -- output $out/region.threshold.gene.go.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat -- output $out/region.threshold.gene.eggnog.stat && "
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.fdr.variant -r $out/sliding-win.fdr.select && ";
+	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.fdr.gene -i $out/sliding-win.fdr.select ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.kegg.stat -- output $out/region.fdr.gene.kegg.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.go.stat -- output $out/region.fdr.gene.go.stat && "
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.fdr.gene.eggnog.stat -- output $out/region.fdr.gene.eggnog.stat && "
 
 }
 

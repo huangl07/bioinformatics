@@ -28,7 +28,7 @@ mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/step01.vcf-convert.sh";
 print SH "perl $Bin/bin/vcf2marker.pl -vcf $vcf -out $out/pop.primary.marker -PID $pid -MID $mid && ";
-print SH "perl $Bin/bin/markerfilter.pl --input $out/pop.primary.marker -output $out/pop -popt $popt \n";
+print SH "perl $Bin/bin/markerfilter.pl -input $out/pop.primary.marker -output $out/pop -popt $popt \n";
 close SH;
 my $job="perl  /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step01.vcf-convert.sh";
 `$job`;

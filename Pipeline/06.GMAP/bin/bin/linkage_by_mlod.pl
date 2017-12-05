@@ -1,5 +1,4 @@
-#!/usr/bin/perl -w
-
+#!/usr/bin/env perl -w
 use strict;
 use warnings;
 use Getopt::Long;
@@ -77,7 +76,7 @@ if (defined $genotype) {
     open IN,$genotype;
 	while (<IN>) {
 		chomp;
-		next if (/^$/ || /MarkerID/ || /^name/ || /^popt/ || /^nloc/ || /^nind/);
+		next if (/^$/ || /MarkerID/ || /^name/ || /^popt/ || /^nloc/ || /^nind/ || /^#/);
 		my ($marker) = split;
 		$all_loci{$marker} = 1;
 	}
@@ -89,7 +88,7 @@ open (IN,"$fIn") or die $!;
 <IN>;
 while (<IN>) {
 	chomp;
-	next if (/^$/ or /^;/) ;
+	next if (/^$/ or /^;/ || /^#/) ;
 	my ($loci_1,$loci_2,$mLOD) = split;
 	if (defined $genotype) {
 		next if (!exists $all_loci{$loci_1} || !exists $all_loci{$loci_2}); ## filter the info of marker not found in genotype file 
@@ -147,9 +146,7 @@ if (-f "$dOut/$fKey.gTree.hash" &&  $redo==0){
 	store  $Tree,"$dOut/$fKey.gTree.hash";
 }
 print $log "\n";
-#open DUMP,">$dOut/$fKey.gTree.hash.dumper";
-#print DUMP Dumper \%{$Tree};
-#close DUMP;
+out_sub_tree($Tree,"$dOut/$fKey.gTree.hash.dumper");
 
 #####################################################################
 #                                                                   #
@@ -183,9 +180,7 @@ if (-f "$dOut/$fKey.gTree.delFragment.hash" && $succeed_flag == 1 && $redo==0) {
 	store  $Tree,"$dOut/$fKey.gTree.delFragment.hash";
 }
 print $log "\n";
-#open DUMP,">$dOut/$fKey.gTree.delFragment.hash.dumper";
-#print DUMP Dumper \%{$Tree};
-#close DUMP;
+out_sub_tree($Tree,"$dOut/$fKey.gTree.delFragment.hash.dumper");
 
 
 #####################################################################
@@ -222,10 +217,8 @@ if (-f "$dOut/$fKey.gTree.delFragment.mergeNode.hash" && $succeed_flag == 1 && $
 	store  $Tree,"$dOut/$fKey.gTree.delFragment.mergeNode.hash";
 }
 print $log "\n";
-#open DUMP,">$dOut/$fKey.gTree.delFragment.mergeNode.hash.dumper";
-#print DUMP Dumper \%{$Tree};
-#close DUMP;
 
+out_sub_tree($Tree,"$dOut/$fKey.gTree.delFragment.mergeNode.hash.dumper");
 
 #####################################################################
 #                                                                   #
@@ -346,6 +339,21 @@ close ($log) ;
 # ------------------------------------------------------------------
 # sub function
 # ------------------------------------------------------------------
+sub out_sub_tree{
+	my($tree,$file)=@_;
+	my @queue=();
+	push @queue,$tree->{'root'};
+	open Out,">$file";
+	for(my $i=0;$i<@queue;$i++) {
+		next if ($queue[$i]->{'nloc'} < $minGroup);
+		print Out join("\n","\t" x $queue[$i]->{'lod'}.$queue[$i]->{'lod'}. "/".$queue[$i]->{'nloc'}),"\n";
+		next if (!defined $queue[$i]->{'child'});
+		if (scalar @{$queue[$i] ->{'child'}}!=0) {
+			@queue = (@queue[0..$i],@{$queue[$i]->{'child'}},@queue[$i+1..$#queue]);
+		}
+	}
+	close Out;
+}
 
 sub construct_group_tree {#
 	my ($tree,$loci,$mLOD,$b_lod,$e_lod,$s_lod) = @_;
@@ -431,7 +439,6 @@ sub simplify_group_tree { ##
 		push @queue,@{$_->{'child'}};
 	}
 }
-
 sub select_sub_tree {#
 	my ($tree,$minG,$maxG,$e_lod,$solution) = @_;
 
@@ -508,7 +515,7 @@ sub output_linkage_group {#
 
 	foreach my $nr (keys %{$final_solution}) {
 			
-		open (OUT,">$key.$nr.lg") or die $!;
+		open (OUT,">$key.lg") or die $!;
 
 		my $group_no = 0;
 

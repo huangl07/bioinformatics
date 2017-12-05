@@ -21,11 +21,11 @@ $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
  $type||="nuc";
-my $emapper="emapper.py --translate --dmnd_db /mnt/ilustre/users/dna/Environment/biotools/eggnog-mapper/data/NOG.fa.dmnd --dbtype seqdb";
+my $emapper="emapper.py --translate --dmnd_db /mnt/ilustre/users/dna/Environment/biotools/eggnog-mapper/data/NOG.fa.dmnd --dbtype seqdb --override ";
 if ($type eq "proc") {
 	$emapper="emapper.py";
 }
-open SH,">$dsh/step06.EGGNOG1.sh";
+open SH,">$dsh/step07.EGGNOG1.sh";
 open In,$fa;
 while (<In>) {
 	chomp;
@@ -35,12 +35,12 @@ while (<In>) {
 }
 close SH;
 close In;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.EGGNOG1.sh --maxjob=20 --CPU 8 --mem=8G";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step07.EGGNOG1.sh --maxjob=20 --CPU 8 --Resource mem=8G";
 `$job`;
-open SH,">$dsh/step06.EGGNOG2.sh";
+open SH,">$dsh/step07.EGGNOG2.sh";
 print SH "perl $Bin/bin/EGGanno.pl -i $fa -d $out/ -o $out/EGGNOG.anno\n";
 close SH;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.EGGNOG2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step07.EGGNOG2.sh";
 `$job`;
 
 #######################################################################################

@@ -46,6 +46,7 @@ open In,$fIn;
 my $head;
 my %info;
 my %stat;
+my %einfo;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -58,6 +59,7 @@ while (<In>) {
 			if ($pos >= $pos1 && $pos <= $pos2) {
 				push @{$info{$chr}{$region}},$_;
 				my ($fun,$impact,$genename,$geneid)=split(/\|/,$ann);
+				push @{$einfo{$chr}{$region}},$_ if($impact eq "HIGH" || $impact eq "MODERATE");
 				$impact||="unknown";
 				my @alt=split(/\,/,$alt);
 				my $len=0;
@@ -78,7 +80,7 @@ while (<In>) {
 	}
 }
 close In;
-open Out,">$fOut";
+open Out,">$fOut.total";
 print Out "#\@chr\tpos1\tpos2\tsnp\teffsnp\tindel\teffindel\n";
 print Out "$head\n";
 foreach my $chr (sort keys %region) {
@@ -92,6 +94,17 @@ foreach my $chr (sort keys %region) {
 	}
 }
 close Out;
+open Out,">$fOut.eff";
+print Out "#\@chr\tpos1\tpos2\n";
+print Out "$head\n";
+foreach my $chr (sort keys %region) {
+	foreach my $region (sort keys %{$region{$chr}}) {
+		print Out join("\t","\@$chr",$region),"\n";
+		print Out join("\n",@{$einfo{$chr}{$region}}),"\n";
+	}
+}
+close Out;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

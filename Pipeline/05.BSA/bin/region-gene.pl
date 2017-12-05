@@ -10,9 +10,9 @@ use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"select:s"=>\$select,
-	"anno:s"=>\$anno,
-	"out:s"=>\$fOut,
+	"i:s"=>\$select,
+	"a:s"=>\$anno,
+	"o:s"=>\$fOut,
 			) or &USAGE;
 &USAGE unless ($select and $anno and $fOut );
 open In,$select;
@@ -48,6 +48,7 @@ my %enrich;
 my %edetail;
 my %info;
 my %stat;
+my %astat;
 my $head;
 while (<In>) {
 	chomp;
@@ -62,26 +63,24 @@ while (<In>) {
 		my ($pos3,$pos4)=split(/\t/,$region);
 		if (($Pos1 > $pos3 && $Pos1 <$pos4) ||($Pos2 > $pos3 && $Pos2 < $pos4) || ($pos3 > $Pos1 && $pos3 < $Pos2) || ($pos4 > $Pos1 && $pos4 < $Pos2)) {
 			push @{$info{$chr}{$region}},$_;
+			$stat{$chr}{$region}{total}++;
 			$stat{$chr}{$region}{totalnr}++ if($nrid ne "--");
 			$stat{$chr}{$region}{totaluni}++ if($uniid ne "--");
 			$stat{$chr}{$region}{totalkegg}++ if($koid ne "--");
 			$stat{$chr}{$region}{totalgo}++ if($goid ne "--");
-			$stat{$chr}{$region}{totaleggnog}++ if($eid ne "--");
-			$stat{$chr}{$region}{effnr}++ if($nrid ne "--" || $High+$Moderate > 0);
-			$stat{$chr}{$region}{effuni}++ if($uniid ne "--" || $High+$Moderate > 0 );
-			$stat{$chr}{$region}{effkegg}++ if($koid ne "--"|| $High+$Moderate > 0);
-			$stat{$chr}{$region}{effgo}++ if($goid ne "--"|| $High+$Moderate > 0);
-			$stat{$chr}{$region}{effeggnog}++ if($eid ne "--"|| $High+$Moderate > 0);
-			$stat{totalkegg}++ if($koid ne "--");
-			$stat{totalgo}++ if($goid ne "--");
-			$stat{totaleggnog}++ if($eid ne "--");
-			$stat{effkegg}++ if($koid ne "--"|| $High+$Moderate > 0);
-			$stat{effgo}++ if($goid ne "--"|| $High+$Moderate > 0);
-			$stat{effeggnog}++ if($eid ne "--"|| $High+$Moderate > 0);
-
+			$stat{$chr}{$region}{totaleggnog}++ if($eid ne "S");
+			$stat{$chr}{$region}{eff}++ if($High+$Moderate > 0);
+			$stat{$chr}{$region}{effnr}++ if($nrid ne "--" && $High+$Moderate > 0);
+			$stat{$chr}{$region}{effuni}++ if($uniid ne "--" && $High+$Moderate > 0 );
+			$stat{$chr}{$region}{effkegg}++ if($koid ne "--" && $High+$Moderate > 0);
+			$stat{$chr}{$region}{effgo}++ if($goid ne "--" && $High+$Moderate > 0);
+			$stat{$chr}{$region}{effeggnog}++ if($eid ne "S" && $High+$Moderate > 0);
 			$regioned=1;
 		}
 	}
+	$astat{total}++;
+	$astat{eff}++ if($regioned == 1);
+
 	my @koid=split(/:/,$koid);
 	my @kdetail=split(/:/,$koanno);
 	for (my $i=0;$i<@koid;$i++) {
@@ -108,8 +107,8 @@ while (<In>) {
 	}
 }
 close In;
-open Out,">$fOut.gene.summary";
-print Out "#\@chr\tpos1\tpos2\ttotalnr\ttotaluni\ttotalkegg\ttotalgo\ttotaleggnog\teffnr\teffuni\teffkegg\teffgo\teffeggnog\n";
+open Out,">$fOut.total";
+print Out "#\@chr\tpos1\tpos2\ttotal\teff\ttotalnr\ttotaluni\ttotalkegg\ttotalgo\ttotaleggnog\teffnr\teffuni\teffkegg\teffgo\teffeggnog\n";
 print Out "$head\n";
 foreach my $chr (sort keys %region) {
 	foreach my $region (sort keys %{$region{$chr}}) {
@@ -117,37 +116,60 @@ foreach my $chr (sort keys %region) {
 		$stat{$chr}{$region}{totaluni}||=0;
 		$stat{$chr}{$region}{totalkegg}||=0;
 		$stat{$chr}{$region}{totalgo}||=0;
-		$stat{$chr}{$region}{totaleggno}||=0;
+		$stat{$chr}{$region}{totaleggnog}||=0;
 		$stat{$chr}{$region}{effnr}||=0;
 		$stat{$chr}{$region}{effuni}||=0;
 		$stat{$chr}{$region}{effkegg}||=0;
 		$stat{$chr}{$region}{effgo}||=0;
 		$stat{$chr}{$region}{effeggnog}||=0;
-		print Out join("\t","\@$chr",$region,$stat{$chr}{$region}{totalnr},$stat{$chr}{$region}{totaluni},$stat{$chr}{$region}{totalkegg},$stat{$chr}{$region}{totalgo},$stat{$chr}{$region}{totaleggno},$stat{$chr}{$region}{effnr},$stat{$chr}{$region}{effuni},$stat{$chr}{$region}{effkegg},$stat{$chr}{$region}{effgo},$stat{$chr}{$region}{effeggnog}),"\n";
+		$stat{$chr}{$region}{total}||=0;
+		$stat{$chr}{$region}{eff}||=0;
+		print Out join("\t","\@$chr",$region,$stat{$chr}{$region}{total},$stat{$chr}{$region}{eff},$stat{$chr}{$region}{totalnr},$stat{$chr}{$region}{totaluni},$stat{$chr}{$region}{totalkegg},$stat{$chr}{$region}{totalgo},$stat{$chr}{$region}{totaleggnog},$stat{$chr}{$region}{effnr},$stat{$chr}{$region}{effuni},$stat{$chr}{$region}{effkegg},$stat{$chr}{$region}{effgo},$stat{$chr}{$region}{effeggnog}),"\n";
 		next if (!defined $info{$chr}{$region});
 		print Out join("\n",@{$info{$chr}{$region}}),"\n";
 	}
 }
 close Out;
+open Out,">$fOut.eff";
+print Out "#\@chr\tpos1\tpos2\n";
+print Out "$head\n";
+foreach my $chr (sort keys %region) {
+	foreach my $region (sort keys %{$region{$chr}}) {
+		print Out join("\t","\@$chr",$region),"\n";
+		next if (!defined $info{$chr}{$region});
+		foreach my $line (@{$info{$chr}{$region}}) {
+			my @split=split(/\t/,$line);
+			print Out $line,"\n" if($split[7]+$split[8] > 0);
+		}
+	}
+}
+close Out;
+
 open Out,">$fOut.kegg.stat";
 foreach my $koid (sort keys %kdetail) {
 	$enrich{$koid}{enrich}||=0;
 	$enrich{$koid}{total}||=0;
-	print Out join("\t",$koid,$kdetail{$koid},$enrich{$koid}{enrich},$enrich{$koid}{total},$stat{effkegg},$stat{totalkegg}),"\n";
+	$astat{totalkegg}||=0;
+	$astat{effkegg}||=0;
+	print Out join("\t",$koid,$kdetail{$koid},$enrich{$koid}{enrich},$enrich{$koid}{total},$astat{eff},$astat{total}),"\n";
 }
 close Out;
 open Out,">$fOut.go.stat";
 foreach my $goid (sort keys %gdetail) {
 	$enrich{$goid}{enrich}||=0;
 	$enrich{$goid}{total}||=0;
-	print Out join("\t",$goid,$gdetail{$goid},$enrich{$goid}{enrich},$enrich{$goid}{total},$stat{effgo},$stat{totalgo}),"\n";
+	$astat{totalgo}||=0;
+	$astat{effgo}||=0;
+	print Out join("\t",$goid,$gdetail{$goid},$enrich{$goid}{enrich},$enrich{$goid}{total},$astat{eff},$astat{total}),"\n";
 }
 close Out;
 open Out,">$fOut.eggnog.stat";
 foreach my $eggnog (sort keys %edetail) {
 	$enrich{$eggnog}{enrich}||=0;
 	$enrich{$eggnog}{total}||=0;
-	print Out join("\t",$eggnog,$edetail{$eggnog},$enrich{$eggnog}{enrich},$enrich{$eggnog}{total},$stat{effeggnog},$stat{totaleggno}),"\n";
+	$astat{totaleggnog}||=0;
+	$astat{effeggnog}||=0;
+	print Out join("\t",$eggnog,$edetail{$eggnog},$enrich{$eggnog}{enrich},$enrich{$eggnog}{total},$astat{eff},$astat{total}),"\n";
 }
 close Out;
 

@@ -1,40 +1,68 @@
-#!/usr/bin/env perl 
+#!/usr/bin/perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$dOut,$dShell,$ulist);
+my ($fIn,$fOut,$scheme);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use Storable;
+
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"vcf:s"=>\$vcf,
-	"ulist:s"=>\$ulist,
-	"out:s"=>\$dOut,
-	"dsh:s"=>\$dShell,
+	"i:s"=>\$fIn,
+	"o:s"=>\$fOut,
+	"s:s"=>\$scheme,
 			) or &USAGE;
-&USAGE unless ($vcf and $dOut and $dShell and $ulist);
-mkdir $dOut if (!-d $dOut);
-mkdir $dShell if (!-d $dShell);
-$dOut=ABSOLUTE_DIR($dOut);
-$vcf=ABSOLUTE_DIR($vcf);
-open SH,">$dShell/step10.stack-stat.sh";
-print SH "perl $Bin/bin/snp.stat.pl -i $vcf -o $dOut/snp.stat -m $dOut/snp.matrix && ";
-print SH "Rscript $Bin/bin/diff_matrix.R --m $dOut/snp.matrix --o $dOut/snp.diff\n";
-print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/snp.depth -o2 $dOut/snp.GQ &&";
-print SH "Rscript $Bin/bin/variant_qual.R --GQ $dOut/snp.GQ --dep $dOut/snp.depth --o $dOut/snp.qual --str SNP\n";
-print SH "perl $Bin/bin/tag-stat.pl -i $ulist -o $dOut/tags.stat\n";
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 1 --Nodes 1 $dShell/step10.stack-stat.sh";
-print "$job\n";
-`$job`;
-print "$job\tdone!\n";
-
+&USAGE unless ($fIn and $fOut and $scheme);
+my $Tree;
+open In,$scheme;
+my %lg;
+my $read;
+while ($read=<In>) {
+	chomp $read;
+	next if ($read eq ""||$read =~ /^$/);
+	$lg{$read}++;
+}
+close In;
+$Tree = retrieve("$fIn");
+my %out;
+sub_tree($Tree,\%lg,\%out);
+open Out,">$fOut";
+my $lgid=0;
+foreach my $lg (sort keys %lg) {
+	if (scalar @{$out{$lg}} == 0) {
+		print STDERR "$lg is not exists! plead check !";
+		next;
+	}
+	foreach my $l (@{$out{$lg}}) {
+		$lgid++;
+		print Out ">LG$lgid\n";
+		print Out $l,"\n";
+	}
+}
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+sub sub_tree{
+	my($tree,$lg,$out)=@_;
+	my @queue=();
+	push @queue,$tree->{'root'};
+	for(my $i=0;$i<@queue;$i++) {
+		my $str=$queue[$i]->{'lod'}. "/".$queue[$i]->{'nloc'};
+		if (exists $$lg{$str}) {
+			push @{$$out{$str}},join("\t",@{$queue[$i]->{'locus'}});
+		}
+		if (scalar @{$queue[$i] ->{'child'}}!=0) {
+			@queue = (@queue[0..$i],@{$queue[$i]->{'child'}},@queue[$i+1..$#queue]);
+		}
+	}
+	close Out;
+}
+
 sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 {
 	my $cur_dir=`pwd`;chomp($cur_dir);
@@ -66,10 +94,8 @@ Description:
 
 Usage:
   Options:
-  -vcf	<file>	input vcf file
-  -sstacks	<file>	sstacks list
-  -out	<dir>	split windows sh
-  -dsh	<dir>	output work sh	
+  -i	<file>	input file name
+  -o	<file>	split windows sh
   -h         Help
 
 USAGE

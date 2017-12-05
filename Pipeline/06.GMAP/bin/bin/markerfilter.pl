@@ -194,6 +194,34 @@ sub SegregationX2{#.....
 		my $Segregation_p=Segregation($theoretical_segregation,$segregation,$valid);
 		$$flag=" $Segregation_p\t$genotypeOrder=$segregation";
 		return ($Segregation_p);
+	}elsif($type eq "abxcc"){
+		my ($ac,$bc,$missingData);
+		$ac=exists $Data{"ac"}?$Data{"ac"}:0;
+		$bc=exists $Data{"bc"}?$Data{"bc"}:0;
+		$missingData=exists $Data{"--"}?$Data{"--"}:0;
+		my $all=$ac+$bc+$missingData;
+		my $valid=$ac+$bc;
+		my $genotypeOrder="ac:bc";
+		my $theoretical_segregation="1:1";
+		my $segregation="$ac:$bc";
+		$$order="$genotypeOrder\t$segregation";
+		my $Segregation_p=Segregation($theoretical_segregation,$segregation,$valid);
+		$$flag=" $Segregation_p\t$genotypeOrder=$segregation";
+		return ($Segregation_p);
+	}elsif($type eq "ccxab"){
+		my ($ac,$bc,$missingData);
+		$ac=exists $Data{"ac"}?$Data{"ac"}:0;
+		$bc=exists $Data{"bc"}?$Data{"bc"}:0;
+		$missingData=exists $Data{"--"}?$Data{"--"}:0;
+		my $all=$ac+$bc+$missingData;
+		my $valid=$ac+$bc;
+		my $genotypeOrder="ac:bc";
+		my $theoretical_segregation="1:1";
+		my $segregation="$ac:$bc";
+		$$order="$genotypeOrder\t$segregation";
+		my $Segregation_p=Segregation($theoretical_segregation,$segregation,$valid);
+		$$flag=" $Segregation_p\t$genotypeOrder=$segregation";
+		return ($Segregation_p);
 	}elsif($type eq "aaxbb"){
 		my ($aa,$bb,$ab,$missingData);
 		$aa=exists $Data{"aa"}?$Data{"aa"}:0;
@@ -218,6 +246,7 @@ sub SegregationX2{#.....
 		}elsif ($popt = "CP") {
 			my $segregation="$ab:$aa:$bb";
 			$$flag="$segregation";
+			$$order="$genotypeOrder\t$segregation";
 			return("-");
 		}else{
 			warn "please input true group!\n";

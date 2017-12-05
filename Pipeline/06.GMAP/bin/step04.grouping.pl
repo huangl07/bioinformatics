@@ -32,18 +32,18 @@ $dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/step04.grouping.sh";
 if ($ref) {
 	print SH "perl $Bin/bin/linkage_by_ref.pl -i $mlod -2 $marker -o $out -k Total && ";
-	if ($popt eq "CP") {
-		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
-	}else{
-		print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
-	}
+#	if ($popt eq "CP") {
+#		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
+#	}else{
+#		print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
+#	}
 }else{
 	print SH "perl $Bin/bin/linkage_by_mlod.pl -i $mlod -k Total -d $out -n $nchr && ";
-	if ($popt eq "CP") {
-		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
-	}else{
-		print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
-	}
+#	if ($popt eq "CP") {
+#		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
+#	}else{
+#		print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
+#	}
 
 }
 close SH;

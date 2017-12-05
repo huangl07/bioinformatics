@@ -40,12 +40,13 @@ while (<In>) {
 }
 close In;
 open In,$fLG;
-open List,">$dOut/LG.list";
+open List,">$dOut/pri.marker.list";
 $/=">";
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($id,$marker)=split(/\n/,$_);
+	$id=(split(/\s+/,$id))[0];
 	open Out,">$dOut/$id.marker";
 	print List "$id\t$dOut/$id.marker\n";
 	my @marker=split(/\s+/,$marker);

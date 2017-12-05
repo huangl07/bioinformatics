@@ -46,7 +46,7 @@ while (<In>) {
 	$nind=scalar @ind;
 }
 close In;
-open List,">$dOut/marker.list";
+open List,">$dOut/pri.marker.list";
 open In,$fLG;
 $/=">";
 while (<In>) {

@@ -41,10 +41,10 @@ close SH;
 close In;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.uniref1.sh --CPU 8 --Resource mem=10G --maxjob=20";
 `$job`;
-open SH,">$dsh/06.uniref2.sh";
+open SH,">$dsh/step06.uniref2.sh";
 print SH "perl $Bin/bin/Unianno.pl -i $fa -d $out/ -o $out/Uni.anno\n";
 close SH;
-$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/06.uniref2.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step06.uniref2.sh";
 `$job`;
 
 #######################################################################################

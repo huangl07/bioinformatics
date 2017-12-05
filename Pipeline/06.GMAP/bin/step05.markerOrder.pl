@@ -3,13 +3,14 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fIn,$out,$dsh,$popt,$cycle);
+my ($fIn,$out,$dsh,$popt,$cycle,$lg);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
+	"lg:s"=>\$lg,
 	"gen:s"=>\$fIn,
 	"out:s"=>\$out,
 	"dsh:s"=>\$dsh,
@@ -21,6 +22,20 @@ mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
+$fIn=ABSOLUTE_DIR($fIn);
+if ($lg) {
+	$lg=ABSOLUTE_DIR($lg);
+	open SH,">$dsh/step05-0.split.sh";
+	if ($popt eq "CP") {
+		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $lg -i $fIn -d $out/ -t $popt";
+	}else{
+		print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $lg -i $fIn -d $out/ -t $popt";
+	}
+	close SH;
+	my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0.split.sh";
+	`$job`;
+	$fIn=ABSOLUTE_DIR("$out/pri.marker.list");
+}
 $cycle||=1;
 if ($popt eq "CP") {
 	mkdir "$out/pwd" if (!-d "$out/pwd");
@@ -31,6 +46,7 @@ if ($popt eq "CP") {
 		chomp;
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
+		die $file if (!-f $file);
 		$lg{$lg}=$file;
 		my $head;
 		my @Marker;
@@ -47,18 +63,18 @@ if ($popt eq "CP") {
 		}
 		close Marker;
 		my $only=200;
-		my $split=int(scalar @Marker/$only);
+		my $split=int(scalar @Marker/$only)+1;
 		for (my $i=0;$i<$split;$i++) {
-			open Out,">$out/pwd/$lg.$i.genotype";
+			open Out,">$out/pwd/$lg.sub.$i.genotype";
 			print Out $head;
 			for (my $j= $only*$i;$j<@Marker;$j++) {
 				print Out $Marker[$j],"\n";
 			}
 			close Out;
 			if ($i == $split-1) {
-				print SH "perl $Bin/calculateMLOD.pl -i $out/pwd/$lg.$i.genotype -k $lg.$i -d $out/pwd/ \n";
+				print SH "perl $Bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ \n";
 			}else{
-				print SH "perl $Bin/calculateMLOD.pl -i $out/pwd/$lg.$i.genotype -k $lg.$i -d $out/pwd/ -s $only\n";
+				print SH "perl $Bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ -s $only\n";
 			}
 		}
 	}
@@ -69,12 +85,12 @@ if ($popt eq "CP") {
 	open SH,">$dsh/step05-$cycle.2.mapping.sh";
 	open List,">$out/marker.list";
 	foreach my $lg (sort keys %lg) {
-		`cat $out/pwd/$lg*.pwd.detail > $out/$lg.pwd.detail`;
-		print SH "perl $Bin/bin/linkagePhase.pl -i $out/$lg.pwd.detail -g $lg{$lg} -k $lg -d $out/ && ";
-		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/$lg.pwd.detail -l $out/$lg -k $lg -d $out && ";
-		print SH "sgsMap -L $out/$lg.loc -P $out/$lg.pwd -K $out/$lg &&";
-		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.map -l $out/$lg.loc -k $lg -d $out\n";
-		print List $lg,"\t","$out/$lg.smooth.marker\n";
+		print SH "cat $out/pwd/$lg.sub.*.pwd > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail > $out/pwd/$lg.pwd.detail && ";
+		print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
+		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $out/$lg.loc -k $lg -d $out && ";
+		print SH "sgsMap -loc $out/$lg.loc -pwd $out/$lg.pwd -k $out/$lg &&";
+		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $out/$lg.loc -k $lg -d $out\n";
+		print List $lg,"\t","$out/$lg.correct.loc\n";
 	}
 	close List;
 	close SH;

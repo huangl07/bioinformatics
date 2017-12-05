@@ -67,7 +67,6 @@ if ($step == 3) {
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	print $marker;die;
 	my $job="perl $Bin/bin/step03.mlod-calc.pl -input $marker -out $out/03.mlod-calc -dsh $dsh \n";
 	print Log "$job\n";
 	`$job`;
@@ -84,7 +83,7 @@ if ($step == 4) {
 	my $mlod=ABSOLUTE_DIR("$out/03.mlod-calc/Total.mlod");
 	my $marker;
 	if ($bin) {
-		$marker=ABSOLUTE_DIR("$out/02.vcf--convert/Total.bin.marker");
+		$marker=ABSOLUTE_DIR("$out/02.binner/Total.bin.marker");
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
@@ -104,8 +103,14 @@ if ($step == 5) {
 	print Log "########################################\n";
 	print Log "map cycle1 \n",my $time=time();
 	print Log "########################################\n";
-	my $gen=ABSOLUTE_DIR("$out/04.grouping/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1\n";
+	my $lg=ABSOLUTE_DIR("$out/04.grouping/Total.lg");
+	my $marker;
+	if ($bin) {
+		$marker=ABSOLUTE_DIR("$out/02.binner/Total.bin.marker");
+	}else{
+		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
+	}
+	my $job="perl $Bin/bin/step05.markerOrder.pl -lg $lg -gen $marker -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

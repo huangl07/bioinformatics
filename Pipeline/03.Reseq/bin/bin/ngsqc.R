@@ -19,8 +19,7 @@ Usage example:
 Usage:
 	--base	base distribution file
 	--qual	base quality file
-	--key	sample ID
-	--od	output dir
+	--out	output dir
 	--help		usage
 \n")
 	q(status=1);
@@ -53,20 +52,20 @@ axix_at<-c(1,50,100,num,num+50,num+100,length(read2[,1]))
 axix_txt<-c(1,50,100,num,50,100,length(read2[,1])/2)
 
 
-pdf(file=paste(opt$od,"/",opt$out,".qual.pdf",sep=""))
+pdf(file=paste(opt$out,".qual.pdf",sep=""))
 barplot(quan*100,col='springgreen2',space=0,ylab='Error rate(%)',border= NA,ylim=c(0,max_quan*100),xlab='Reads position(bp)',main='Quality distribution')
 axis(1,labels=axix_txt,at=axix_at)
 abline(v=num+0.5, lty=2,col='darkgray')
 box()
 dev.off()
-png(file=paste(opt$od,"/",opt$out,".qual.png",sep=""))
+png(file=paste(opt$out,".qual.png",sep=""))
 barplot(quan*100,col='springgreen2',space=0,ylab='Error rate(%)',border= NA,ylim=c(0,max_quan*100),xlab='Reads position(bp)',main='Quality distribution')
 axis(1,labels=axix_txt,at=axix_at)
 abline(v=num+0.5, lty=2,col='darkgray')
 box()
 dev.off()
 
-pdf(file=paste(opt$od,"/",opt$out,".base.pdf",sep=""))
+pdf(file=paste(opt$out,".base.pdf",sep=""))
 plot(Aper,col='red',type = 'l',xlab='Reads position(bp)',ylab='Percent(%)',ylim=c(0,max_per),xaxt="n",lty=1,lwd=1.5,main="Base distribution")
 axis(1,labels=axix_txt,at=axix_at)
 abline(v=num+0.5, lty=2,col='darkgray')
@@ -77,7 +76,7 @@ lines(Nper,col='black',lty=1,lwd=1.5)
 legend("topright",c("A","T","G","C","N"),lty=c(1,1,1,1,1),col=c("red","orange","green","blue","black"))
 dev.off()
 
-png(file=paste(opt$od,"/",opt$out,".base.png",sep=""))
+png(file=paste(opt$out,".base.png",sep=""))
 plot(Aper,col='red',type = 'l',xlab='Reads position(bp)',ylab='Percent(%)',ylim=c(0,max_per),xaxt="n",lty=1,lwd=1.5,main="Base distribution")
 axis(1,labels=axix_txt,at=axix_at)
 abline(v=num+0.5, lty=2,col='darkgray')
