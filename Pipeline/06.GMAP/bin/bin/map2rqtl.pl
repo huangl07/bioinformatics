@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
@@ -39,13 +39,12 @@ my %info;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""|| /^$/);
-	next if (!/Marker/);
 	if (/MarkerID/) {
 		(undef,$head)=split(/\s+/,$_,2);
 		$head=~s/\t/,/g;
 		my @head=split(/\,/,$head);
 		my @trt=split(//,"1" x scalar @head);
-		print Out "id,,,$head\n";
+		print Out "trait,,,",join(",",@trt),"\n";
 	}else{
 		my ($id,$info)=split(/\s+/,$_,2);
 		$info=~s/\t/,/g;

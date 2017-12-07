@@ -25,6 +25,7 @@ mkdir "$dOut/stacks" if (!-d "$dOut/stacks");
 
 open In,$ulist;
 open Out,">$dOut/ustacks.list";
+open SH,">$dShell/step06.correct2.sh";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -32,8 +33,10 @@ while (<In>) {
 	`ln -s $ustacks* $dOut/stacks`;
 	my $ustack=basename($ustacks);
 	print Out "$sample $dOut/$ustack\n";
+	print SH "perl $Bin/bin/tag-stat.pl -i $dOut/$sample -o $dOut/$sample.tags.stat -k $sample\n";
 }
 close In;
+close SH;
 close Out;
 open In,$clist;
 while (<In>) {
@@ -44,20 +47,22 @@ while (<In>) {
 }
 close In;
 open In,$slist;
-open SH,">$dShell/step06.correct2.sh";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$sstacks)=split(/\s+/,$_);
 	`ln -s $sstacks* $dOut/stacks`;
 }
-close SH;
 close In;
-open SH,">$dShell/step06.correct.sh";
+open SH,">$dShell/step06.correct1.sh";
 print SH "rxstacks -P $dOut/stacks/ --conf_lim 0.25 --prune_haplo --model_type bounded --bound_high 0.1 --lnl_lim -10.0 -t 16 -o $dOut/ && ";
 close SH;
 
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct1.sh";
+print  "$job\n";
+`$job`;
+print "$job\tdone!\n";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step06.correct2.sh";
 print  "$job\n";
 `$job`;
 print "$job\tdone!\n";

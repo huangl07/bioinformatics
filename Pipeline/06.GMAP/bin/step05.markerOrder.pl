@@ -47,16 +47,17 @@ if ($popt eq "CP") {
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
 		die $file if (!-f $file);
+		`ln -s $file $out/$lg.pri.loc`;
 		$lg{$lg}=$file;
 		my $head;
 		my @Marker;
-		my $read;
+		my $read="";
 		open Marker,$file;
 		while ($read=<Marker>) {
 			chomp;
-			next if ($read eq ""||$read =~ /^$/);
-			if ($read =~ /^#/) {
-				$head=$read;
+			next if ($read eq ""||$read =~ /^$/ || /^;/);
+			if ($read =~ /^#/ || $read =~/=/ ) {
+				$head.=$read."\n";
 			}else{
 				push @Marker,$read;
 			}
@@ -72,9 +73,9 @@ if ($popt eq "CP") {
 			}
 			close Out;
 			if ($i == $split-1) {
-				print SH "perl $Bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ \n";
+				print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ \n";
 			}else{
-				print SH "perl $Bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ -s $only\n";
+				print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ -p $only\n";
 			}
 		}
 	}
@@ -85,11 +86,16 @@ if ($popt eq "CP") {
 	open SH,">$dsh/step05-$cycle.2.mapping.sh";
 	open List,">$out/marker.list";
 	foreach my $lg (sort keys %lg) {
-		print SH "cat $out/pwd/$lg.sub.*.pwd > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail > $out/pwd/$lg.pwd.detail && ";
-		print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $out/$lg.loc -k $lg -d $out && ";
-		print SH "sgsMap -loc $out/$lg.loc -pwd $out/$lg.pwd -k $out/$lg &&";
-		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $out/$lg.loc -k $lg -d $out\n";
+		print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less}sort|uniq > $out/pwd/$lg.pwd.detail && ";
+		my $loc="$out/$lg.loc";
+		if ($cycle == 1) {
+			print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
+		}else{
+			$loc="$out/$lg.pri.loc"
+		}
+		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
+		print SH "sgsMap -loc $loc -pwd $out/$lg.pwd -k $out/$lg &&";
+		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $loc -k $lg -d $out\n";
 		print List $lg,"\t","$out/$lg.correct.loc\n";
 	}
 	close List;

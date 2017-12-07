@@ -131,8 +131,8 @@ if ($step == 8) {
 	print LOG "########################################\n";
 	print LOG "rsstacks\n"; my $time=time();
 	print LOG "########################################\n";
-	my $ustacks=ABSOLUTE_DIR("$outdir/07.cstacks/cstacks.list");
-	my $cstacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
+	my $ustacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
+	my $cstacks=ABSOLUTE_DIR("$outdir/07.rcstacks/cstacks.list");
 	my $job="perl $Bin/bin/step08.rsstacks.pl -ulist $ustacks -clist $cstacks -out $outdir/08.rsstacks -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
@@ -146,10 +146,10 @@ if ($step == 9) {
 	print LOG "########################################\n";
 	print LOG "genotype\n"; my $time=time();
 	print LOG "########################################\n";
-	my $ustacks=ABSOLUTE_DIR("$outdir/04.cstacks/cstacks.list");
-	my $cstacks=ABSOLUTE_DIR("$outdir/03.ustacks/ustacks.list");
-	my $sstacks=ABSOLUTE_DIR("$outdir/05.sstacks/sstacks.list");
-	my $job="perl $Bin/bin/step09.genotype.pl -ulist $ustacks -clist $cstacks -slist $sstacks -out $outdir/09.genotype -dsh $outdir/work_sh -proc 20";
+	my $ustacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
+	my $cstacks=ABSOLUTE_DIR("$outdir/07.rcstacks/cstacks.list");
+	my $sstacks=ABSOLUTE_DIR("$outdir/08.rsstacks/sstacks.list");
+	my $job="perl $Bin/bin/step09.genotype.pl -ulist $ustacks -clist $cstacks -slist $sstacks -out $outdir/09.genotype -dsh $outdir/work_sh ";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -162,9 +162,25 @@ if ($step == 10) {
 	print LOG "########################################\n";
 	print LOG "stacks stat\n"; my $time=time();
 	print LOG "########################################\n";
-	my $sstacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
+	my $stacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
 	my $vcf=ABSOLUTE_DIR("$outdir/09.genotype/batch_1.vcf");
-	my $job="perl $Bin/bin/step10.stackstat.pl -ulist $sstacks -vcf $vcf -out $outdir/10.stacksstat -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step10.stackstat.pl -ulist $stacks -vcf $vcf -out $outdir/10.stacksstat -dsh $outdir/work_sh ";
+	print LOG "$job\n";
+	`$job`;
+	print LOG "$job\tdone!\n";
+	print LOG "########################################\n";
+	print LOG "Done and elapsed time : ",time()-$time,"s\n";
+	print LOG "########################################\n";
+	$step++ if ($step ne $stop);
+}
+if ($step == 11) {
+	print LOG "########################################\n";
+	print LOG "stacks stat\n"; my $time=time();
+	print LOG "########################################\n";
+	my $stacks=ABSOLUTE_DIR("$outdir/10.stacksstat/");
+	my $vcf=ABSOLUTE_DIR("$outdir/09.genotype/");
+	my $fastqc=ABSOLUTE_DIR("$outdir/01.fastq-qc/");
+	my $job="perl $Bin/bin/step11.report.pl -statdir $stacks -vcfdir $vcf -fastqc $fastqc -out $outdir/11.report -dsh $outdir/work_sh ";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

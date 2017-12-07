@@ -180,7 +180,7 @@ if ($step == 10) {
 	print Log "########################################\n";
 	print Log "evalutaion\n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step06.mapEvaluation.pl -vcf $vcf -popt $popt -out $out/01.vcf-convert -pid $pid -mid $mid \n";
+	my $job="perl $Bin/bin/step06.mapEvaluation.pl -mapdir $out/09.map-cycle5 -popt $popt -out $out/10.mapEvalue \n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

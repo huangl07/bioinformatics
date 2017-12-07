@@ -41,7 +41,8 @@ if ( is.null(opt$outfile) )	{ print_usage(spec) }
 if ( is.null(opt$varfile) )	{ print_usage(spec) }
 
 
-pca.file<-read.table(opt$infile,header=TRUE)
+pca.file<-read.table(opt$infile,header=FALSE)
+colnames(pca.file)=c("FID","IID","PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9","PC10","PC11","PC12","PC13","PC14","PC15","PC16","PC17","PC18","PC19","PC20")
 if (!is.null(opt$group)){
 	pop.list<-read.table(opt$group,header=FALSE)
 	names(pop.list)=c("id","popid")
@@ -57,7 +58,7 @@ if (!is.null(opt$group)){
 pdf(paste(opt$outfile,".pc1vspc2.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC2,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC1,pca.file$PC2,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
 }
@@ -65,7 +66,7 @@ dev.off();
 png(paste(opt$outfile,".pc1vspc2.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC2,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC1,pca.file$PC2,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
 }
@@ -73,7 +74,7 @@ dev.off();
 pdf(paste(opt$outfile,".pc1vspc3.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC3,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC1,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC1 vs PC3")
 }
@@ -81,7 +82,7 @@ dev.off();
 png(paste(opt$outfile,".pc1vspc3.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC3,col=pop.list$colour,xlab="PC1",ylab="PC3",main="PC1 vs PC3")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC1,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC1 vs PC3")
 }
@@ -89,7 +90,7 @@ dev.off();
 pdf(paste(opt$outfile,".pc2vspc3.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC2,pca.file$PC3,col=pop.list$colour,xlab="PC3",ylab="PC3",main="PC2 vs PC3")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC2,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC2 vs PC3")
 }
@@ -97,21 +98,22 @@ dev.off()
 png(paste(opt$outfile,".pc2vspc3.png",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC2,pca.file$PC3,col=pop.list$colour,xlab="PC2",ylab="PC3",main="PC2 vs PC3")
-	legend("right",col=color.list,legend=pop.id,bty=T,pch=1)
+	legend("right",col=color.list,legend=pop.id,bty=T,pch=1,cex=0.5)
 }else{
 	plot(pca.file$PC2,pca.file$PC3,xlab="PC1",ylab="PC2",main="PC2 vs PC3")
 }
 dev.off();
 value<-read.table(opt$varfile,header=FALSE);
-sum<-sum(value$V1)
-value$V1<-value$V1/sum*100
+value<-value[0:20,]
+sum<-sum(value)
+value<-value/sum*100
 pdf(paste(opt$outfile,".val.pdf",sep=""),width=800,height=800);
-valmax=length(value$V1);
-barplot(value$V1,col="blue",xlab="PCAs",ylab="Variance%",beside=FALSE,names.arg=c(1:valmax),border=TRUE,ylim=c(0,100),main="Variance of 
+valmax=length(value);
+barplot(value,col="blue",xlab="PCAs",ylab="Variance%",beside=FALSE,names.arg=c(1:valmax),border=TRUE,ylim=c(0,100),main="Variance of 
 PCAs")
 dev.off()
 png(paste(opt$outfile,".val.png",sep=""),width=800,height=800);
-barplot(value$V1,col="blue",xlab="PCAs",ylab="Variance%",beside=FALSE,names.arg=c(1:valmax),border=TRUE,ylim=c(0,100),main="Variance of 
+barplot(value,col="blue",xlab="PCAs",ylab="Variance%",beside=FALSE,names.arg=c(1:valmax),border=TRUE,ylim=c(0,100),main="Variance of 
 PCAs")
 dev.off()
 pdf(paste(opt$outfile,".3D.pdf",sep=""))

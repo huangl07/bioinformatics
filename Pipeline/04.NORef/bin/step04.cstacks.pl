@@ -34,32 +34,25 @@ if ($sample) {
 	close Out;
 }else{
 	open In,$ulist;
-	my %dep;
+	my %tag;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/);
 		my ($sample,$ustacks)=split(/\s+/,$_);
-		my $total++;
-		my $ndp++;
-		open Slist,"gunzip -c $ustacks.tags.tsv.gz|";
-		while (<Slist>) {
+		open Stat,"$ustacks.tags.stat";
+		while (<Stat>) {
 			chomp;
-			next if ($_ eq ""||/^$/);
-			if (/consensus/) {
-				$total++;
-			}
-			if (/primary/ || /secondary/) {
-				$ndp++;
-			}
+			next if ($_ eq ""||/^$/||/^#/);
+			my ($id,$ntag,$dep,$ad)=split(/\t/,$_);
+			$tag{$sample}=$ntag;
 		}
-		close Slist;
-		$dep{$sample}=$ndp/$total;
+		close Stat;
 	}
 	close In;
 	open Out,">$dOut/sample.list";
 	my $n=0;
-	foreach my $sam (sort {$dep{$a}<=> $dep{$b}}keys %dep) {
-		if (scalar keys %dep > 10){
+	foreach my $sam (sort {$tag{$a}<=> $tag{$b}}keys %tag) {
+		if (scalar keys %tag > 50){
 			next if ($n % 5 !=0);
 		}
 		$n++;

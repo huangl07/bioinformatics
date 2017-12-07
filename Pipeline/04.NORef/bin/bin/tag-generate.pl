@@ -3,35 +3,47 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($tags,$fOut,$sampleID);
+my ($vcf,$fOut,$catalog);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$tags,
-	"o:s"=>\$fOut,
-	"k:s"=>\$sampleID,
+	"vcf:s"=>\$vcf,
+	"catalog:s"=>\$catalog,
+	"out:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($tags and $fOut and $sampleID );
-open In,"zcat $tags.tags.tsv.gz|";
-my $total=0;
-my $dep=0;
+&USAGE unless ($vcf and $fOut and $catalog  );
+open In,"$vcf";
+my %variant;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ || /^#/);
-	my (undef,undef,$cata,undef,undef,undef,$type,undef,undef)=split(/\t/,$_);
-	if ($type =~ /consensus/) {
-		$total++;
-	}elsif ($type =~ /primary/ || $type =~ /secondary/) {
-		$dep++;
-	}
+	my ($chr,$pos,$id,undef)=split(/\s+/,$_);
+	my ($cataid,$posi)=split(/\_/,$id);
+	$variant{$cataid}{$posi}=1;
 }
 close In;
+open In,"zcat $catalog|";
 open Out,">$fOut";
-print Out "#sampleID\ttotal tags\ttotal depth\taverage depth\n";
-print Out "$sampleID\t$total\t$dep\t",sprintf("%.2f",$dep/$total),"\n";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/ || /^#/);
+	my (undef,undef,$cataid,undef,undef,undef,undef,undef,$seq,undef)=split(/\s+/,$_);
+	print Out ">$cataid\n";
+	print Out $seq,"\n";
+	my @out;
+	for (my $i=0;$i<length($seq);$i++) {
+		if(!exists $variant{$cataid}{$i-1}){
+			push @out," ";
+		}else{
+			push @out,"*";
+		}
+	}
+	print Out join("",@out),"\n";
+}
+close In;
 close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -67,8 +79,9 @@ Description:
 
 Usage:
   Options:
-  -i	<file>	input file name
-  -o	<file>	output file
+  -vcf	<file>	input file name
+  -catalog	<file>	catalog file
+  -out	<file>	output file
   -h         Help
 
 USAGE

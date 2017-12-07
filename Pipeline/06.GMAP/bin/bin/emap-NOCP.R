@@ -43,19 +43,19 @@ plotMap(d,alternate.chrid=TRUE,shift=TRUE)
 dev.off()
 
 pdf("total.rf.pdf")
-plotRF(d,col.scheme="redblue",alternate.chrid=TRUE,mark.diagonal=TRUE)
+plotRF(d,col.scheme="redblue",alternate.chrid=TRUE,mark.diagonal=TRUE,what="rf")
 dev.off()
 chrname<-chrnames(d);
 for(i in chrname){
 	pdf(paste(i,".rf.pdf",sep=""))
-	plotRF(d,chr=i,col.scheme="redblue",alternate.chrid=TRUE)
+	plotRF(d,chr=i,col.scheme="redblue",alternate.chrid=TRUE,what="rf")
 	dev.off()
 }
-pdf("total.geno.pdf");
+pdf("total.geno.pdf",height=900,width=1600);
 plotGeno(d,include.xo=TRUE,horizontal=TRUE,min.sep=2)
 dev.off()
 for(i in chrname){
-	pdf(paste(i,".geno.pdf",sep=""))
+	pdf(paste(i,".geno.pdf",sep=""),height=900,width=1600)
 	plotGeno(d,chr=i,include.xo=TRUE,horizontal=TRUE,min.sep=2)
 	dev.off()
 }

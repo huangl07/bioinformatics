@@ -12,27 +12,25 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"i:s"=>\$tags,
 	"o:s"=>\$fOut,
-	"k:s"=>\$sampleID,
 			) or &USAGE;
-&USAGE unless ($tags and $fOut and $sampleID );
-open In,"zcat $tags.tags.tsv.gz|";
-my $total=0;
-my $dep=0;
+&USAGE unless ($tags and $fOut  );
+open In,"$tags";
+open Out,">$fOut";
+print Out "#sampleID\ttotal tags\ttotal depth\taverage depth\n";
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ || /^#/);
-	my (undef,undef,$cata,undef,undef,undef,$type,undef,undef)=split(/\t/,$_);
-	if ($type =~ /consensus/) {
-		$total++;
-	}elsif ($type =~ /primary/ || $type =~ /secondary/) {
-		$dep++;
+	my ($sample,$ustacks)=split(/\s+/,$_);
+	open STAT,"$ustacks.tags.stat";
+	while (<STAT>) {
+		next if ($_ eq "" || /^$/ || /^#/);
+		print Out $_;
 	}
+	close STAT;
 }
 close In;
-open Out,">$fOut";
-print Out "#sampleID\ttotal tags\ttotal depth\taverage depth\n";
-print Out "$sampleID\t$total\t$dep\t",sprintf("%.2f",$dep/$total),"\n";
 close Out;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

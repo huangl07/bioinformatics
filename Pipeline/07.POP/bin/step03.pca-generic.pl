@@ -23,7 +23,9 @@ $dsh=ABSOLUTE_DIR($dsh);
 $vcf=ABSOLUTE_DIR($vcf);
 open SH,">$dsh/step03.PCA-generic.sh";
 print SH "vcftools --vcf $vcf --plink --out $out/pop && ";
-print SH "plink --file  $out/pop --pca 20 header tabs var-wts --out $out/pop.pca --allow-extra-chr && ";
+print SH "plink --file  $out/pop  --make-bed --out $out/pop && ";
+print SH "gcta --bfile $out/pop --make-grm --out $out/pop && ";
+print SH "gcta --grm $out/pop --pca 20 --out $out/pop.pca && ";
 print SH "Rscript $Bin/bin/pca.R --infile $out/pop.pca.eigenvec --outfile $out/pop.pca --varfile $out/pop.pca.eigenval ";
 if ($gro) {
 	$gro=ABSOLUTE_DIR($gro);

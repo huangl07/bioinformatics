@@ -29,7 +29,8 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$fq)=split(/\s+/,$_);
-	print SH "ustacks -f $fq -o $outdir/ -i $n --deleverage -M 6 -m 2 -p 8 --gapped\n";
+	print SH "ustacks -f $fq -o $outdir/ -i $n --deleverage -M 6 -m 2 -p 8 --gapped && ";
+	print SH "perl $Bin/bin/tag-stat.pl -i $outdir/$sample -o $outdir/$sample.tags.stat -k $sample\n";
 	print Out "$sample\t$outdir/$sample\n";
 	$n++;
 }

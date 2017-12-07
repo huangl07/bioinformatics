@@ -3,26 +3,32 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fmap,$out,$dsh,$popt,$fmarker);
+my ($dmap,$out,$dsh,$popt);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"map:s"=>\$fmap,
-	"marker:s"=>\$fmarker
+	"map:s"=>\$dmap,
 	"out:s"=>\$out,
 	"dsh:s"=>\$dsh,
 	"popt:s"=>\$popt,
 			) or &USAGE;
-&USAGE unless ($fIn and $out and $dsh and $popt);
+&USAGE unless ($dmap and $out and $dsh and $popt);
 mkdir $out if (!-d $out);
 mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
 open In,$fIn;
 open SH,">$dsh/step06.mapEvaluation.sh";
+if ($popt ne "CP") {
+	print SH "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
+	print SH "perl $Bin/bin/map2rqtl.pl -l $out/total.marker -m $out/total.map -o $out/total.csvr";
+	print SH "Rscript $Bin/bin/emap-NOCP.R --mark $out/total.csvr --out $out --pop $popt\n";
+}else{
+
+}
 close In;
 close SH;
 #######################################################################################

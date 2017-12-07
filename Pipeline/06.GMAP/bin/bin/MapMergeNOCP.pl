@@ -3,35 +3,52 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($tags,$fOut,$sampleID);
+my ($dmap,$dOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$tags,
-	"o:s"=>\$fOut,
-	"k:s"=>\$sampleID,
+	"dmap:s"=>\$dmap,
+	"out:s"=>\$dOut,
 			) or &USAGE;
-&USAGE unless ($tags and $fOut and $sampleID );
-open In,"zcat $tags.tags.tsv.gz|";
-my $total=0;
-my $dep=0;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" || /^$/ || /^#/);
-	my (undef,undef,$cata,undef,undef,undef,$type,undef,undef)=split(/\t/,$_);
-	if ($type =~ /consensus/) {
-		$total++;
-	}elsif ($type =~ /primary/ || $type =~ /secondary/) {
-		$dep++;
+&USAGE unless ($dmap and $dOut );
+my @map=glob("$dmap/*.out");
+open Out,">$dOut/total.map";
+foreach my $map (@map) {
+	my $lgID=(split(/\./,basename($map)))[0];
+	$lgID=~s/\D+//g;
+	print Out "group\t$lgID\n";
+	open In,$map;
+	while (<In>) {
+		chomp;
+		next if ($_ eq ""||/^$/ || /^;/ || /group/);
+		print Out $_,"\n";
 	}
+	close In;
 }
-close In;
-open Out,">$fOut";
-print Out "#sampleID\ttotal tags\ttotal depth\taverage depth\n";
-print Out "$sampleID\t$total\t$dep\t",sprintf("%.2f",$dep/$total),"\n";
+close Out;
+my @marker=glob("$dmap/*.marker");
+open Out,">$dOut/total.marker";
+my $head;
+my @out;
+foreach my $marker (@marker) {
+	open In,$marker;
+	while (<In>) {
+		chomp;
+		next if ($_ eq ""||/^$/);
+		my @info=split;
+		next if (scalar @info < 3);
+		if (/MarkerID/) {
+			$head=$_;
+		}else{
+			push @out,$_;
+		}
+	}
+	close In;
+}
+print Out join("\n",$head,@out);
 close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -67,8 +84,8 @@ Description:
 
 Usage:
   Options:
-  -i	<file>	input file name
-  -o	<file>	output file
+  -dmap	<file>	input file name
+  -out	<file>	output file
   -h         Help
 
 USAGE

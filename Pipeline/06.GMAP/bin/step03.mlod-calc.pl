@@ -45,9 +45,9 @@ for (my $i=0;$i<$split;$i++) {
 	}
 	close Out;
 	if ($i == $split -1) {
-		print SH "perl $Bin/bin/calculateMLOD.pl -i $dOut/sub.$i.genotype -o $dOut/sub.$i.mlod \n";
+		print SH "perl $Bin/bin/calculateMLOD.pl -i $dOut/sub.$i.genotype -o $dOut/sub.$i.mlod -s \n";
 	}else{
-		print SH "perl $Bin/bin/calculateMLOD.pl -i $dOut/sub.$i.genotype -o $dOut/sub.$i.mlod -s $only\n";
+		print SH "perl $Bin/bin/calculateMLOD.pl -i $dOut/sub.$i.genotype -o $dOut/sub.$i.mlod -p $only -s\n";
 	}
 }
 close SH;

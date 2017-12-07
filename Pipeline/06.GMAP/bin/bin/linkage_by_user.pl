@@ -95,7 +95,8 @@ Description:
 Usage:
   Options:
   -i	<file>	input file name
-  -o	<file>	split windows sh
+  -o	<file>	output file
+  -s	<file>	group scheme list
   -h         Help
 
 USAGE

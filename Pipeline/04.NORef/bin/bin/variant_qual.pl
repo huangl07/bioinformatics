@@ -14,13 +14,11 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"i:s"=>\$snp_vcf,
     "o1:s"=>\$depth,
-	"o2:s"=>\$qual,
 	) or &USAGE;
-&USAGE unless ($snp_vcf);
+&USAGE unless ($snp_vcf and $depth);
 my @indi;
 open In,$snp_vcf;
 my %depth;
-my %qual;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/ || /^##/);
@@ -35,7 +33,6 @@ while (<In>) {
 		for (my $i=0;$i<@geno;$i++) {
 			my @info=split(/\:/,$geno[$i]);
 			my $dp=-1;
-			my $GQ=-1;
 			for (my $j=0;$j<@info;$j++) {
 				if ($format[$j] eq "AD") {
 					my ($d1,$d2)=split(/\,/,$info[$j]);
@@ -43,14 +40,9 @@ while (<In>) {
 					$dp+=$d1;
 					$dp+=$d2;
 				}
-				if ($format[$j] eq "GQ") {
-					next if ($info[$j] eq ".");
-					$GQ=$info[$j];
-				}
 			}
-			next if ($dp eq "-1" || $GQ eq "-1");
+			next if ($dp eq "-1");
 			$depth{$indi[$i]}{$dp}++;
-			$qual{$indi[$i]}{$GQ}++;
 		}
 	}
 }
@@ -62,16 +54,6 @@ foreach my $sample (sort keys %depth) {
 	foreach my $depth (sort {$a<=>$b} keys %{$depth{$sample}}) {
 		$sum+=$depth{$sample}{$depth};
 		print Out $sample,"\t",$depth,"\t",$sum,"\n";
-	}
-}
-close Out;
-open Out,">$qual";
-print Out "sampleID\tGQvalue\tnum\n";
-my $qualsum=0;
-foreach my $sample (sort keys %qual) {
-	foreach my $depth (sort {$a<=>$b} keys %{$qual{$sample}}) {
-		$qualsum+=$qual{$sample}{$depth};
-		print Out $sample,"\t",$depth,"\t",$qualsum,"\n";
 	}
 }
 close Out;
@@ -94,7 +76,6 @@ Usage:
   Options:
   -i	<file>	input vcf file
   -o1	<file>	output file of Cumulative_DEP.txt,
-  -o2   <file>  output file of Cumulative_GQ.txt,
   -h         Help
 
 USAGE

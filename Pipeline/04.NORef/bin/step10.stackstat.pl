@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$dOut,$dShell,$ulist);
+my ($vcf,$dOut,$dShell,$ulist,$fastqc);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -22,15 +22,18 @@ $dOut=ABSOLUTE_DIR($dOut);
 $vcf=ABSOLUTE_DIR($vcf);
 open SH,">$dShell/step10.stack-stat.sh";
 print SH "perl $Bin/bin/snp.stat.pl -i $vcf -o $dOut/snp.stat -m $dOut/snp.matrix && ";
-print SH "Rscript $Bin/bin/diff_matrix.R --m $dOut/snp.matrix --o $dOut/snp.diff\n";
-print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/snp.depth -o2 $dOut/snp.GQ &&";
-print SH "Rscript $Bin/bin/variant_qual.R --GQ $dOut/snp.GQ --dep $dOut/snp.depth --o $dOut/snp.qual --str SNP\n";
-print SH "perl $Bin/bin/tag-stat.pl -i $ulist -o $dOut/tags.stat\n";
+print SH "Rscript $Bin/bin/diff_matrix.R --i $dOut/snp.matrix --o $dOut/snp.diff\n";
+print SH "perl $Bin/bin/variant_qual.pl -i $vcf -o1 $dOut/snp.depth &&";
+print SH "Rscript $Bin/bin/snp_qual.R --dep $dOut/snp.depth --o $dOut/snp.qual \n";
+print SH "perl $Bin/bin/merge.pl -i $ulist -o $dOut/tag.stat\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=20G --CPU 1 --Nodes 1 $dShell/step10.stack-stat.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";
+
+
+
 
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

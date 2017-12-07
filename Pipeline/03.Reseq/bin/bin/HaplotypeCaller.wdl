@@ -25,6 +25,7 @@ task haplotypeCaller {
 		-filterNoBases \
 		-filterMBQ \
 		-filterRNC \
+		-dontUseSoftClippedBases \
 		-log ${workdir}/${sampleName}.gvcf.log
   }
   output {
