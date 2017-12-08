@@ -1,4 +1,5 @@
 library('getopt');
+library('ASMap')
 options(bitmapType='cairo')
 spec = matrix(c(
 	'mark','m',1,'character',
@@ -23,7 +24,6 @@ Usage:
 	q(status=1);
 }
 times<-Sys.time()
-library('qtl');
 if ( !is.null(opt$help) ) { print_usage(spec) }
 if ( is.null(opt$mark) ) { print_usage(spec) }
 if ( is.null(opt$pop) ) { print_usage(spec) }
@@ -36,21 +36,26 @@ setwd(opt$out)
 d<-jittermap(d)
 d<-est.rf(d)
 
+pdf("total.lg.pdf");
+plot(d)
+dev.off()
+png("total.lg.png");
+plot(d)
+dev.off()
+
 pdf("total.rf.pdf")
-plotRF(d,col.scheme="redblue",alternate.chrid=TRUE,mark.diagonal=TRUE,what="rf")
+heatMap(d,lmax=50)
 dev.off()
 png("total.rf.png")
-plotRF(d,col.scheme="redblue",alternate.chrid=TRUE,mark.diagonal=TRUE,what="rf")
+heatMap(d,lmax=50)
 dev.off()
-chrname<-chrnames(d);
 for(i in chrname){
 	pdf(paste(i,".rf.pdf",sep=""))
-	plotRF(d,chr=i,col.scheme="redblue",alternate.chrid=TRUE,what="rf")
+	heatMap(d,chr=i,lmax=50)
 	dev.off()
 	png(paste(i,".rf.png",sep=""))
-	plotRF(d,chr=i,col.scheme="redblue",alternate.chrid=TRUE,what="rf")
+	heatMap(d,chr=i,lmax=50)
 	dev.off()
-
 }
 pdf("total.geno.pdf",height=900,width=1600);
 plotGeno(d,include.xo=TRUE,horizontal=TRUE,min.sep=2)
@@ -58,7 +63,6 @@ dev.off()
 pdf("total.geno.png",height=900,width=1600);
 plotGeno(d,include.xo=TRUE,horizontal=TRUE,min.sep=2)
 dev.off()
-
 for(i in chrname){
 	pdf(paste(i,".geno.pdf",sep=""),height=900,width=1600)
 	plotGeno(d,chr=i,include.xo=TRUE,horizontal=TRUE,min.sep=2)
@@ -66,10 +70,13 @@ for(i in chrname){
 	png(paste(i,".geno.png",sep=""),height=900,width=1600)
 	plotGeno(d,chr=i,include.xo=TRUE,horizontal=TRUE,min.sep=2)
 	dev.off()
-
 }
-
-
+png("total.maker.png")
+profileMark(d, stat.type = c("seg.dist", "miss", "recomb"),layout = c(1,3),type="l",cex=0.7,byChr=TRUE)
+dev.off()
+pdf("total.marker.pdf")
+profileMark(d, stat.type = c("seg.dist", "miss", "recomb"),layout = c(1,3),type="l",cex=0.7,byChr=TRUE)
+dev.off()
 escaptime=Sys.time()-times;
 print("Done!\n")
 print(escaptime)

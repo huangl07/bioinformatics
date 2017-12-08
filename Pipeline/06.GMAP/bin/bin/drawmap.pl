@@ -3,34 +3,45 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dmap,$out,$dsh,$popt);
+my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
+use SVG;
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"dmap:s"=>\$dmap,
-	"out:s"=>\$out,
-	"dsh:s"=>\$dsh,
-	"popt:s"=>\$popt,
+	"i:s"=>\$fIn,
+	"o:s"=>\$fOut,
 			) or &USAGE;
-&USAGE unless ($dmap and $out and $dsh and $popt);
-mkdir $out if (!-d $out);
-mkdir $dsh if (!-d $dsh);
-$out=ABSOLUTE_DIR($out);
-$dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step06.mapEvaluation.sh";
-if ($popt ne "CP") {
-	$popt=lc($popt);
-	print SH "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
-	print SH "perl $Bin/bin/map2rqtl.pl -l $out/total.marker -m $out/total.map -o $out/total.csvr";
-	print SH "Rscript $Bin/bin/emap-NOCP.R --mark $out/total.csvr --out $out --pop $popt\n";
-}else{
-	print SH "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
-	print SH "Rscript $Bin/bin/emap-CP.R --mark $out/total --out $out --pop $popt\n";
+&USAGE unless ($fIn and $fOut);
+open In,$fIn;
+my %group;
+my $id;
+my %order;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	if (/group/) {
+		$id=(split(/\s+/,$_))[-1];
+		my $oid=$id;
+		$oid=~s/\D*//g;
+		$order{$oid}=$id;
+	}else{
+		my ($markerID,$pos)=split(/\s+/,$_);
+		$group{$id}{$pos}++;
+	}
 }
-close SH;
+close In;
+my $svg= SVG->new( width => 1600, height => 900);
+my $Row=6;
+my $Col=scalar keys %group{$id}/$Row;
+
+for (my $i=0;$i<$Row;$i++) {
+	for (my $; ;) {
+	}
+}
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -65,10 +76,8 @@ Description:
 
 Usage:
   Options:
-  -dmap	<file>	input dmap file
-  -out	<dir>	output dir
-  -dsh	<dir>	worksh dir
-  -popt	<srt>	population type
+  -i	<file>	input file name
+  -o	<file>	split windows sh
   -h         Help
 
 USAGE
