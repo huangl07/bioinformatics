@@ -86,7 +86,7 @@ if ($popt eq "CP") {
 	open SH,">$dsh/step05-$cycle.2.mapping.sh";
 	open List,">$out/marker.list";
 	foreach my $lg (sort keys %lg) {
-		print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less}sort|uniq > $out/pwd/$lg.pwd.detail && ";
+		print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pwd/$lg.pwd.detail && ";
 		my $loc="$out/$lg.loc";
 		if ($cycle == 1) {
 			print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";

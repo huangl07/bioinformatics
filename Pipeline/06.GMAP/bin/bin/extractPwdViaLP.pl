@@ -89,17 +89,17 @@ my $pair_num = 0;
 
 open (IN,"<",$fDetail);
 open (OUT,">","$dOut/$fKey.pwd");
-
+my %output;
 while (<IN>) {
 
 	chomp;
 	next if (/^$/ or /^;/);
 
 	my ($marker1,$marker2,$type1,$type2,$integrity,$recCC,$lodCC,$fiCC,$recCR,$lodCR,$fiCR,$recRC,$lodRC,$fiRC,$recRR,$lodRR,$fiRR,$mLOD) = split;
-
 	my ($p11,$p12,$m11,$m12) = $type1=~/<?(.)(.)x(.)(.)>?/;
 	my ($p21,$p22,$m21,$m22) = $type2=~/<?(.)(.)x(.)(.)>?/;
-
+	next if (exists $output{$marker1}{$marker2});
+	next if (exists $output{$marker2}{$marker1});
 	next if (($p11 eq $p12 and $m11 eq $m12) or ($p21 eq $p22 and $m21 eq $m22) or ($p11 eq $p12 and $m21 eq $m22) or ($p21 eq $p22 and $m11 eq $m12)) ;
 
 	if (exists $pair_lp{$marker1}{$marker2}) {
@@ -133,6 +133,7 @@ while (<IN>) {
 			print OUT join("\t",($marker1,$marker2,$recRR,$mLOD,$lodRR,$fiRR,$integrity,'RR')),"\n";
 		}
 	}
+	$output{$marker1}{$marker2}=1;
 }
 
 close (IN);
