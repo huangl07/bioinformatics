@@ -11,9 +11,21 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"dmap:s"=>\$dmap,
+	"marker:s"=>\$marker,
 	"out:s"=>\$dOut,
 			) or &USAGE;
-&USAGE unless ($dmap and $dOut );
+&USAGE unless ($dmap and $dOut and $marker);
+open In,$markerID;
+my @Indi;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	if (/MarkerID/) {
+		my (undef,undef,@indi)=split;
+		push @Indi,@indi;
+	}
+}
+close In;
 my @map=glob("$dmap/*.sexAver.map");
 open Out,">$dOut/total.sexAver.map";
 foreach my $map (@map) {
@@ -92,9 +104,9 @@ open Out,">$dOut/total.trt";
 print Out "ntrt=1\n";
 print Out "nind=$nind\n";
 print Out "miss=*\n";
-print Out "T1\n";
+print Out "Genotype\n";
 for (my $i=0;$i<$nind;$i++) {
-	print Out "1\n";
+	print Out "$Indi[$i]\n";
 }
 close Out;
 #######################################################################################
@@ -133,6 +145,7 @@ Usage:
   Options:
   -dmap	<file>	input file name
   -out	<file>	output file
+  -marker	<file>	input marker file
   -h         Help
 
 USAGE

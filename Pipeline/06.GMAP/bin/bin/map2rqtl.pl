@@ -43,8 +43,7 @@ while (<In>) {
 		(undef,$head)=split(/\s+/,$_,2);
 		$head=~s/\t/,/g;
 		my @head=split(/\,/,$head);
-		my @trt=split(//,"1" x scalar @head);
-		print Out "trait,,,",join(",",@trt),"\n";
+		print Out "Genotype,,,",join(",",@head),"\n";
 	}else{
 		my ($id,$info)=split(/\s+/,$_,2);
 		$info=~s/\t/,/g;
