@@ -24,6 +24,8 @@ Usage:
 }
 times<-Sys.time()
 library('qtl');
+library('ASMap');
+
 if ( !is.null(opt$help) ) { print_usage(spec) }
 if ( is.null(opt$mark) ) { print_usage(spec) }
 if ( is.null(opt$pop) ) { print_usage(spec) }
