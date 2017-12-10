@@ -79,6 +79,7 @@ if(opt$pop == "cp"){
 	png("heatMap.female.png")
 	heatMap(d2,lmax=50)
 	dev.off()
+	chrname<-chrnames(d);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.sexAver.pdf",sep=""))
 		heatMap(d,chr=i,lmax=50)
@@ -87,6 +88,8 @@ if(opt$pop == "cp"){
 		heatMap(d,chr=i,lmax=50)
 		dev.off()
 	}
+	chrname<-chrnames(d1);
+
 	for(i in chrname){
 		pdf(paste(i,".heatMap.male.pdf",sep=""))
 		heatMap(d1,chr=i,lmax=50)
@@ -95,6 +98,8 @@ if(opt$pop == "cp"){
 		heatMap(d1,chr=i,lmax=50)
 		dev.off()
 	}
+	chrname<-chrnames(d2);
+
 	for(i in chrname){
 		pdf(paste(i,".heatMap.female.pdf",sep=""))
 		heatMap(d2,chr=i,lmax=50)
@@ -104,7 +109,7 @@ if(opt$pop == "cp"){
 		dev.off()
 	}
 }else{
-	d<-read.cross(file=paste(opt$mark,"csv",sep="."),format="csvsr",crosstype=opt$pop)
+	d<-read.cross(file=paste(opt$mark,"csv",sep="."),format="csvr",crosstype=opt$pop)
 	setwd(opt$out)
 	d<-jittermap(d)
 	d<-est.rf(d)
@@ -114,17 +119,18 @@ if(opt$pop == "cp"){
 	png("total.lg.png");
 	plotMap(d,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
-	pdf("total.rf.pdf")
+	pdf("total.heatMap.pdf")
 	heatMap(d,lmax=50)
 	dev.off()
-	png("total.rf.png")
+	png("total.heatMap.png")
 	heatMap(d,lmax=50)
 	dev.off()
+	chrname<-chrnames(d);
 	for(i in chrname){
-		pdf(paste(i,".rf.pdf",sep=""))
+		pdf(paste(i,".heatMap.pdf",sep=""))
 		heatMap(d,chr=i,lmax=50)
 		dev.off()
-		png(paste(i,".rf.png",sep=""))
+		png(paste(i,".heatMap.png",sep=""))
 		heatMap(d,chr=i,lmax=50)
 		dev.off()
 	}

@@ -25,14 +25,19 @@ foreach my $map (@map) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
 		print Out $_,"\n";
+		my ($id,$pos)=split(/\t/,$_);
+		$Marker{$id}=join(",",$$lgID,$pos);
 	}
 	close In;
 }
 close Out;
 my @marker=glob("$dmap/*.marker");
 open Out,">$dOut/total.marker";
+open CSV,">$dOut/total.csv";
 my $head;
+my $chead;
 my @out;
+my @cout;
 foreach my $marker (@marker) {
 	open In,$marker;
 	while (<In>) {
@@ -42,14 +47,26 @@ foreach my $marker (@marker) {
 		next if (scalar @info < 3);
 		if (/MarkerID/) {
 			$head=$_;
+			(undef,$head)=split(/\s+/,$_,2);
+			$head=~s/\t/,/g;
+			my @head=split(/\,/,$head);
+			$chead="Genotype,,,".join(",",@head);
 		}else{
 			push @out,$_;
+			my ($id,$info)=split(/\s+/,$_,2);
+			$info=~s/\t/,/g;
+			$info=~s/X/H/g;
+			$info=~s/U/-/g;
+			push @cout join(",",$id,$Marker{$id},$info),"\n"
+
 		}
 	}
 	close In;
 }
 print Out join("\n",$head,@out);
 close Out;
+print Out join("\n",$chead,@cout);
+close CSV;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
