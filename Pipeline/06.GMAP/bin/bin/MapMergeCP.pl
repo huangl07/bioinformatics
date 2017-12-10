@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dmap,$dOut);
+my ($dmap,$dOut,$marker);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -15,7 +15,7 @@ GetOptions(
 	"out:s"=>\$dOut,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut and $marker);
-open In,$markerID;
+open In,$marker;
 my @Indi;
 while (<In>) {
 	chomp;
@@ -23,6 +23,7 @@ while (<In>) {
 	if (/MarkerID/) {
 		my (undef,undef,@indi)=split;
 		push @Indi,@indi;
+		last;
 	}
 }
 close In;
@@ -31,6 +32,9 @@ open Out,">$dOut/total.sexAver.map";
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
+	my $nloc=`wc -l $map`;
+	$nloc=(split(/\s+/,$nloc))[0];
+	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
 	while (<In>) {
@@ -46,6 +50,9 @@ open Out,">$dOut/total.male.map";
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
+	my $nloc=`wc -l $map`;
+	$nloc=(split(/\s+/,$nloc))[0];
+	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
 	while (<In>) {
@@ -61,6 +68,9 @@ open Out,">$dOut/total.female.map";
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
+	my $nloc=`wc -l $map`;
+	$nloc=(split(/\s+/,$nloc))[0];
+	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
 	while (<In>) {

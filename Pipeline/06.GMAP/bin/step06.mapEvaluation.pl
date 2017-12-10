@@ -24,11 +24,12 @@ open SH,">$dsh/step06.mapEvaluation.sh";
 if ($popt ne "CP") {
 	$popt=lc($popt);
 	print SH "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
-	print SH "perl $Bin/bin/map2rqtl.pl -l $out/total.marker -m $out/total.map -o $out/total.csvr";
-	print SH "Rscript $Bin/bin/emap-NOCP.R --mark $out/total.csvr --out $out --pop $popt\n";
+	print SH "perl $Bin/bin/mapEvalutation.pl -i $out/total.map -o $out/total.mapstat && ";
 }else{
 	print SH "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
-	print SH "Rscript $Bin/bin/emap-CP.R --mark $out/total --out $out --pop $popt\n";
+	print SH "perl $Bin/bin/mapEvalutation.pl -i $out/total.sexAver.map -o $out/sexAver.mapstat && ";
+	print SH "perl $Bin/bin/mapEvalutation.pl -i $out/total.male.map -o $out/male.mapstat && ";
+	print SH "perl $Bin/bin/mapEvalutation.pl -i $out/total.female.map -o $out/female.mapstat && ";
 }
 close SH;
 #######################################################################################
