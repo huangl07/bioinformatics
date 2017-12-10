@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-java -jar $bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -R $1 -I $2 -o $3.intervals
-java -jar $bin/GenomeAnalysisTK.jar -T IndelRealigner -R $1 -I $2 -targetIntervals $3.intervals -o $3.realign.bam

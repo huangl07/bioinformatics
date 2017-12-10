@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-java -jar $bin/GenomeAnalysisTK.jar -T HaplotypeCaller -R $1 -I $2 --emitRefConfidence GVCF -o $3.g.vcf  -stand_emit_conf 10  -stand_call_conf 30 --genotyping_mode DISCOVERY
-java -jar $bin/GenomeAnalysisTK.jar -T GenotypeGVCFs -R $1 -V $3.g.vcf -o $3.vcf

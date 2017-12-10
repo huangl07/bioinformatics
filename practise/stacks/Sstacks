@@ -1,2 +1,0 @@
-#!/usr/bin/bash
-sstacks -b 1 -c $1 -s $2 -p 15

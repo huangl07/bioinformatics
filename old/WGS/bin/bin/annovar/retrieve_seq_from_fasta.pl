@@ -1,1 +1,0 @@
-/mnt/ilustre/users//long.huang/Software/Annovar/annovar/retrieve_seq_from_fasta.pl

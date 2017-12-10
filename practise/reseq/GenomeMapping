@@ -1,4 +1,0 @@
-#!/usr/bin/bash
-$bin/bwa mem -M -a -t 4  $1 $2 $3 |$bin/samtools view -bS - > $4.bam
-java -jar $bin/picard.jar AddOrReplaceReadGroups I=$4.bam O=$4.sort.bam SORT_ORDER=coordinate ID=1 LB=1 PL=illumina PU=barcode SM=$4
-java -jar $bin/picard.jar MarkDuplicates I=$4.sort.bam O=$4.mkdup.bam METRIC_FILE=$4.metrics.txt

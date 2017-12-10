@@ -1,2 +1,0 @@
-#!/usr/bin/bash
-populations -P $1 -b 1 --vcf -O $2 -p 2 -m 2 -t 8

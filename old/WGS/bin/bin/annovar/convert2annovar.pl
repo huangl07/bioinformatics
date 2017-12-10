@@ -1,1 +1,0 @@
-/mnt/ilustre/users//long.huang/Software/Annovar/annovar/convert2annovar.pl

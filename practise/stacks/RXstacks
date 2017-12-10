@@ -1,2 +1,0 @@
-#!/usr/bin/bash
-rxstacks -b 1 -P $1 -o $2 --conf_lim 0.25 --prune_haplo --model_type bounded --bound_high 0.1 --lnl_lim -10.0 -t 8

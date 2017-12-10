@@ -1,5 +1,0 @@
-#!/usr/bin/bash
-
-$bin/bwa index $1
-$bin/samtools faidx $1
-java -jar $bin/picard.jar CreateSequenceDictionary R=$1 
