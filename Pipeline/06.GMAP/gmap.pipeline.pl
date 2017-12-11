@@ -180,7 +180,12 @@ if ($step == 10) {
 	print Log "########################################\n";
 	print Log "evalutaion\n",my $time=time();
 	print Log "########################################\n";
-	my $job="perl $Bin/bin/step06.mapEvaluation.pl -mapdir $out/09.map-cycle5 -popt $popt -out $out/10.mapEvalue \n";
+	my $marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
+	my $dmap=ABSOLUTE_DIR("$out/09.map-cycle5")
+	my $job="perl $Bin/bin/step06.mapEvaluation.pl -dmap $dmap -popt $popt -out $out/10.mapEvalue --mark $mark -dsh $dsh  ";
+	if ($ref) {
+		$job.="-ref \n";
+	}
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

@@ -16,6 +16,7 @@ GetOptions(
 &USAGE unless ($dmap and $dOut );
 my @map=glob("$dmap/*.out");
 open Out,">$dOut/total.map";
+my %Marker;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -26,7 +27,7 @@ foreach my $map (@map) {
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
 		print Out $_,"\n";
 		my ($id,$pos)=split(/\t/,$_);
-		$Marker{$id}=join(",",$$lgID,$pos);
+		$Marker{$id}=join(",",$lgID,$pos);
 	}
 	close In;
 }
@@ -57,7 +58,7 @@ foreach my $marker (@marker) {
 			$info=~s/\t/,/g;
 			$info=~s/X/H/g;
 			$info=~s/U/-/g;
-			push @cout join(",",$id,$Marker{$id},$info),"\n"
+			push @cout,join(",",$id,$Marker{$id},$info);
 
 		}
 	}
@@ -65,7 +66,7 @@ foreach my $marker (@marker) {
 }
 print Out join("\n",$head,@out);
 close Out;
-print Out join("\n",$chead,@cout);
+print CSV join("\n",$chead,@cout);
 close CSV;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

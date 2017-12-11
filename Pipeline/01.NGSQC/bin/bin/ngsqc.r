@@ -1,0 +1,1 @@
+/mnt/ilustre/users/long.huang/Pipeline/v2.0/01_Quality_Control/v1.3/bin/bin/ngsqc.r

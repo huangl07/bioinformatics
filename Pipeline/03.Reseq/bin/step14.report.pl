@@ -183,6 +183,7 @@ if (scalar @svstat > 0) {
 		close In;
 	}
 	open Out,">$dOut/Table/3-12.xls";
+	print Out "##format",join(":","total":"gene"),"\n";
 	print Out "#type",join("\t",sort keys %sample),"\n";
 		foreach my $type (sort keys %sv) {
 			my @out;
@@ -191,7 +192,7 @@ if (scalar @svstat > 0) {
 				$sv{$type}{$id}{total}||=0;
 				$sv{$type}{$id}{gene}||=0;
 				$sv{$type}{$id}{alen}||=0;
-				push @out,join(",",$sv{$type}{$id}{total},$sv{$type}{$id}{gene},$sv{$type}{$id}{alen});
+				push @out,join(":",$sv{$type}{$id}{total},$sv{$type}{$id}{gene});
 			}
 			print Out join("\t",@out),"\n";
 		}
@@ -216,6 +217,7 @@ if (scalar @svstat > 0) {
 		close In;
 	}
 	open Out,">$dOut/Table/3-13.xls";
+	print Out "##format",join(":","total":"gene"),"\n";
 	print Out "#type",join("\t",sort keys %sample),"\n";
 		foreach my $type (sort keys %cnv) {
 			my @out;
@@ -223,8 +225,7 @@ if (scalar @svstat > 0) {
 			foreach my $id (sort keys %sample) {
 				$cnv{$type}{$id}{total}||=0;
 				$cnv{$type}{$id}{gene}||=0;
-				$cnv{$type}{$id}{alen}||=0;
-				push @out,join(",",$cnv{$type}{$id}{total},$cnv{$type}{$id}{gene},$cnv{$type}{$id}{alen});
+				push @out,join(":",$cnv{$type}{$id}{total},$cnv{$type}{$id}{gene});
 			}
 			print Out join("\t",@out),"\n";
 		}

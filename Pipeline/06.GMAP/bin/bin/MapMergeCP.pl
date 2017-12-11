@@ -29,6 +29,7 @@ while (<In>) {
 close In;
 my @map=glob("$dmap/*.sexAver.map");
 open Out,">$dOut/total.sexAver.map";
+my %info;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -41,12 +42,16 @@ foreach my $map (@map) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
 		print Out $_,"\n";
+		my ($id,$pos)=split(/\s+/,$_);
+		$info{$id}{lgID}=$lgID;
+		$info{$id}{pos}=$pos;
 	}
 	close In;
 }
 close Out;
 @map=glob("$dmap/*.male.map");
 open Out,">$dOut/total.male.map";
+my %maleinfo;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -108,7 +113,45 @@ foreach my $marker (@marker) {
 	}
 	close In;
 }
+open Out,">$dOut/total.loc";
 print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out);
+close Out;
+
+ @marker=glob("$dmap/*.correct.phase");
+ @out=();
+open Out,">$dOut/total.sexAver.phase";
+open Male,">$dOut/total.male.phase";
+open Female,">$dOut/total.female.phase";
+print Out join(",","Genotype","","",@Indi),"\n";
+print Male join(",","Genotype","","",@Indi),"\n";
+print Female join(",","Genotype","","",@Indi),"\n";
+foreach my $marker (@marker) {
+	open In,$marker;
+	while (<In>) {
+		chomp;
+		next if ($_ eq ""||/^$/);
+		my ($id,$type,$phase,@info)=split(/\s+/,$_);
+		next if ($type eq "hkxhk");
+		my @out1;
+		my @out2;
+		push @out1,join(",",$id,$info{$id}{lgID},$info{$id}{pos});
+		push @out2,join(",",$id,$info{$id}{lgID},$info{$id}{pos});
+		for (my $i=0;$i<@info;$i++) {
+			my ($p1,$p2)=split(//,$info[$i]);
+			push @out1,$p1;
+			push @out2,$p2;
+		}
+		print Out join(",",@out1),"\n";
+		print Out join(",",@out2),"\n";
+		if ($type ne "nnxnp") {
+			print Male join(",",@out1),"\n";
+		}
+		if ($type ne "lmxll") {
+			print Female join(",",@out1),"\n";
+		}
+	}
+	close In;
+}
 close Out;
 open Out,">$dOut/total.trt";
 print Out "ntrt=1\n";
