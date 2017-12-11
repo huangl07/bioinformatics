@@ -33,7 +33,7 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$gvcf)=split(/\s+/,$_);
-	if (!-f $gvcf) {
+	if (!-f $gvcf || !-f "$gvcf.idx") {
 		die "check $gvcf!";
 	}
 	$vcf .=" -V $gvcf ";

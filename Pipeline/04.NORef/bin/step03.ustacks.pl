@@ -25,6 +25,7 @@ open SH,">$dsh/step03.ustacks.sh";
 open Out,">$outdir/ustacks.list";
 open In,$fqlist;
 my $n=0;
+my $mem=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -36,7 +37,7 @@ while (<In>) {
 }
 close In;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=10G --CPU 8 --maxjob $proc $dsh/step03.ustacks.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=100G --CPU 8 --maxjob $proc $dsh/step03.ustacks.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";
