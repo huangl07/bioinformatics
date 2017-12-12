@@ -26,6 +26,36 @@ $ref=ABSOLUTE_DIR($ref);
 $dict=ABSOLUTE_DIR($dict);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
+open SH,">$dShell/08.gvcf-typing2.sh";
+
+open In,$dict;
+my %hand;
+my $nchr=0;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my $id=(split(/\t/,$_))[1];
+	$nchr++;
+	my $hand=$nchr % 25;
+	if (!exists $hand{$hand}) {
+		open $hand{$hand},">$out/$hand.internal";
+		open Out,">$dOut/$hand.json\n";
+		print Out "{\n";
+		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Refdict\": \"$dict\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Refindex\": \"$ref.fai\",\n";
+		print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
+		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$$out/$hand.internal\"\n;
+		print Out "}\n";
+		close Out;
+		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.json && ";
+	}
+	print {$hand{$hand}} $id,"\n";
+}
+close In;
+close SH;
+
 open In,$gvcflist;
 open List,">$dOut/total.gvcf.list";
 open SH,">$dShell/08.gvcf-typing1.sh";
@@ -61,19 +91,6 @@ while (<In>) {
 close List;
 close SH;
 close Out;
-open Out,">$dOut/Gvcftyping.json\n";
-print Out "{\n";
-print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
-print Out "\"Gvcftyping.gvcftyping.Refdict\": \"$dict\",\n";
-print Out "\"Gvcftyping.gvcftyping.Refindex\": \"$ref.fai\",\n";
-print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
-print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\"\n";
-print Out "}\n";
-close Out;
-open SH,">$dShell/08.gvcf-typing2.sh";
-print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/Gvcftyping.json && ";
-print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
-close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing1.sh";
 #`$job`;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing2.sh";
