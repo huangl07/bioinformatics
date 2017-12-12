@@ -1,9 +1,13 @@
 #!/usr/bin/env Rscript
 library('getopt');
+library(ggplot2)
+library(grid)
+
 options(bitmapType='cairo')
 spec = matrix(c(
 	'input','i',0,'character',
 	'output','o',0,'character',
+	'top','t',0,'character',
 	'help','m',0,'logical'
 	), byrow=TRUE, ncol=4);
 opt = getopt(spec);
@@ -13,7 +17,8 @@ print_usage <- function(spec=NULL){
 	cat("	
 Usage:
 	--input	the input  file
-	--output	the out file 
+	--output	the out file
+	--top the top file
 	--help		usage
 \n")
 	q(status=1);
@@ -31,21 +36,20 @@ qvalue<-p.adjust(pvalue,method="fdr")
 outd<-data.frame(id=data$id,des=data$description,eff=data$k,total=data$n,pvalue=1-pvalue,qvalue=1-qvalue)
 outd<-outd[order(outd$eff,decreasing=T),]
 write.table(file=paste(opt$output,"detail",sep="."),outd,row.name=FALSE);
-order<-order(outd$qvalue)[0:20]
-draw<-data.frame(id=data$id,des=data$description,eff=data$k/data$n,total=data$M/data$N,pvalue=1-pvalue,qvalue=1-qvalue)
-ymax=max(max(draw$eff[order]),max(draw$total[order]))
-
-pdf(paste(opt$output,"pdf",sep="."))
-barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"),main=("Enrichment Analysis"))
-box()
-dev.off()
-png(paste(opt$output,"png",sep="."))
-barplot(rbind(draw$eff[order],draw$total[order]),col=c("red","blue"),beside=TRUE,names.arg=outd$id[order],las=2,ylim=c(0,ymax/0.8),legend=c("eff","total"),main=("Enrichment Analysis"))
-box()
-dev.off()
-
+draw<-data.frame(id=outd$id,des=outd$des,eff=outd$eff)
+if(!is.null(opt$top)){
+	draw<-data.frame(id=outd$id[1:20],des=outd$des[1:20],eff=outd$eff[1:20])
+}
+draw$labels=paste(draw$id,draw$des,sep=":")
+p<-ggplot(draw,aes(x=labels,y=eff))+ theme_bw()
+p<-p+geom_bar(stat="identity",aes(fill=labels),width=0.5)
+p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="NONE")
+p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")+coord_flip()
+ggsave(filename=paste(opt$output,"pdf",sep="."),p,height=9,width=16,device="pdf")
+ggsave(filename=paste(opt$output,"png",sep="."),p,height=9,width=16,device="png")
 
 
 escaptime=Sys.time()-times;
+
 print("Done!")
 print(escaptime)

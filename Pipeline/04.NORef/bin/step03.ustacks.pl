@@ -25,19 +25,30 @@ open SH,">$dsh/step03.ustacks.sh";
 open Out,">$outdir/ustacks.list";
 open In,$fqlist;
 my $n=0;
-my $mem=0;
+my $max=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($sample,$fq)=split(/\s+/,$_);
-	print SH "ustacks -f $fq -o $outdir/ -i $n --deleverage -M 6 -m 2 -p 8 --gapped && ";
+	my $mem=`du -s $fq`;
+	if ($mem > $max) {
+		$max=$mem;
+	}
+	print SH "ustacks -f $fq -o $outdir/ -i $n -M 6 -m 2 -p 8 --gapped --deleverage && ";
 	print SH "perl $Bin/bin/tag-stat.pl -i $outdir/$sample -o $outdir/$sample.tags.stat -k $sample\n";
 	print Out "$sample\t$outdir/$sample\n";
 	$n++;
 }
 close In;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=100G --CPU 8 --maxjob $proc $dsh/step03.ustacks.sh";
+$max=($max/1000000);
+if ($max < 1) {
+	$max="3G";
+}else{
+	$max=$max*10;
+	$max.="G";
+}
+my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=$max --CPU 8 --maxjob $proc $dsh/step03.ustacks.sh";
 print "$job\n";
 `$job`;
 print "$job\tdone!\n";
