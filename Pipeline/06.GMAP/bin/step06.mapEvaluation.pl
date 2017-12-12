@@ -29,23 +29,23 @@ open SH2,">$dsh/step06.mapEvaluation2.sh";
 if ($popt ne "CP") {
 	$popt=lc($popt);
 	print SH1 "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
-	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.map -o $out/sexAver.mapstat \n ";
-	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/total --pop $popt \n";
-	print SH2 "Rscript $Bin/bin/drawbinNOCP.R --mark $out/total.csv  --out $out/total.bin \n";
+	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.map -o $out/total.mapstat \n ";
+	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop $popt \n";
+	print SH2 "Rscript $Bin/bin/drawbinNOCP.R --mark $out/total.csv  --out $out/fig/total.bin \n";
 	if ($ref) {
-		print SH2 "Rscript $Bin/bin/drawAligmentRalationMap.pl -m $out/total.map --out $out/ -k total.phy\n";
+		print SH2 "perl $Bin/bin/drawAligmentRalationMap.pl -m $out/total.map -o $out/fig/ -k total.phy\n";
 	}
 }else{
 	print SH1 "perl $Bin/bin/MapMergeCP.pl -dmap $dmap -o $out --mark $mark && ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.sexAver.map -o $out/sexAver.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.male.map -o $out/male.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.female.map -o $out/female.mapstat \n ";
-	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/total --pop cp \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/total.sexAver.bin  \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/total.male.bin \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/total.female.bin \n";
+	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop cp \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/fig/total.female.bin \n";
 	if ($ref) {
-		print SH2 "Rscript $Bin/bin/drawAligmentRalationMap.pl -m $out/total.sexAver.map --out $out/ -k total.phy\n";
+		print SH2 "Rscript $Bin/bin/drawAligmentRalationMap.pl -m $out/total.sexAver.map --out $out/fig/ -k total.phy\n";
 	}
 }
 close SH1;
