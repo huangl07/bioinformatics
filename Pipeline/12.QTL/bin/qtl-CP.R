@@ -109,13 +109,13 @@ for(i in 1:length(phe.name)){
 	plot(qtl)
 	dev.off()
 	pdf(paste(phe.name[i],".PXG.pdf",sep=""))
-	plotPXG(d,data$marker)
+	plotPXG(d,data$marker,pheno.col=i)
 	dev.off()
 	png(paste(phe.name[i],".qtl.png",sep=""))
 	plot(qtl)
 	dev.off()
 	png(paste(phe.name[i],".PXG.png",sep=""))
-	plotPXG(d,data$marker)
+	plotPXG(d,data$marker,pheno.col=i)
 	dev.off()
 
 }
