@@ -45,7 +45,7 @@ if (scalar @bid == 1) {
 	print SH "perl $Bin/bin/region-vcf.pl -i $vcf -o $out/region.threshold.vcf -r $out/sliding-win.threshold.select && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/fig/region.threshold.gene.kegg.stat --top 1 && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat --output $out/fig/region.threshold.gene.go.stat --top 1&& ";
-	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/fig/region.threshold.gene.eggnog.stat && ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/fig/region.threshold.gene.eggnog.stat --eggnog && ";
 
 }else{
 	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt ";
@@ -61,7 +61,7 @@ if (scalar @bid == 1) {
 	print SH "perl $Bin/bin/region-vcf.pl -i $vcf -o $out/region.threshold.vcf -r $out/sliding-win.threshold.select && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/region.threshold.gene.kegg.stat --top 1 && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat --output $out/region.threshold.gene.go.stat --top 1&& ";
-	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/region.threshold.gene.eggnog.stat && ";
+	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/region.threshold.gene.eggnog.stat --eggnog&& ";
 }
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=20G --CPU 1 $dsh/bsa.sh";
 `$job`;

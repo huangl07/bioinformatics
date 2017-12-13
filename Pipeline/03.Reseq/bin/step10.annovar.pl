@@ -50,7 +50,7 @@ print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx50G -jar /mnt/ilustre/users/dna/.e
 print SH "perl $Bin/bin/anno-count.pl -snp $out/snp.anno.genes.txt -indel $out/indel.anno.genes.txt -anno $anno -out $out/pop && ";
 print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.kegg.stat --output $out/pop.kegg --top 1&& ";
 print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.go.stat --output $out/pop.go --top 1 && ";
-print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.eggnog.stat --output $out/pop.eggnog && ";
+print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.eggnog.stat --output $out/pop.eggnog --eggnog && ";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Resource mem=50G -CPU 1 --maxjob $proc $dsh/10.annovar1.sh";
 `$job`;
