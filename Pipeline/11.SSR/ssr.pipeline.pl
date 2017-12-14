@@ -37,7 +37,8 @@ close Out;
 open SH,">$out/work_sh/ssr.sh";
 print SH "cd $out && ";
 print SH "SOAPdenovo-127mer all -s $out/soapdenovo.config -K 63 -R -o $out/denovo -p 20 1> $out/ass.log 2>$out/ass.err && ";
-print SH "perl $Bin/bin/misa.pl $out/denovo.scafSeq \n";
+print SH "perl $Bin/bin/misa.pl $out/denovo.scafSeq $Bin/bin/misa.ini && ";
+print SH "perl $Bin/bin/misa2p3in -i $out/denovo.scafSeq.misa -o $out/denovo.scafSeq.misa.p3in && ";
 close SH;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

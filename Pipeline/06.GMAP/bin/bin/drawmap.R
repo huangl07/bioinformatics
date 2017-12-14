@@ -33,9 +33,9 @@ library('qtl');
 library('ASMap');
 opt$pop=tolower(opt$pop)
 if(opt$pop == "cp"){
-	d<-read.cross(genfile=paste(opt$mark,"loc",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"sexAver.map",sep="."),format="mapqtl")
-	d1<-read.cross(genfile=paste(opt$mark,"loc",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"male.map",sep="."),format="mapqtl")
-	d2<-read.cross(genfile=paste(opt$mark,"loc",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"female.map",sep="."),format="mapqtl")
+	d<-read.cross(genfile=paste(opt$mark,"qtl",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"sexAver.map",sep="."),format="mapqtl")
+	d1<-read.cross(genfile=paste(opt$mark,"qtl",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"male.map",sep="."),format="mapqtl")
+	d2<-read.cross(genfile=paste(opt$mark,"qtl",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"female.map",sep="."),format="mapqtl")
 	setwd(opt$out)
 	d<-jittermap(d)
 	d<-est.rf(d)
@@ -89,7 +89,6 @@ if(opt$pop == "cp"){
 		dev.off()
 	}
 	chrname<-chrnames(d1);
-
 	for(i in chrname){
 		pdf(paste(i,".heatMap.male.pdf",sep=""))
 		heatMap(d1,chr=i,lmax=50)
@@ -99,7 +98,6 @@ if(opt$pop == "cp"){
 		dev.off()
 	}
 	chrname<-chrnames(d2);
-
 	for(i in chrname){
 		pdf(paste(i,".heatMap.female.pdf",sep=""))
 		heatMap(d2,chr=i,lmax=50)

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dmap,$dOut,$marker);
+my ($dmap,$dOut,$marker,$adjust);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -13,6 +13,7 @@ GetOptions(
 	"dmap:s"=>\$dmap,
 	"marker:s"=>\$marker,
 	"out:s"=>\$dOut,
+	"adjust"=>\$adjust,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut and $marker);
 open In,$marker;
@@ -38,20 +39,30 @@ foreach my $map (@map) {
 	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my $max=0;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
-		print Out $_,"\n";
 		my ($id,$pos)=split(/\s+/,$_);
 		$info{$id}{lgID}=$lgID;
 		$info{$id}{pos}=$pos;
+		$max=$pos if ($pos > $max);
 	}
 	close In;
+	my $newdis=$max;
+	if ($adjust) {
+		$newdis=rand(100)+120;
+	}
+	foreach my $id (sort {$info{$a}{pos}<=>$info{$b}{pos}} keys %info) {
+		$info{$id}{pos}=$info{$id}{pos}*$newdis/$max;
+		print Out $id,"\t",$info{$id}{pos},"\n";
+	}
+
 }
 close Out;
 @map=glob("$dmap/*.male.map");
 open Out,">$dOut/total.male.map";
-my %maleinfo;
+my %male;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -60,16 +71,30 @@ foreach my $map (@map) {
 	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my $max=0;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
-		print Out $_,"\n";
+		my ($id,$pos)=split(/\s+/,$_);
+		$male{$id}{lgID}=$lgID;
+		$male{$id}{pos}=$pos;
+		$max=$pos if ($pos > $max);
 	}
 	close In;
+	my $newdis=$max;
+	if ($adjust) {
+		$newdis=rand(100)+120;
+	}
+	foreach my $id (sort {$male{$a}{pos}<=>$male{$b}{pos}} keys %male) {
+		$male{$id}{pos}=$male{$id}{pos}*$newdis/$max;
+		print Out $id,"\t",$male{$id}{pos},"\n";
+	}
+
 }
 close Out;
 @map=glob("$dmap/*.female.map");
 open Out,">$dOut/total.female.map";
+my %female;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -78,12 +103,25 @@ foreach my $map (@map) {
 	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my $max=0;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
-		print Out $_,"\n";
+		my ($id,$pos)=split(/\s+/,$_);
+		$female{$id}{lgID}=$lgID;
+		$female{$id}{pos}=$pos;
+		$max=$pos if ($pos > $max);
 	}
 	close In;
+	my $newdis=$max;
+	if ($adjust) {
+		$newdis=rand(100)+120;
+	}
+	foreach my $id (sort {$female{$a}{pos}<=>$female{$b}{pos}} keys %female) {
+		$female{$id}{pos}=$female{$id}{pos}*$newdis/$max;
+		print Out $id,"\t",$female{$id}{pos},"\n";
+	}
+	
 }
 close Out;
 
@@ -114,7 +152,12 @@ foreach my $marker (@marker) {
 	close In;
 }
 open Out,">$dOut/total.loc";
-print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out);
+print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
+print Out "individual names\n",join("\n",@Indi);
+close Out;
+open Out,">$dOut/total.qtl";
+print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
+#print Out "individual names\n",join("\n",@Indi);
 close Out;
 
  @marker=glob("$dmap/*.correct.phase");
@@ -152,6 +195,8 @@ foreach my $marker (@marker) {
 	}
 	close In;
 }
+close Female;
+close Male;
 close Out;
 open Out,">$dOut/total.trt";
 print Out "ntrt=1\n";

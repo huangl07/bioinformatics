@@ -93,9 +93,9 @@ my ($id,$seq);
 while (<IN>)
   {
   next unless (($id,$seq) = /(.*?)\n(.*)/s);
+  $id=(split(/\s+/,$id))[0];
   my ($nr,%start,@order,%end,%motif,%repeats); # store info of all SSRs from each sequence
   $seq =~ s/[\d\s>]//g; #remove digits, spaces, line breaks,...
-  $id =~ s/^\s*//g; $id =~ s/\s*$//g;$id =~ s/\s/_/g; #replace whitespace with "_"
   $number_sequences++;
   $size_sequences += length $seq;
   for ($i=0; $i < scalar(@typ); $i++) #check each motif class

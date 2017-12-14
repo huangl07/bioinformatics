@@ -8,7 +8,7 @@ spec = matrix(c(
 	'input','i',0,'character',
 	'output','o',0,'character',
 	'top','t',0,'character',
-	'effnog','e',0,'character',
+	'eggnog','e',0,'character',
 	'help','m',0,'logical'
 	), byrow=TRUE, ncol=4);
 opt = getopt(spec);
@@ -43,16 +43,16 @@ if(!is.null(opt$top)){
 	draw<-data.frame(id=outd$id[1:20],des=outd$des[1:20],eff=outd$eff[1:20])
 }
 draw$labels=paste(draw$id,draw$des,sep=":")
-if(is.null(opt$snpeff)){
+if(is.null(opt$eggnog)){
 	p<-ggplot(draw,aes(x=labels,y=eff))+ theme_bw()
 	p<-p+geom_bar(stat="identity",aes(fill=labels),width=0.5)
 	p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="NONE")
 	p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")+coord_flip()
 }else{
-	p<-ggplot(draw,aes(x=labels,y=eff))+ theme_bw()
+	p<-ggplot(draw,aes(x=id,y=eff))+ theme_bw()
 	p<-p+geom_bar(stat="identity",aes(fill=labels),width=0.5)+scale_fill_discrete(name="")
-	p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="right")
-	p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")+coord_flip()	
+	p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="right",legend.key.size=unit(1,"cm"))
+	p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")
 }
 ggsave(filename=paste(opt$output,"pdf",sep="."),p,height=9,width=16,device="pdf")
 ggsave(filename=paste(opt$output,"png",sep="."),p,height=9,width=16,device="png")

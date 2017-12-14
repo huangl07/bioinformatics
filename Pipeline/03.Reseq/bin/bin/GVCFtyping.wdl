@@ -8,20 +8,23 @@ task gvcftyping {
   File RefFasta
   File Refindex
   File Refdict
+  File Internal
+  String Filename
   command {
     java -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
         -T  GenotypeGVCFs\
         -R ${RefFasta} \
         -V ${inputVCFs} \
-        -o ${workdir}/pop.noid.vcf \
+        -o ${workdir}/${Filename}.noid.vcf \
         --never_trim_vcf_format_field \
+		-L ${Internal}
 	-jdk_inflater \
 	-jdk_deflater \
 	-nt 32 \
-	-log ${workdir}/pop.vcf-typing.log
+	-log ${workdir}/${Filename}.vcf-typing.log
   }
   output {
-    File rawVCF = "${workdir}/pop.noid.vcf"
+    File rawVCF = "${workdir}/${Filename}.noid.vcf"
   }
 }
 

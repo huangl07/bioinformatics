@@ -38,7 +38,7 @@ while (<In>) {
 	$nchr++;
 	my $hand=$nchr % 25;
 	if (!exists $hand{$hand}) {
-		open $hand{$hand},">$out/$hand.internal";
+		open $hand{$hand},">$dOut/$hand.internal";
 		open Out,">$dOut/$hand.json\n";
 		print Out "{\n";
 		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
@@ -46,7 +46,8 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.Refindex\": \"$ref.fai\",\n";
 		print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
 		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
-		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$$out/$hand.internal\"\n;
+		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.internal\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\"\n";
 		print Out "}\n";
 		close Out;
 		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.json && ";

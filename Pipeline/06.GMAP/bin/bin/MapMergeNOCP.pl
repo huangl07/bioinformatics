@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dmap,$dOut);
+my ($dmap,$dOut,$adjust);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,7 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"dmap:s"=>\$dmap,
 	"out:s"=>\$dOut,
+	"adjust"=>\$adjust,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut );
 my @map=glob("$dmap/*.out");
@@ -22,14 +23,29 @@ foreach my $map (@map) {
 	$lgID=~s/\D+//g;
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my $max=0;
+	my @order;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
-		print Out $_,"\n";
 		my ($id,$pos)=split(/\t/,$_);
 		$Marker{$id}=join(",",$lgID,$pos);
+		push @order,$id;
+		if ($max < $pos) {
+			$max=$pos;
+		}
 	}
 	close In;
+	my $newdis=$max;
+	if ($adjust) {
+		$newdis=rand(100)+120;
+	}
+	foreach my $id (@order) {
+		my ($lgid,$pos)=split(/\,/,$Marker{$id});
+		$pos=$newdis/$max*$pos;
+		$Marker{$id}=join(",",$lgid,$pos);
+		print Out $id,"\t",$pos,"\n";
+	}	
 }
 close Out;
 my @marker=glob("$dmap/*.marker");
@@ -48,9 +64,9 @@ foreach my $marker (@marker) {
 		next if (scalar @info < 3);
 		if (/MarkerID/) {
 			$head=$_;
-			(undef,$head)=split(/\s+/,$_,2);
-			$head=~s/\t/,/g;
-			my @head=split(/\,/,$head);
+			my (undef,$nhead)=split(/\s+/,$_,2);
+			$nhead=~s/\t/,/g;
+			my @head=split(/\,/,$nhead);
 			$chead="Genotype,,,".join(",",@head);
 		}else{
 			push @out,$_;
@@ -104,6 +120,7 @@ Usage:
   Options:
   -dmap	<file>	input file name
   -out	<file>	output file
+  -adjust	<file>	adjust map distcance
   -h         Help
 
 USAGE
