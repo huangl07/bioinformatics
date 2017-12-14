@@ -24,17 +24,15 @@ while (<In>) {
 	my ($chr,$pos1,$pos2,undef)=split(/\s+/,$_);
 	next if ($chr eq "chr");
 	my $regioned=0;
-	foreach my $chr (sort keys %region) {
-		foreach my $region (sort keys %{$region{$chr}}) {
-			my ($pos3,$pos4)=split(/\s+/,$region);
-			#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
-			if ($pos1 > $pos3 && $pos1 < $pos4) {
-				my ($p1,$p2,$p3,$p4)=sort {$a<=>$b} ($pos1,$pos2,$pos3,$pos4);
-				my $newregion=join("\t",$p1,$p4);
-				delete $region{$chr}{$region};
-				$region{$chr}{$newregion}++;
-				$regioned=1;
-			}
+	foreach my $region (sort keys %{$region{$chr}}) {
+		my ($pos3,$pos4)=split(/\s+/,$region);
+		#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
+		if ($pos1 > $pos3 && $pos1 < $pos4) {
+			my ($p1,$p2,$p3,$p4)=sort {$a<=>$b} ($pos1,$pos2,$pos3,$pos4);
+			my $newregion=join("\t",$p1,$p4);
+			delete $region{$chr}{$region};
+			$region{$chr}{$newregion}++;
+			$regioned=1;
 		}
 	}
 	if ($regioned == 0) {
@@ -97,9 +95,10 @@ close Out;
 open Out,">$fOut.eff";
 print Out "#\@chr\tpos1\tpos2\n";
 print Out "$head\n";
-foreach my $chr (sort keys %region) {
+ foreach my $chr (sort keys %region) {
 	foreach my $region (sort keys %{$region{$chr}}) {
 		print Out join("\t","\@$chr",$region),"\n";
+		next if (!exists $einfo{$chr} || !exists $einfo{$chr}{$region});
 		print Out join("\n",@{$einfo{$chr}{$region}}),"\n";
 	}
 }

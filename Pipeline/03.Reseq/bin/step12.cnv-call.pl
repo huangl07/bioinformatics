@@ -34,10 +34,10 @@ while (<In>) {
 	if (!-f $bam) {
 		die "check $bam!";
 	}
-	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam &&";
-	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  $dOut/ &&";
-	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 -d $dOut/&&";
-	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 -d $dOut/ &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -tree $bam > $dOut/$sampleID.cnv1.log&&";
+	print SH "cnvnator -root $dOut/$sampleID.root -his 300 -d  > $dOut/$sampleID.cnv2.log &&";
+	print SH "cnvnator -root $dOut/$sampleID.root -stat 300 -d > $dOut/$sampleID.cnv3.log&&";
+	print SH "cnvnator -root $dOut/$sampleID.root -partition 300 -d > $dOut/$sampleID.cnv4.log &&";
 	print SH "cnvnator -root $dOut/$sampleID.root -call 300 > $dOut/$sampleID.cnv &&";
 	print SH "perl $Bin/bin/cnv_anno.pl -i $dOut/$sampleID.cnv -g $gff -o $dOut/$sampleID.cnv.anno \n";
 	print Out "$sampleID\t$dOut/$sampleID.cnv.anno\n";

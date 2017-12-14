@@ -6,7 +6,7 @@
 open (SRC,"<$ARGV[0]") || die ("\nError: Couldn't open Primer3 results file (*.p3out) !\n\n");
 my $filename = $ARGV[0];
 $filename =~ s/\.p3out//;
-open (IN,"<$ARGV[1]") || die ("\nError: Couldn't open source file containing MISA (*.misa) results !\n\n");
+open (IN,"<$ARGV[1]") || die ("\nError: Couldn't open source file containing MISA (*.misa) results ! \n\n");
 open (OUT,">$filename.results") || die ("nError: Couldn't create file !\n\n");
 
 my ($seq_names_failed,$count,$countfailed);

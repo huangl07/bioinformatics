@@ -183,19 +183,19 @@ if (scalar @svstat > 0) {
 		close In;
 	}
 	open Out,">$dOut/Table/3-12.xls";
-	print Out "##format",join(":","total":"gene"),"\n";
-	print Out "#type",join("\t",sort keys %sample),"\n";
-		foreach my $type (sort keys %sv) {
-			my @out;
-			push @out,$type;
-			foreach my $id (sort keys %sample) {
-				$sv{$type}{$id}{total}||=0;
-				$sv{$type}{$id}{gene}||=0;
-				$sv{$type}{$id}{alen}||=0;
-				push @out,join(":",$sv{$type}{$id}{total},$sv{$type}{$id}{gene});
-			}
-			print Out join("\t",@out),"\n";
+	my @type=sort keys %sv;
+	print Out "sample",join("\t",@type),"\t","gene","\n";
+	foreach my $sample (sort keys %sample) {
+		my @out;
+		push @out,$sample;
+		my $gene=0;
+		foreach my $type (@type) {
+			push @out,$sv{$type}{$sample}{total};
+			$gene+=$sv{$type}{$sample}{gene};
 		}
+		push @out,$gene;
+		print Out join("\t",@out),"\n";
+	}
 	close Out;
 }
 my @cnvstat=glob("$variant/*.cnv.stat");
@@ -217,18 +217,19 @@ if (scalar @svstat > 0) {
 		close In;
 	}
 	open Out,">$dOut/Table/3-13.xls";
-	print Out "##format",join(":","total":"gene"),"\n";
-	print Out "#type",join("\t",sort keys %sample),"\n";
-		foreach my $type (sort keys %cnv) {
-			my @out;
-			push @out,$type;
-			foreach my $id (sort keys %sample) {
-				$cnv{$type}{$id}{total}||=0;
-				$cnv{$type}{$id}{gene}||=0;
-				push @out,join(":",$cnv{$type}{$id}{total},$cnv{$type}{$id}{gene});
-			}
-			print Out join("\t",@out),"\n";
+	my @type=sort keys %cnv;
+	print Out "sample",join("\t",@type),"\t","gene","\n";
+	foreach my $sample (sort keys %sample) {
+		my @out;
+		push @out,$sample;
+		my $gene=0;
+		foreach my $type (@type) {
+			push @out,$cnv{$type}{$sample}{total};
+			$gene+=$cnv{$type}{$sample}{gene};
 		}
+		push @out,$gene;
+		print Out join("\t",@out),"\n";
+	}
 	close Out;
 }
 if (-f "$variant/snp.effects") {

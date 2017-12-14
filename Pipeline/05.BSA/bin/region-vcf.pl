@@ -24,7 +24,6 @@ while (<In>) {
 	my ($chr,$pos1,$pos2,undef)=split(/\s+/,$_);
 	next if ($chr eq "chr");
 	my $regioned=0;
-	foreach my $chr (sort keys %region) {
 		foreach my $region (sort keys %{$region{$chr}}) {
 			my ($pos3,$pos4)=split(/\s+/,$region);
 			#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
@@ -36,7 +35,6 @@ while (<In>) {
 				$regioned=1;
 			}
 		}
-	}
 	if ($regioned == 0) {
 		$region{$chr}{join("\t",$pos1,$pos2)}++;
 	}
@@ -101,6 +99,7 @@ print Out "$head\n";
 foreach my $chr (sort keys %region) {
 	foreach my $region (sort keys %{$region{$chr}}) {
 		print Out join("\t","\@$chr",$region),"\n";
+		next if (!exists $einfo{$chr} || !exists $einfo{$chr}{$region});
 		print Out join("\n",@{$einfo{$chr}{$region}}),"\n";
 	}
 }

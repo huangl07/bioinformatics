@@ -28,10 +28,14 @@ $mis||=0.3;
 $maf||=0.05;
 $dep||=2;
 $mis=1-$mis;
-open SH,">$dsh/step00.LD-calc.sh";
-print SH "vcftools --vcf $vcf --out $out/pop --min-meanDP $dep --max-missing $mis  --maf $maf  --geno-r2   --ld-window-bp 3000000 \n";
-print SH "PopLDdecay --InVCF $vcf --OutStat $out/pop --MAF $maf --Miss $mis &&";
+open SH,">$dsh/step00.LD-calc1.sh";
+print SH "vcftools --vcf $vcf --out $out/pop --min-meanDP $dep --max-missing $mis  --maf $maf --recode &&";
+print SH "PopLDdecay --InVCF $out/pop.recode.vcf --OutStat $out/pop --MAF $maf --Miss $mis &&";
 print SH "Rscript $Bin/bin/ld-decay.R --infile $out/pop.stat.gz --outfile $out/pop.ld\n";
+close SH;
+open SH,">$dsh/step02.block.sh";
+print SH "vcftools --vcf $out/pop.recode.vcf --out $out/pop --plink && ";
+print SH "plink --file $out/pop --blocks no-pheno-req\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step00.LD-calc.sh";
 #######################################################################################

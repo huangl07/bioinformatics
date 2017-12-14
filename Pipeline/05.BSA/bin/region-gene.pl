@@ -16,17 +16,27 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($select and $anno and $fOut );
 open In,$select;
-my $region;
+my %region;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ ||/#/);
-	my ($marker,$chr,$pos,$lod,$var,$pm1,$pm2,$start,$end,$mark1,$mark2)=split(/\s+/,$_);
-	my ($chr1,$start1)=split(/\s+/,$mark1);
-	my ($chr2,$start2)=split(/\s+/,$mark2);
-	if ($chr1 ne $chr2) {
-		die "error region!";
-	}else{
-		$region{$chr1}=join("\t",sort{$a<=>$b}($start1,$start2));
+	s/\"//g;
+	my ($chr,$pos1,$pos2,undef)=split(/\s+/,$_);
+	next if ($chr eq "chr");
+	my $regioned==0;
+	foreach my $region (sort keys %{$region{$chr}}) {
+		my ($pos3,$pos4)=split(/\s+/,$region);
+		#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
+		if ($pos1 > $pos3 && $pos1 < $pos4) {
+			my ($p1,$p2,$p3,$p4)=sort {$a<=>$b} ($pos1,$pos2,$pos3,$pos4);
+			my $newregion=join("\t",$p1,$p4);
+			delete $region{$chr}{$region};
+			$region{$chr}{$newregion}++;
+			$regioned=1;
+		}
+	}
+	if ($regioned == 0) {
+		$region{$chr}{join("\t",$pos1,$pos2)}++;
 	}
 }
 close In;

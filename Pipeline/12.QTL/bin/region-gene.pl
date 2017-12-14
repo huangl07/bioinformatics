@@ -16,7 +16,7 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($select and $anno and $fOut );
 open In,$select;
-my $region;
+my %region;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ ||/#/);

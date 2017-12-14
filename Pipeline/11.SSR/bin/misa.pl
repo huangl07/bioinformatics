@@ -66,6 +66,8 @@ if ($ARGV[0] =~ /-help/i)
 
 open (IN,"<$ARGV[0]") || die ("\nError: FASTA file doesn't exist !\n\n");
 open (OUT,">$ARGV[0].misa");
+open (FA,">$ARGV[0].ssrfa");
+open (NEW,">$ARGV[0].newmisa");
 print OUT "ID\tSSR nr.\tSSR type\tSSR\tsize\tstart\tend\n";
 
 # Reading arguments #
@@ -192,11 +194,27 @@ while (<IN>)
     }
   continue
     {
-    print OUT "$id\t$count_seq\t$ssrtype\t$ssrseq\t",($end - $start + 1),"\t$start\t$end\n"
+	my $size=$end - $start + 1;
+    print OUT "$id\t$count_seq\t$ssrtype\t$ssrseq\t",$size,"\t$start\t$end\n";
+	my $begin=$start-300;
+	my $nstart=300;
+	if ($start < 300) {
+		$begin=0;
+		$nstart=$start;
+	}
+	my $left=$end-$start+1+600;
+	if ($left > length($seq)) {
+		$left=length($seq)-$end-$start+1+600;
+	}
+	print NEW "$id\_$count_seq\t$count_seq\t$ssrtype\t$ssrseq\t",$size,"\t$nstart\t",$start+$size,"\n";
+	print FA ">$id\_$count_seq\n";
+	print FA substr($seq,$start-300,$left),"\n";
     };
   };
 
 close (OUT);
+close (FA);
+close (NEW);
 open (OUT,">$ARGV[0].statistics");
 
 #����� INFO �����#
