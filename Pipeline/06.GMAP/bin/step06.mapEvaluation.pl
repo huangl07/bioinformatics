@@ -30,6 +30,8 @@ if ($popt ne "CP") {
 	$popt=lc($popt);
 	print SH1 "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out && ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.map -o $out/total.mapstat \n ";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.mapstat --output $out/fig/total"
+	print SH2 "perl $Bin/bin/mapinfo.pl -map $out/total.map -input $out/total.marker --pop $pop -out $out/total.marker.info \n";
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop $popt \n";
 	print SH2 "Rscript $Bin/bin/drawbinNOCP.R --mark $out/total.csv  --out $out/fig/total.bin \n";
 	if ($ref) {
@@ -40,6 +42,13 @@ if ($popt ne "CP") {
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.sexAver.map -o $out/sexAver.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.male.map -o $out/male.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.female.map -o $out/female.mapstat \n ";
+	print SH2 "perl $Bin/bin/mapinfo.pl -map $out/total.sexAver.map -input $out/total.loc --pop $pop -out $out/total.sexAver.info \n";
+	print SH2 "perl $Bin/bin/mapinfo.pl -map $out/total.male.map -input $out/total.loc --pop $pop -out $out/total.male.info \n";
+	print SH2 "perl $Bin/bin/mapinfo.pl -map $out/total.female.map -input $out/total.loc --pop $pop -out $out/total.female.info \n";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.sexAver.mapstat --output $out/fig/total.sexAver"
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.male.mapstat --output $out/fig/total.male"
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.female.mapstat --output $out/fig/total.female"
+
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop cp \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin \n";
