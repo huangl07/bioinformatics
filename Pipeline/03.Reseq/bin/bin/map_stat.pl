@@ -98,8 +98,8 @@ print Out "average insert insert\t",$mapstat{insert},"\n";
 print Out "average depth\t",sprintf("%.2f",$mapstat{coverage}/$reflen),"\n";
 print Out "real depth\t",sprintf("%.2f",$mapstat{coverage}/$cov{1}),"\n";
 print Out "cover base\t",$cov{1},"\n";
-print Out "genome coverage(1X)\t",sprintf("%.2f",$cov{1}/$reflen)*100,"\n";
-print Out "genome coverage(5X)\t",sprintf("%.2f",$cov{5}/$reflen)*100,"\n";
+print Out "genome coverage(1X)\t",sprintf("%.2f",$cov{1}/$reflen*100),"\n";
+print Out "genome coverage(5X)\t",sprintf("%.2f",$cov{5}/$reflen*100),"\n";
 close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

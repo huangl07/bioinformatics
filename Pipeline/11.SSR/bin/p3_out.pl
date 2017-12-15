@@ -19,7 +19,6 @@ print OUT "FORWARD PRIMER3 (5'-3')\tTm(°C)\tsize\tREVERSE PRIMER3 (5'-3')\tTm(°C
 undef $/;
 my $in = <IN>;
 study $in;
-
 $/ = "=\n";
 
 while (<SRC>)
@@ -28,21 +27,18 @@ while (<SRC>)
   
   $in =~ /($id\t$ssr_nr\t.*)\n/;
   my $misa = $1;
-  
-  /PRIMER_LEFT_SEQUENCE=(.*)/ || do {$count_failed++;print OUT "$misa\n"; next};
+  /PRIMER_LEFT_0_SEQUENCE=(.*)/ || do {$count_failed++; next};
   my $info = "$1\t";
+  /PRIMER_LEFT_0_TM=(.*)/; $info .= "$1\t";
+  /PRIMER_LEFT_0=\d+,(\d+)/; $info .= "$1\t";
   
-  /PRIMER_LEFT_TM=(.*)/; $info .= "$1\t";
-  /PRIMER_LEFT=\d+,(\d+)/; $info .= "$1\t";
+  /PRIMER_RIGHT_0_SEQUENCE=(.*)/;  $info .= "$1\t";
+  /PRIMER_RIGHT_0_TM=(.*)/; $info .= "$1\t";
+  /PRIMER_RIGHT_0=\d+,(\d+)/; $info .= "$1\t";
   
-  /PRIMER_RIGHT_SEQUENCE=(.*)/;  $info .= "$1\t";
-  /PRIMER_RIGHT_TM=(.*)/; $info .= "$1\t";
-  /PRIMER_RIGHT=\d+,(\d+)/; $info .= "$1\t";
-  
-  /PRIMER_PRODUCT_SIZE=(.*)/; $info .= "$1\t";
-  /PRIMER_LEFT=(\d+),\d+/; $info .= "$1\t";
-  /PRIMER_RIGHT=(\d+),\d+/; $info .= "$1\t";
-  
+  /PRIMER_PAIR_0_PRODUCT_SIZE=(.*)/; $info .= "$1\t";
+  /PRIMER_LEFT_0=(\d+),\d+/; $info .= "$1\t";
+  /PRIMER_RIGHT_0=(\d+),\d+/; $info .= "$1\t";
   
   /PRIMER_LEFT_1_SEQUENCE=(.*)/; $info .= "$1\t";
   /PRIMER_LEFT_1_TM=(.*)/; $info .= "$1\t";

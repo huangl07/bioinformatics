@@ -74,7 +74,7 @@ foreach my $fqstat (@fqstat) {
 	open In,$fqstat;
 	while (<In>) {
 		chomp;
-		next if ($_ eq ""||/^$/ ||/!Total/ ||/#/);
+		next if ($_ eq ""||/^$/ ||!/Total/ ||/#/);
 		my(undef,$sample,$readnum,$basenum,$a,$t,$g,$c,$n,$GC,$Q30,$Q20,undef)=split(/\s+/,$_);
 		my $sampleID=(split(/\:/,$sample))[0];
 		$fqstat{$sampleID}{readnum}+=$readnum;
@@ -118,12 +118,10 @@ foreach my $sample (sort keys %fqstat) {
 close Out;
 
 open Out,">$dOut/Table/3-4.xls";
-print Out "#sampleID\tclean Reads\tMapped Reads\tMapped Ratio(%)\tProperly Mapped(%)\tDuplicate Ratio(%)\n";
+print Out "#sampleID\tMapped Ratio(%)\tProperly Mapped(%)\tDuplicate Ratio(%)\n";
 foreach my $sample (sort keys %stat) {
 	my @out;
 	push @out,$sample;
-	push @out,$stat{$sample}{"total reads"};
-	push @out,$stat{$sample}{"mapped reads"};
 	push @out,sprintf("%.2f",$stat{$sample}{"mapped reads"}/$stat{$sample}{"total reads"}*100);
 	push @out,sprintf("%.2f",$stat{$sample}{"proper reads"}/$stat{$sample}{"total reads"}*100);
 	push @out,sprintf("%.2f",$stat{$sample}{"duplicate ratio(%)"});
@@ -155,7 +153,7 @@ while (<In>) {
 }
 close Out;
 close In;
-open Out,">$dOut/Table/3-9.xls";
+open Out,">$dOut/Table/3-10.xls";
 open In,"$variant/indel.stat";
 while (<In>) {
 	chomp;
@@ -163,6 +161,7 @@ while (<In>) {
 	my @out=split(/\t/,$_);
 	print Out join("\t",@out[0..4]),"\n";
 }
+close In;
 close Out;
 my @svstat=glob("$variant/*.sv.stat");
 if (scalar @svstat > 0) {
@@ -182,14 +181,16 @@ if (scalar @svstat > 0) {
 		}
 		close In;
 	}
-	open Out,">$dOut/Table/3-12.xls";
+	open Out,">$dOut/Table/3-13.xls";
 	my @type=sort keys %sv;
-	print Out "sample",join("\t",@type),"\t","gene","\n";
+	print Out "sample\t",join("\t",@type),"\t","gene","\n";
 	foreach my $sample (sort keys %sample) {
 		my @out;
 		push @out,$sample;
 		my $gene=0;
 		foreach my $type (@type) {
+			$sv{$type}{$sample}{gene}||=0;
+			$sv{$type}{$sample}{total}||=0;
 			push @out,$sv{$type}{$sample}{total};
 			$gene+=$sv{$type}{$sample}{gene};
 		}
@@ -216,14 +217,16 @@ if (scalar @svstat > 0) {
 		}
 		close In;
 	}
-	open Out,">$dOut/Table/3-13.xls";
+	open Out,">$dOut/Table/3-14.xls";
 	my @type=sort keys %cnv;
-	print Out "sample",join("\t",@type),"\t","gene","\n";
+	print Out "sample\t",join("\t",@type),"\t","gene","\n";
 	foreach my $sample (sort keys %sample) {
 		my @out;
 		push @out,$sample;
 		my $gene=0;
 		foreach my $type (@type) {
+			$cnv{$type}{$sample}{gene}||=0;
+			$cnv{$type}{$sample}{total}||=0;
 			push @out,$cnv{$type}{$sample}{total};
 			$gene+=$cnv{$type}{$sample}{gene};
 		}
@@ -239,11 +242,21 @@ if (-f "$variant/snp.region") {
 	`cp $variant/snp.region $dOut/Table/3-7.xls`
 }
 if (-f "$variant/indel.effects") {
-	`cp $variant/indel.effects $dOut/Table/3-10.xls`
+	`cp $variant/indel.effects $dOut/Table/3-12.xls`
 }
 if (-f "$variant/indel.region") {
 	`cp $variant/indel.region $dOut/Table/3-11.xls`
 }
+if (-f "$variant/snp.matrix") {
+	`cp $variant/snp.martix $dOut/Table/3-9.xls`;
+}
+if (-f "$variant/indel.matrix") {
+	`cp $variant/indel.martix $dOut/Table/3-13.xls`;
+}
+if (-f "$annotate/pop.stat.csv") {
+	`cp $annotate/pop.stat.csv $dOut/Table/3-16.xls`;
+}
+
 mkdir "$dOut/Result/Eff" if (!-d "$dOut/Result/Eff");
 `ln -s $annotate/pop.summary $dOut/Result/Eff/pop.summary`;
 `ln -s $annotate/pop.final.vcf $dOut/Result/Eff/pop.final.vcf`;

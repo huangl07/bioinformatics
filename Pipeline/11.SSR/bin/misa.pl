@@ -206,8 +206,8 @@ while (<IN>)
 	if ($left > length($seq)) {
 		$left=length($seq)-$end-$start+1+600;
 	}
-	print NEW "$id\_$count_seq\t$count_seq\t$ssrtype\t$ssrseq\t",$size,"\t$nstart\t",$start+$size,"\n";
-	print FA ">$id\_$count_seq\n";
+	print NEW "$id\:$start\t$count_seq\t$ssrtype\t$ssrseq\t",$size,"\t$nstart\t",$start+$size,"\n";
+	print FA ">$id\:$start\n";
 	print FA substr($seq,$start-300,$left),"\n";
     };
   };

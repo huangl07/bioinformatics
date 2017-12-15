@@ -57,6 +57,7 @@ my %kdetail;
 my %gdetail;
 my %enrich;
 my %edetail;
+my %fun;
 print Out join("\t","#Gene_name","Gene_id","Transcript_id","Bio_Type","Chr","Pos1","Pos2","High","Moderate","Low","Modifier","NR-ID","NR-ANNO","Uni-ID","Uni-ANNO","KEGG-ID","KEGG-ANNO","GO-ID","GO-ANNO","EggNOG-ID","EggNOG-ANNO"),"\n";
 while (<In>) {
 	chomp;
@@ -73,6 +74,16 @@ while (<In>) {
 		$stat{$info}{low}||=0;
 		$stat{$info}{middle}||=0;
 		$stat{$info}{unknow}||=0;
+		$fun{total}{nr}++ if($nrid ne "--");
+		$fun{eff}{nr}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $nrid ne "--");
+		$fun{total}{uni}++ if($uniid ne "--");
+		$fun{eff}{uni}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $uniid ne "--");
+		$fun{total}{kegg}++ if($koid ne "--");
+		$fun{eff}{kegg}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $koid ne "--");
+		$fun{total}{go}++ if($goid ne "--");
+		$fun{eff}{go}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $goid ne "--");
+		$fun{total}{eggnog}++ if($eid ne "--");
+		$fun{eff}{eggnog}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $eid ne "--");
 		print Out join("\t",$info,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno),"\n";
 		my @koid=split(/:/,$koid);
 		my @kdetail=split(/:/,$koanno);
@@ -126,7 +137,21 @@ foreach my $eggnog (sort keys %edetail) {
 	print Out join("\t",$eggnog,$edetail{$eggnog},$enrich{$eggnog}{enrich},$enrich{$eggnog}{total},scalar keys %eff,scalar keys %stat),"\n";
 }
 close Out;
-
+open Out,">$fOut.stat.csv";
+$fun{total}{nr}||=0;
+$fun{eff}{nr}||=0;
+$fun{total}{uni}||=0;
+$fun{eff}{uni}||=0;
+$fun{total}{kegg}||=0;
+$fun{eff}{kegg}||=0;
+$fun{total}{go}||=0;
+$fun{eff}{go}||=0;
+$fun{total}{eggnog}||=0;
+$fun{eff}{eggnog}||=0;
+print Out join("\t","#type","NR","Uniprot","KEGG","GO","EGGNOG"),"\n";
+print Out join("\t","total",$fun{total}{nr},$fun{total}{uni},$fun{total}{kegg},$fun{total}{go},$fun{total}{eggnog}),"\n";
+print Out join("\t","eff",$fun{eff}{nr},$fun{eff}{uni},$fun{eff}{kegg},$fun{eff}{go},$fun{eff}{eggnog}),"\n";
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

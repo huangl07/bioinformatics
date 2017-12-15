@@ -38,9 +38,9 @@ open SH,">$out/work_sh/ssr.sh";
 print SH "cd $out && ";
 print SH "SOAPdenovo-127mer all -s $out/soapdenovo.config -K 63 -R -o $out/denovo -p 20 1> $out/ass.log 2>$out/ass.err && ";
 print SH "perl $Bin/bin/misa.pl $out/denovo.scafSeq $Bin/bin/misa.ini && ";
-print SH "perl $Bin/bin/misa2p3in -i $out/denovo.scafSeq.misa -o $out/denovo.scafSeq.misa.p3in && ";
+print SH "perl $Bin/bin/p3_in.pl $out/denovo.scafSeq.newmisa $out/denovo.scafSeq.ssrfa && ";
 print SH "cd /mnt/ilustre/users/dna/Environment/biotools/primer3/src/ && ./primer3_core < $out/denovo.scafSeq.misa.p3in > $out/denovo.scafSeq.misa.p3out &&";
-print SH "cd $out/ && perl $Bin/bin/p3out.pl $out/denovo.scafSeq.misa.p3out > $out/denovo.scafSeq.misa.result\n";
+print SH "cd $out/ && perl $Bin/bin/p3_out.pl $out/denovo.scafSeq.misa.p3out > $out/denovo.scafSeq.misa.result\n";
 close SH;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
