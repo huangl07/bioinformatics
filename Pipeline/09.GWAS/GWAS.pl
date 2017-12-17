@@ -17,9 +17,9 @@ GetOptions(
 	"maf:s"=>\$maf,
 	"mis:s"=>\$mis,
 	"dep:s"=>\$dep,
-
+	"block:s"=>\$block,
 			) or &USAGE;
-&USAGE unless ($vcf and $out and $dsh );
+&USAGE unless ($vcf and $out and $dsh and $block);
 my $vcf=ABSOLUTE_DIR($vcf);
 my $trt=ABSOLUTE_DIR($trt);
 mkdir $out if (!-d $out);
@@ -42,7 +42,8 @@ while (<In>) {
 	next if ($_ eq ""||/^$/);
 	my ($id,@trt)=split(/\s+/,$_);
 	for (my $i=0;$i<@trt;$i++) {
-		print SH "Rscript $bin/manhattan.R --infile $trt[$i]_GWAS_Result.txt --outfile $trt[$i]\n";
+		print SH "Rscript $bin/manhattan.R --infile $out/$trt[$i]_GWAS_Result.txt --outfile  $out/$trt[$i]\n";
+		print SH "perl get-region.pl -i  $out/$trt[$i]_GWAS_Result.txt -b $block -outfile  $out/$trt[$i].region\n";
 	}
 }
 close In;
@@ -90,6 +91,7 @@ Usage:
   -maf	<num>	maf filter default 0.05
   -mis	<num>	mis filter default 0.3
   -dep	<num>	dep filter default 2
+  -block	<file>	block file
 
   -h         Help
 

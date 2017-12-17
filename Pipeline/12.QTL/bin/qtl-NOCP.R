@@ -44,14 +44,14 @@ d<-calc.genoprob(d)
 phe.name<-colnames(d$pheno);
 ncol=ceiling(sqrt(length(phe.name)));
 nrow=ncol;
-pdf(paste("pheno.pdf",sep="/"),width=30*ncol,height=40*nrow)
+pdf("pheno.pdf",width=30*ncol,height=40*nrow)
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
-png(paste("pheno.png",sep="/"))
+png("pheno.png")
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
@@ -95,7 +95,7 @@ for(i in 1:length(phe.name)){
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
 	var<-fitqtl$result.drop[,"%var"]
-	if (length(qtl) == 1){var<-fitqtl$result.full["Model","%var"]}
+	if (length(qtl$name) == 1){var<-fitqtl$result.full["Model","%var"]}
 	data<-data.frame(marker=markerid,chr=scan.result$lod$chr,pos=scan.result$lod$pos,lod=scan.result$lod$lod,var=var,pm1=pm.result[1],pm2=pm.result[2])
 	for(j in 1:length(qtlname)){
 		insert<-bayesint(scan,chr=qtl$chr[j],expandtomarkers=FALSE,prob=0.99)

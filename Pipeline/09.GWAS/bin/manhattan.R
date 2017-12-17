@@ -39,7 +39,9 @@ dev.off()
 png(paste(opt$output,".qq-plot.png",sep=""))
 qq(GWAS$p_value)
 dev.off()
-
+GWAS$bonferroni=p.adjust(GWAS$p_value,method="bonferroni");
+GWSA$fdr=p.adjust(GWAS$p_value,method="fdr");
+write.table(paste(opt$output,".GWAS.select",sep=""),subset(GWAS,GWAS$bonferroni < 0.0001));
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
