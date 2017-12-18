@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$trt,$block);
+my ($vcf,$out,$dsh,$maf,$mis,$dep,$pop);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -11,45 +11,54 @@ my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
 	"vcf:s"=>\$vcf,
-	"trt:s"=>\$trt,
 	"out:s"=>\$out,
+	"pop:s"=>\$pop,
 	"maf:s"=>\$maf,
 	"mis:s"=>\$mis,
 	"dep:s"=>\$dep,
-	"block:s"=>\$block,
 			) or &USAGE;
-&USAGE unless ($vcf and $out and $trt and $block);
+&USAGE unless ($vcf and $out and $pop);
 $vcf=ABSOLUTE_DIR($vcf);
-$trt=ABSOLUTE_DIR($trt);
-$dsh="out/work_sh";
+$pop=ABSOLUTE_DIR($pop);
+
 mkdir $out if (!-d $out);
+$out=ABSOLUTE_DIR($out);
+$dsh="$out/work_sh";
 mkdir $dsh if (!-d $dsh);
 $mis||=0.3;
 $maf||=0.05;
 $dep||=2;
 $mis=1-$mis;
-
-open SH,">$dsh/gwas1.sh";
-print SH "vcftools --vcf $vcf --out $out/myData --min-meanDP $dep --max-missing $mis --maf $maf --recode && ";
-print SH "ln -s $out/myData.recode.vcf $out/myData.vcf && ";
-print SH "ln -s $trt $out/myData.txt && cd $out/ && ";
-print SH "blink --file MyData --vcf  --gwas --trait 0 --parallel 8 \n";
+open SH,">$dsh/01.filtered.sh";
+print SH "vcftools --vcf $vcf  --out $out/pop --max-missing $mis --maf $maf --minDP $dep --recode \n ";
 close SH;
-open SH,">$dsh/gwas2.sh";
-open In,$trt;
+open SH,">$dsh/02.calculate.sh";
+open In,$pop;
+my %group;
+my %filehand;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
-	my ($id,@trt)=split(/\s+/,$_);
-	for (my $i=0;$i<@trt;$i++) {
-		print SH "Rscript $Bin/bin/manhattan.R --infile $out/$trt[$i]_GWAS_Result.txt --outfile  $out/$trt[$i]\n";
-		print SH "perl $Bin/bin/get-region.pl -i  $out/$trt[$i]_GWAS_Result.txt -b $block -outfile  $out/$trt[$i].region\n";
+	my ($id,$gid)=split(/\s+/,$_);
+	if (!exists $filehand{$gid}) {
+		open $filehand{$gid},">$out/$gid.list";
 	}
+	print {$filehand{$gid}} "$id\n";
 }
 close In;
+my @groid=sort keys %filehand;
+for (my $i=0;$i<@groid;$i++) {
+	print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i]  --window-pi 2000000 --window-pi-step 10000 \n";
+	print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i] --TajimaD 10000 \n";
+	print SH "RAiSD -n $i -p $out/RAiSD -f -S $out/groid[$i].list -I $out/pop.recode.vcf \n";
+	for (my $j=$i+1;$j<@groid;$j++) {
+		print SH "vcftools --vcf $out/pop.recode.vcf --weir-fst-pop $out/$groid[$i].list --weir-fst-pop $out/$groid[$j].list --out $out/$groid[$i]-$groid[$j] --fst-window-size 2000000 --fst-window-step 10000 \n";
+	}
+}
 close SH;
 
-
+open SH,">$dsh/03.draw-select.sh";
+close SH;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -86,8 +95,7 @@ Usage:
   Options:
   -vcf	<file>	input vcf files
   -out	<dir>	output dir
-  -dsh	<dir>	output work shell
-  -gro	<str>	group list
+  -pop	<str>	group list
   -maf	<num>	maf filter default 0.05
   -mis	<num>	mis filter default 0.3
   -dep	<num>	dep filter default 2

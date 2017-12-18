@@ -272,7 +272,6 @@ if ($step == 14) {
 	print LOG "########################################\n";
 	$step++ if ($step ne $stop);
 }
-
 close LOG;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
