@@ -40,13 +40,12 @@ fst<-read.table(opt$fst,sep="\t",head=TRUE)
 pi1$win<-paste(pi1$CHROM,pi1$BIN_START,pi1$BIN_END)
 pi2$win<-paste(pi2$CHROM,pi2$BIN_START,pi2$BIN_END)
 fst$win<-paste(fst$CHROM,fst$BIN_START,fst$BIN_END)
-win<-pi1$win[pi1$win %in% pi2$win]
-win<-win[win %in% fst$win]
-pi<-data.frame(chr=pi1$CHROM[pi1$win %in% win],pos1=pi1$BIN_START[pi1$win %in% win],pos2=pi2$BIN_END[pi1$win %in% win],pi1=pi1$PI[pi1$win %in% win],pi2=pi2$PI[pi2$win %in% win],fst=fst$WEIGHTED_FST[fst$win %in% win])
+win<-intersect(intersect(pi1$win,pi2$win),fst$win)
+pi<-data.frame(chr=pi1$CHROM[pi1$win %in% win],pos1=pi1$BIN_START[pi1$win %in% win],pos2=pi1$BIN_END[pi1$win %in% win],pi1=pi1$PI[pi1$win %in% win],pi2=pi2$PI[pi2$win %in% win],fst=fst$WEIGHTED_FST[fst$win %in% win])
 pi$theta=pi$pi1/pi$pi2
 pi$fst[pi$fst < 0]=0
-write.table(file=paste(opt$out,"detail",sep="."),row.names=FALSE,pi);
-write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(pi,(pi$theta < quantile(pi$theta,probs=0.05) | pi$theta > quantile(pi$theta,probs=0.95)) & pi$fst > quantile(pi$fst,probs=0.95) ));
+#write.table(file=paste(opt$out,"detail",sep="."),row.names=FALSE,pi);
+#write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(pi,(pi$theta < quantile(pi$theta,probs=0.05) | pi$theta > quantile(pi$theta,probs=0.95)) & pi$fst > quantile(pi$fst,probs=0.95) ));
 
 empty<-ggplot()+theme(panel.background=element_blank())
 hist_top<-ggplot()+theme_bw()
@@ -74,10 +73,10 @@ scatter<-scatter+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.05)),linety
 
 
 
-pdf(paste(opt$out,".dis.pdf",sep="."));
+pdf(paste(opt$out,"pdf",sep="."));
 grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
 dev.off()
-png(paste(opt$out,".dis.png",sep="."));
+png(paste(opt$out,"png",sep="."));
 grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
 dev.off()
 

@@ -139,7 +139,7 @@ if ($step == 8) {
 	my $uniprot=ABSOLUTE_DIR("$out/06.Uniref/Uni.anno");
 	my $eggnog=ABSOLUTE_DIR("$out/07.Eggnog/EGGNOG.anno");
 	my $ref=ABSOLUTE_DIR("$out/01.newref");
-	my $job="perl $Bin/bin/step08.merge-result.pl -nr $nr -kegg $kegg -go $go -eggnog $eggnog -uniprot $uniprot -ref $ref -out 08.result\n";
+	my $job="perl $Bin/bin/step08.merge-result.pl -nr $nr -kegg $kegg -go $go -eggnog $eggnog -uniprot $uniprot -ref $ref -out $out/08.result\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

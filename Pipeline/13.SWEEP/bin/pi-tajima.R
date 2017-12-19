@@ -35,12 +35,13 @@ pi<-read.table(opt$pi,sep="\t",head=TRUE)
 tajima<-read.table(opt$tajima,sep="\t",head=TRUE)
 pi$win<-paste(pi$CHROM,pi$BIN_START)
 tajima$win<-paste(tajima$CHROM,tajima$BIN_START+1)
-win<-pi$win[pi$win %in% tajima$win]
+win<-intersect(tajima$win,pi$win)
+
 pi<-data.frame(chr=pi$CHROM[pi$win %in% win],pos1=pi$BIN_START[pi$win %in% win],pos2=pi$BIN_END[pi$win %in% win],pi=pi$PI[pi$win %in% win],tajima=tajima$TajimaD[tajima$win %in% win])
 pi$tajima[pi$tajima == "NaN"]=0
-write.table(file=paste(opt$out,"detail",sep="."),row.names=FALSE,pi);
-data<-pi
-write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(data,data$pi < quantile(data$pi,prob=0.05) & (data$tajima < quantile(data$pi,prob=0.05) & data$tajima > quantile(data$pi,prob=0.95))));
+#write.table(file=paste(opt$out,"detail",sep="."),row.names=FALSE,pi);
+#data<-pi
+#write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(data,data$pi < quantile(data$pi,prob=0.05) & (data$tajima < quantile(data$pi,prob=0.05) | data$tajima > quantile(data$pi,prob=0.95))));
 empty<-ggplot()+theme(panel.background=element_blank())
 maxpi=max(pi$pi)
 minpi=min(pi$pi)
@@ -60,7 +61,7 @@ scatter<-ggplot()+theme_bw()
 scatter<-scatter+geom_point(aes(pi$pi,pi$tajima),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)]),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)]),colour='blue',fill='blue')
-scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima > quantile(pi$tajima,probs=0.95)]),colour='green',fill='green')
+scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima > quantile(pi$tajima,probs=0.95)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima > quantile(pi$tajima,probs=0.95)]),colour='green',fill='green')
 scatter<-scatter+theme(panel.background=element_blank(),axis.text.y = element_blank())+xlab("Pi Distribution")+ylab("Tajima'D Distribution")
 scatter<-scatter+geom_hline(aes(yintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")
 scatter<-scatter+geom_hline(aes(yintercept=quantile(pi$tajima,probs=0.05)),linetype=5,col="black")

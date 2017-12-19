@@ -72,7 +72,7 @@ while(<GFF>){
     my ($chr,undef,$type,$start,@others)=split(/\t/,$_);
     my $win_num=int($start/$gff_windows)+1;
       #print OUTT $win_num."\n";
-    if (exists $hash_chr_num{$chr} and $type=~/gene/){
+    if (exists $hash_chr_num{$chr} and ($type=~/gene/ || ($type !~ /CDS/ && $type !~/exon/)) ){
         if ($chr =~ /chr/) {$chr=~s/chr//g;}
         if ($chr =~ /sca/) {$chr=~s/sca//g;}
         $hash_gff{$chr}{$win_num}++;

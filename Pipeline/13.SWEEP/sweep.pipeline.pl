@@ -33,6 +33,7 @@ open SH,">$dsh/01.filtered.sh";
 print SH "vcftools --vcf $vcf  --out $out/pop --max-missing $mis --maf $maf --minDP $dep --recode \n ";
 close SH;
 open SH,">$dsh/02.calculate.sh";
+open SH2,">$dsh/03.draw-select.sh";
 open In,$pop;
 my %group;
 my %filehand;
@@ -50,15 +51,15 @@ my @groid=sort keys %filehand;
 for (my $i=0;$i<@groid;$i++) {
 	print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i]  --window-pi 2000000 --window-pi-step 10000 \n";
 	print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i] --TajimaD 10000 \n";
-	print SH "RAiSD -n $i -p $out/RAiSD -f -S $out/groid[$i].list -I $out/pop.recode.vcf \n";
+	print SH2 "Rscript $Bin/bin/pi-tajima.R --tajima $out/$groid[$i].Tajima.D --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$i].windowed.pi --out $out/$groid[$i]\n";
 	for (my $j=$i+1;$j<@groid;$j++) {
 		print SH "vcftools --vcf $out/pop.recode.vcf --weir-fst-pop $out/$groid[$i].list --weir-fst-pop $out/$groid[$j].list --out $out/$groid[$i]-$groid[$j] --fst-window-size 2000000 --fst-window-step 10000 \n";
+		print SH2 "Rscript $Bin/bin/fst-pi.R --fst $out/$groid[$i]-$groid[$j].windowed.weir.fst --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$j].windowed.pi --out $out/$groid[$i]-$groid[$j] \n";
+		print SH2 "Rscript $Bin/bin/manhattan.R --fst $out/$groid[$i]-$groid[$j].windowed.weir.fst --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$j].windowed.pi --out $out/$groid[$i]-$groid[$j] --tajima1 $out/$groid[$i].Tajima.D --tajima2 $out/$groid[$j].Tajima.D \n";
 	}
 }
 close SH;
-
-open SH,">$dsh/03.draw-select.sh";
-close SH;
+close SH2;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
