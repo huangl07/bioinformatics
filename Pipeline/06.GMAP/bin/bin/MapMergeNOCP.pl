@@ -15,6 +15,7 @@ GetOptions(
 	"adjust"=>\$adjust,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut );
+mkdir $dOut if (!-d $dOut);
 my @map=glob("$dmap/*.out");
 open Out,">$dOut/total.map";
 my %Marker;
@@ -84,6 +85,7 @@ print Out join("\n",$head,@out);
 close Out;
 print CSV join("\n",$chead,@cout);
 close CSV;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

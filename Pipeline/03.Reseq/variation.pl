@@ -255,7 +255,8 @@ if ($step == 14) {
 	my $mapstat=ABSOLUTE_DIR("$outdir/06.map-stat");
 	my $varstat=ABSOLUTE_DIR("$outdir/13.variant-stat");
 	my $vcf=ABSOLUTE_DIR("$outdir/10.annovar/anno.list");
-	my $job="perl $Bin/bin/step14.report.pl -fastqc $fqdir -mapstat $mapstat -variant $varstat -vcf $vcf --out $outdir/14.report";
+	my $anno=ABSOLUTE_DIR("$outdir/10.annovar");
+	my $job="perl $Bin/bin/step14.report.pl -fastqc $fqdir -mapstat $mapstat -variant $varstat -vcf $vcf -out $outdir/14.report -annotate $anno";
 	if ($SV) {
 		my $sv=ABSOLUTE_DIR("$outdir/11.sv-call/sv.filter.list");
 		$job.=" -sv $sv ";

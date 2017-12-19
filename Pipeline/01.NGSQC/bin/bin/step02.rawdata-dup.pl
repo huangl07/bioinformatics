@@ -11,7 +11,7 @@ my $version="1.0.0";
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($fqlist,$config,$dOut,$dShell);
+my ($fqlist,$dOut,$dShell);
 GetOptions(
 				"help|?" =>\&USAGE,
 				"fqlist:s"=>\$fqlist,,
@@ -21,28 +21,34 @@ GetOptions(
 &USAGE unless ($fqlist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
 mkdir $dShell if (!-d $dShell);
-mkdir "$dOut/fig" if (!-d "$dOut/fig");
-$dOut=ABSOLUTE_DIR($dOut);
 $fqlist=ABSOLUTE_DIR($fqlist);
+$dOut=ABSOLUTE_DIR($dOut);
 open In,$fqlist;
-open SH,">$dShell/step02.rawdata-qc.sh";
-open Out,">$dOut/stat.list";
+open SH,">$dShell/step02.rawdata-dup.sh";
+open Dup,">$dOut/dup.list";
 mkdir "$dOut/fig" if (!-d "$dOut/fig");
 my %lane;
+my $maxmem=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sample,$fq1,$fq2,$e1,$e2)=split(/\s+/,$_);
-	print SH "$Bin/bin/ngsqc -1 $fq1 -2 $fq2 -o $dOut -k $sample -e $e1 -p $e2 && ";
-	print SH "Rscript $Bin/bin/ngsqc.r --base  $dOut/$sample.atgc  --qual $dOut/$sample.qual  --key $sample --od  $dOut/fig\n";
-	print Out "$sample $dOut/$sample.stat\n";
+	print SH "$Bin/bin/ngsduplicate -1 $fq1 -2 $fq2 -q 33 -s $dOut/$sample.dup\n";
+	my $mem1=`du $fq1`;
+	my $mem2=`du $fq2`;
+	$mem1=~s/\D//g;
+	$mem2=~s/\D//g;
+	if ($mem1+$mem2 >$maxmem) {
+		$maxmem=$mem1+$mem2;
+	}
+	print Dup "$sample\t$dOut/$sample.dup\n";
 }
 close In;
 close SH;
-close Out;
-my $job="perl $Bin/bin/qsub-sge.pl $dShell/step02.rawdata-qc.sh --Resource mem=3G --CPU 1  --Nodes 1 --Maxjob 19 ";
+close Dup;
+my $mem=join("",int($maxmem/1000000)+1)."G";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  $dShell/step02.rawdata-dup.sh --Resource mem=3G --CPU 1  --Nodes 1 --Maxjob 19 ";
 `$job`;
-
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -74,9 +80,9 @@ Contact: long.huang
 
 Usage:
   Options:
-	-fqlist	<file>	input file 
+	-fqlist	<file>	input fqlist file 
 	-out	<dir>	output dir
-	-dsh	<dir>	output dsh
+	-dsh	<dir>	output shell	
 USAGE
 	print $usage;
 	exit;

@@ -101,7 +101,7 @@ for (my $i=0;$i<@b2rawA;$i++) {
 	print Out join("\t",$i,$b2rawQ[$i]),"\n";
 }
 close Out;
-open Out,">$fOut.clean.quan\n";
+open Out,">$fOut.clean.qual\n";
 for (my $i=0;$i<@b1cleanA;$i++) {
 	print Out join("\t",$i,$b1cleanQ[$i]),"\n";
 }
@@ -160,9 +160,7 @@ Description:
 Usage:
   Options:
   -i	<file>	input dict name
-  -qc	<file>	out qc file name
-  -qual	<file>	out qual file name
-  -base	<file>	out base file name
+  -o	<file>	out qc base file name
   -h         Help
 
 USAGE

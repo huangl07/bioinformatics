@@ -21,32 +21,34 @@ GetOptions(
 &USAGE unless ($fqlist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
 mkdir $dShell if (!-d $dShell);
-`mkdir $dOut/qc/ `;
 $fqlist=ABSOLUTE_DIR($fqlist);
 $dOut=ABSOLUTE_DIR($dOut);
-
 open In,$fqlist;
-open SH,">$dShell/step04.fastp-trim.sh";
+open SH,">$dShell/step04.clean-dup.sh";
+open Dup,">$dOut/dup.list";
 mkdir "$dOut/fig" if (!-d "$dOut/fig");
-open Out,">$dOut/fastq.list";
-open Stat,">$dOut/json.list";
 my %lane;
+my $maxmem=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sample,$fq1,$fq2,$e1,$e2)=split(/\s+/,$_);
-	print SH "/mnt/ilustre/users/dna/.env//bin/fastp  -i $fq1 -I $fq2 -o $dOut/$sample.clean.1.fastq.gz -O $dOut/$sample.clean.2.fastq.gz ";
-	print SH " -q 20 -l 36 -5 20 -3 3 -W 4 -M 20 -n 10  -j $dOut/qc/$sample.json -h $dOut/qc/$sample.html -z 6 -w 8 \n";
-	print Out "$sample $dOut/$sample.clean.1.fastq.gz $dOut/$sample.clean.2.fastq.gz\n";
-	print Stat "$sample\t$dOut/qc/$sample.json\n";
+	print SH "$Bin/bin/ngsduplicate -1 $fq1 -2 $fq2 -q 33 -s $dOut/$sample.dup\n";
+	my $mem1=`du $fq1`;
+	my $mem2=`du $fq2`;
+	$mem1=~s/\D//g;
+	$mem2=~s/\D//g;
+	if ($mem1+$mem2 >$maxmem) {
+		$maxmem=$mem1+$mem2;
+	}
+	print Dup "$sample\t$dOut/$sample.dup\n";
 }
 close In;
 close SH;
-close Out;
-close Stat;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  $dShell/step04.fastp-trim.sh --Resource mem=12G --CPU 8  --Maxjob 39";
+close Dup;
+my $mem=join("",int($maxmem/1000000)+1)."G";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  $dShell/step04.clean-dup.sh --Resource mem=3G --CPU 1 --Maxjob 19";
 `$job`;
-
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -78,9 +80,9 @@ Contact: long.huang
 
 Usage:
   Options:
-	-fqlist	<file>	input file 
+	-fqlist	<file>	input fqlist file 
 	-out	<dir>	output dir
-	-dsh	<dir>	output work sh
+	-dsh	<dir>	output shell	
 USAGE
 	print $usage;
 	exit;

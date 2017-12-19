@@ -11,30 +11,28 @@ my $version="1.0.0";
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($rawlist , $rawdup , $cleanlist , $cleanfig , $cleandup , $dOut,$pollution);
+my ($rawdup , $cleandup , $qc , $dOut,$pollution);
 GetOptions(
 				"help|?" =>\&USAGE,
-				"rawlist:s"=>\$rawlist,,
 				"rawdup:s"=>\$rawdup,
-				"cleanlist:s"=>\$cleanlist,
-				"cleanfig:s"=>\$cleanfig,
 				"cleandup:s"=>\$cleandup,
 				"pollution:s"=>\$pollution,
+				"qc:s"=>\$qc,
 				"o:s"=>\$dOut,
 				) or &USAGE;
-&USAGE unless ($rawlist and $rawdup and $cleanlist and $cleanfig and $cleandup and $dOut);
+&USAGE unless ($rawdup and $qc and $cleandup and $pollution and $dOut);
 mkdir $dOut if (!-d $dOut);
 $dOut=ABSOLUTE_DIR($dOut);
 my %sample;
-open In,$rawlist;
+open In,"$qc/stat.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($sample,$stat)=split(/\s+/,$_);
 	open Stat,$stat;
 	while (<Stat>) {
-		next if ($_ eq "" ||/^$/||!/Total/);
-		(undef,$sample{raw}{$sample},$sample{raw}{$sample}{read},$sample{raw}{$sample}{base},$sample{raw}{$sample}{A},$sample{raw}{$sample}{T},$sample{raw}{$sample}{G},$sample{raw}{$sample}{C},$sample{raw}{$sample}{N},$sample{raw}{$sample}{GC},$sample{raw}{$sample}{Q30},$sample{raw}{$sample}{Q20},$sample{raw}{$sample}{AQ},$sample{raw}{$sample}{enzyme1},$sample{raw}{$sample}{enzyme2})=split(/\s+/,$_);
+		next if ($_ eq "" ||/^$/||/#/);
+		($sample{raw}{$sample},$sample{raw}{$sample}{rawread},$sample{raw}{$sample}{rawbase},$sample{raw}{$sample}{rawq20},$sample{raw}{$sample}{rawq30},$sample{raw}{$sample}{rawGC},$sample{raw}{$sample}{ada},$sample{raw}{$sample}{cleanread},$sample{raw}{$sample}{cleanbase},$sample{raw}{$sample}{cleanq20},$sample{raw}{$sample}{cleanq30},$sample{raw}{$sample}{cleanGC})=split(/\s+/,$_);
 	}
 	close Stat;
 }
@@ -56,19 +54,6 @@ while (<In>) {
 	close Dup;
 }
 close In;
-open In,$cleanlist;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" ||/^$/);
-	my ($sample,$stat)=split(/\s+/,$_);
-	open Stat,$stat;
-	while (<Stat>) {
-		next if ($_ eq "" ||/^$/||!/Total/);
-		(undef,undef,$sample{clean}{$sample}{read},$sample{clean}{$sample}{base},$sample{clean}{$sample}{A},$sample{clean}{$sample}{T},$sample{clean}{$sample}{G},$sample{clean}{$sample}{C},$sample{clean}{$sample}{N},$sample{clean}{$sample}{GC},$sample{clean}{$sample}{Q30},$sample{clean}{$sample}{Q20},$sample{clean}{$sample}{AQ},$sample{clean}{$sample}{enzyme1},$sample{clean}{$sample}{enzyme2})=split(/\s+/,$_);
-	}
-	close Stat;
-}
-close In;
 open In,$cleandup;
 while (<In>) {
 	chomp;
@@ -85,7 +70,7 @@ while (<In>) {
 	close Dup;
 }
 close In;
-open In,"$pollution";
+open In,$pollution;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
@@ -96,25 +81,25 @@ while (<In>) {
 }
 close In;
 open Out,">$dOut/qc-report.xls";
-print Out join("\t","#LaneID\tLibraryID\tProjectID\tMajorID\tSampleID\t","Raw Reads","Clean Reads","Raw Base","Clean Base","Raw Q30","Clean Q30","Raw AQ(%)","Clean AQ(%)","Raw GC(%)","Clean GC(%)","Raw Dup(%)","Clean Dup(%)","Pollution-species","Pollution-rate(%)","Pollution-number"),"\n";
+print Out join("\t","#LaneID\tLibraryID\tProjectID\tMajorID\tSampleID\t","Raw Reads","Clean Reads","Raw Base","Clean Base","Raw Q30","Clean Q30","Raw GC(%)","Clean GC(%)","Raw Dup(%)","Clean Dup(%)","Adapter(%)","Pollution-species","Pollution-rate(%)","Pollution-number"),"\n";
 foreach my $sample (sort keys %{$sample{raw}}) {
 	my $samples=$sample;
 	$samples=~s/\:/\t/g;
-	print Out join("\t",$samples,$sample{raw}{$sample}{read},$sample{clean}{$sample}{read},$sample{raw}{$sample}{base},$sample{clean}{$sample}{base},$sample{raw}{$sample}{Q30},$sample{clean}{$sample}{Q30},$sample{raw}{$sample}{AQ},$sample{clean}{$sample}{AQ},$sample{raw}{$sample}{GC},$sample{clean}{$sample}{GC},$sample{raw}{$sample}{pollutions},$sample{raw}{$sample}{pollutionr},$sample{raw}{$sample}{pollutionn}),"\n";
+	print Out join("\t",$samples,$sample{raw}{$sample}{rawread},$sample{raw}{$sample}{cleanread},$sample{raw}{$sample}{rawbase},$sample{raw}{$sample}{cleanbase},$sample{raw}{$sample}{rawq30},$sample{raw}{$sample}{cleanq30},$sample{raw}{$sample}{rawGC},$sample{raw}{$sample}{cleanGC},$sample{raw}{$sample}{dup},$sample{clean}{$sample}{dup},$sample{raw}{$sample}{ada},$sample{raw}{$sample}{pollutions},$sample{raw}{$sample}{pollutionr},$sample{raw}{$sample}{pollutionn}),"\n";
 }
 close Out;
 open Out,">$dOut/10.report.xls";
-print Out join("\t","#LaneID\tLibraryID\tProjectID\tMajorID\tSampleID\t","Raw Base","Clean Base","Clean Reads","CleanBasePer(%)","Q30(%)","GC(%)","Pollution-species","Pollution-rate(%)","Pollution-number"),"\n";
+print Out join("\t","#LaneID\tLibraryID\tProjectID\tMajorID\tSampleID\t","Raw Data(G)","Clean Data(G)","Clean Reads(Mreads)","CleanBasePer(%)","Q30(%)","GC(%)","Dup(%)","Pollution-species","Pollution-rate(%)","Pollution-number"),"\n";
 foreach my $sample (sort keys %{$sample{raw}}) {
 	my $samples=$sample;
 	$samples=~s/\:/\t/g;
-	print Out join("\t",$samples,sprintf("%.2f",$sample{raw}{$sample}{base}/1000000000),sprintf("%.2f",$sample{clean}{$sample}{base}/1000000000),sprintf("%.2f",$sample{clean}{$sample}{read}/1000000),sprintf("%.2f",100*$sample{clean}{$sample}{base}/$sample{raw}{$sample}{base}),$sample{clean}{$sample}{Q30},$sample{clean}{$sample}{GC},$sample{raw}{$sample}{pollutions},$sample{raw}{$sample}{pollutionr},$sample{raw}{$sample}{pollutionn}),"\n";
+	print Out join("\t",$samples,sprintf("%.3f",$sample{raw}{$sample}{rawbase}/1000000000),sprintf("%.3f",$sample{raw}{$sample}{cleanbase}/1000000000),sprintf("%.3f",$sample{raw}{$sample}{cleanread}/1000000),sprintf("%.2f",100*$sample{raw}{$sample}{cleanbase}/$sample{raw}{$sample}{cleanbase}),$sample{raw}{$sample}{cleanq30},$sample{raw}{$sample}{cleanGC},$sample{raw}{$sample}{pollutions},$sample{raw}{$sample}{pollutionr},$sample{raw}{$sample}{pollutionn}),"\n";
 }
 close Out;
-my $dir=basename($cleanlist);
+my $dir=basename($qc);
 mkdir "$dOut/fig" if (!-d "$dOut/fig");
-`ln -s $cleanfig/*.png $dOut/fig`;
-`ln -s $cleanfig/*.pdf $dOut/fig`;
+`ln -s $qc/fig/*.png $dOut/fig`;
+`ln -s $qc/fig/*.pdf $dOut/fig`;
 
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -148,10 +133,8 @@ Contact: long.huang
 
 Usage:
   Options:
-		-rawlist	<file>	raw qc list
 		-rawdup		<file>	raw dup list
-		-cleanlist	<file>	clean qc list
-		-cleanfig	<dir>	clean qc fig
+		-qc	<dir>	fqstp qc dir
 		-cleandup	<file>	clean dup list
 		-pollution	<file>	pollution summary
 		-o	<dir>	QC report

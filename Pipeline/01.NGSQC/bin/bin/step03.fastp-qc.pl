@@ -21,34 +21,36 @@ GetOptions(
 &USAGE unless ($fqlist and $dOut and $dShell);
 mkdir $dOut if (!-d $dOut);
 mkdir $dShell if (!-d $dShell);
+`mkdir $dOut/qc/ `;
 $fqlist=ABSOLUTE_DIR($fqlist);
 $dOut=ABSOLUTE_DIR($dOut);
+
 open In,$fqlist;
-open SH,">$dShell/step06.clean-dup.sh";
-open Dup,">$dOut/dup.list";
+open SH,">$dShell/step03.fastp-trim.sh";
 mkdir "$dOut/fig" if (!-d "$dOut/fig");
+open Out,">$dOut/fastq.list";
+open Stat,">$dOut/stat.list";
+open Json,">$dOut/json.list";
 my %lane;
-my $maxmem=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sample,$fq1,$fq2,$e1,$e2)=split(/\s+/,$_);
-	print SH "$Bin/bin/ngsduplicate -1 $fq1 -2 $fq2 -q 33 -s $dOut/$sample.dup\n";
-	my $mem1=`du $fq1`;
-	my $mem2=`du $fq2`;
-	$mem1=~s/\D//g;
-	$mem2=~s/\D//g;
-	if ($mem1+$mem2 >$maxmem) {
-		$maxmem=$mem1+$mem2;
-	}
-	print Dup "$sample\t$dOut/$sample.dup\n";
+	print SH "/mnt/ilustre/users/dna/.env//bin/fastp  -i $fq1 -I $fq2 -o $dOut/$sample.clean.1.fastq.gz -O $dOut/$sample.clean.2.fastq.gz ";
+	print SH " -q 20 -l 36 -5 20 -3 3 -W 4 -M 20 -n 10  -j $dOut/qc/$sample.json -h $dOut/qc/$sample.html -z 6 -w 8 && ";
+	print SH " perl /mnt/ilustre/users/caixia.tian/perl/fastp/bin/bin/fastp.pl -i $dOut/qc/$sample.json -o $dOut/qc/$sample && Rscript /mnt/ilustre/users/caixia.tian/perl/fastp/bin/bin/ngsqc.r --base  $dOut/qc/$sample.raw.atgcn  --qual $dOut/qc/$sample.raw.qual  --key $sample --od  $dOut/fig && Rscript /mnt/ilustre/users/caixia.tian/perl/fastp/bin/bin/ngsqc.r --base $dOut/qc/$sample.clean.atgcn --qual $dOut/qc/$sample.clean.qual --key $sample --od $dOut/fig \n";
+	print Out "$sample $dOut/$sample.clean.1.fastq.gz $dOut/$sample.clean.2.fastq.gz\n";
+	print Stat "$sample\t$dOut/qc/$sample.stat\n";
+	print Json "$sample\t$dOut/qc/$sample.json\n";
 }
 close In;
 close SH;
-close Dup;
-my $mem=join("",int($maxmem/1000000)+1)."G";
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  $dShell/step06.clean-dup.sh --Resource mem=3G --CPU 1 --Maxjob 19";
+close Out;
+close Stat;
+close Json;
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  $dShell/step03.fastp-trim.sh --Resource mem=12G --CPU 8  --Maxjob 39";
 `$job`;
+
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -80,9 +82,9 @@ Contact: long.huang
 
 Usage:
   Options:
-	-fqlist	<file>	input fqlist file 
+	-fqlist	<file>	input file 
 	-out	<dir>	output dir
-	-dsh	<dir>	output shell	
+	-dsh	<dir>	output work sh
 USAGE
 	print $usage;
 	exit;
