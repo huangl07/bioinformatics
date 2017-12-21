@@ -50,7 +50,8 @@ close SH;
 close In;
 open SH,">$dShell/step09.genotype.sh";
 print SH "populations -P $dOut -t 16 -m 4 -O $dOut/ --vcf && ";
-print SH "perl $Bin/bin/tag-generate.pl -vcf $dOut/batch_1.vcf -catalog $dOut/batch_1.catalog.tags.tsv.gz -out $dOut/batch_1.tag\n";
+print SH "perl $Bin/bin/tag-generate.pl -vcf $dOut/batch_1.vcf -catalog $dOut/batch_1.catalog.tags.tsv.gz -out $dOut/batch_1.tag && ";
+print SH "perl $Bin/bin/vcf-convert.pl -vcf $dOut/batch_1.vcf -out $dOut/pop.recode.vcf\n"
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl --Queue dna --Resource mem=80G --CPU 16 --Nodes 1 $dShell/step09.genotype.sh";
 print "$job\n";

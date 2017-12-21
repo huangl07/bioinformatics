@@ -37,7 +37,6 @@ while (<In>) {
 	}
 	my ($id,$type,@info)=split(/\s+/,$_);
 	$stat{total}++;
-
 	if ($type eq "aaxbb" && $popt eq "BC1") {
 		for (my $i=0;$i<@info;$i++) {
 			if ($info[$i] eq "bb") {

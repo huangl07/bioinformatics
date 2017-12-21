@@ -42,7 +42,7 @@ close In;
 print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx120G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $vcf -nt 32 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log -jdk_deflater -jdk_inflater && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=50G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing.sh";
 `$job`;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

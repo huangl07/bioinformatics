@@ -15,7 +15,7 @@ task haplotypeCaller {
         -T HaplotypeCaller \
         -R ${RefFasta} \
         -I ${inputBAM} \
-        -o ${workdir}/${sampleName}.g.vcf \
+        -o ${workdir}/${sampleName}.g.vcf.gz \
 		-nct 8 \
 		--genotyping_mode DISCOVERY \
 		--emitRefConfidence GVCF \

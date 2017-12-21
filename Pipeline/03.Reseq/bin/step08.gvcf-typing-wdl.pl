@@ -39,7 +39,7 @@ while (<In>) {
 	my $hand=$nchr % 25;
 	if (!exists $hand{$hand}) {
 		open $hand{$hand},">$dOut/$hand.internal";
-		open Out,">$dOut/$hand.json\n";
+		open Out,">$dOut/$hand.gtyping.json\n";
 		print Out "{\n";
 		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Refdict\": \"$dict\",\n";
@@ -50,7 +50,7 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\"\n";
 		print Out "}\n";
 		close Out;
-		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.json && ";
+		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
 	}
 	print {$hand{$hand}} $id,"\n";
 }
@@ -73,8 +73,8 @@ while (<In>) {
 	$number++;
 	my $handfile=$number % 20;
 	if (!exists $handfile{$handfile}) {
-		open $handfile{$handfile},">$handfile.gvcf.list";
-		open Out,">$dOut/$handfile.json\n";
+		open $handfile{$handfile},">$dOut/$handfile.gvcf.list";
+		open Out,">$dOut/$handfile.combine.json\n";
 		print Out "{\n";
 		print Out "\"CombinesGVCF.CombineVCF.inputVCFs\": \"$dOut/$handfile.gvcf.list\",\n";
 		print Out "\"CombinesGVCF.CombineVCF.Refdict\": \"$dict\",\n";
@@ -85,7 +85,7 @@ while (<In>) {
 		print Out "}\n";
 		close Out;
 		print List "$dOut/$handfile.gvcf.list","\n";
-		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/$handfile.json \n";
+		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/$handfile.combine.json \n";
 	}
 	print {$handfile{$handfile}} "$gvcf\n";
 }

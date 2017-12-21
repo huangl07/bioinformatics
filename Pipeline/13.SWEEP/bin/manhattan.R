@@ -35,33 +35,35 @@ if ( is.null(opt$tajima2)){ print_usage(spec) }
 
 library(qqman)
 times<-Sys.time()
-pi1<-read.table(opt$pi1,sep="\t",head=TRUE)
-pi2<-read.table(opt$pi2,sep="\t",head=TRUE)
-fst<-read.table(opt$fst,sep="\t",head=TRUE)
-tajima1<-read.table(opt$tajima1,sep="\t",head=TRUE)
-tajima2<-read.table(opt$tajima2,sep="\t",head=TRUE)
+pi1<-read.table(opt$pi1,sep="\t",head=TRUE,stringsAsFactors=FALSE)
+pi2<-read.table(opt$pi2,sep="\t",head=TRUE,stringsAsFactors=FALSE)
+fst<-read.table(opt$fst,sep="\t",head=TRUE,stringsAsFactors=FALSE)
+tajima1<-read.table(opt$tajima1,sep="\t",head=TRUE,stringsAsFactors=FALSE)
+tajima2<-read.table(opt$tajima2,sep="\t",head=TRUE,stringsAsFactors=FALSE)
 pi1$win<-paste(pi1$CHROM,pi1$BIN_START)
 pi2$win<-paste(pi2$CHROM,pi2$BIN_START)
 fst$win<-paste(fst$CHROM,fst$BIN_START)
 tajima1$win<-paste(tajima1$CHROM,tajima1$BIN_START+1)
 tajima2$win<-paste(tajima2$CHROM,tajima2$BIN_START+1)
 win<-intersect(pi1$win,intersect(pi2$win,intersect(fst$win,intersect(tajima1$win,tajima2$win))))
-data<-data.frame(chr=pi1$CHROM[pi1$win %in% win])
+data<-data.frame(chr=pi1$CHROM[pi1$win %in% win],stringsAsFactors=FALSE)
 data$pos<-pi1$BIN_START[pi1$win %in% win]
 data$pi1<-pi1$PI[pi1$win %in% win]
 data$pi2<-pi2$PI[pi2$win %in% win]
 data$tajima1<-tajima1$TajimaD[tajima1$win %in% win]
 data$tajima2<-tajima2$TajimaD[tajima2$win %in% win]
 data$fst<-fst$WEIGHTED_FST[fst$win %in% win]
+data$tajima1[data$tajima1=="NaN"]=0
+data$tajima2[data$tajima2=="NaN"]=0
 
 write.table(file=paste(opt$out,".detail",sep=""),row.names=FALSE,data)
 write.table(file=paste(opt$out,".pop1.select",sep=""),row.names=FALSE,subset(data,(data$pi1 < quantile(data$pi1,prob=0.05) & (data$tajima1 < quantile(data$tajima1,prob=0.05) | data$tajima1 > quantile(data$tajima1,prob=0.05)) & data$fst > quantile(data$fst,prob=0.95))))
 write.table(file=paste(opt$out,".pop2.select",sep=""),row.names=FALSE,subset(data,(data$pi2 < quantile(data$pi1,prob=0.05) & (data$tajima2 < quantile(data$tajima2,prob=0.05) | data$tajima2 > quantile(data$tajima2,prob=0.95))& data$fst > quantile(data$fst,prob=0.95))))
 write.table(file=paste(opt$out,".diver.select",sep=""),row.names=FALSE,subset(data,(data$fst > quantile(data$fst,prob=0.95))))
-chrlab=unique(names(data$chr))
+chrlab=unique(data$chr)
 for (i in 1:length(chrlab)){data$chr[data$chr==chrlab[i]]=i}
+data$chr<-as.numeric(data$chr)
 ylimit=max(abs(data$tajima1),abs(data$tajima2))
-
 pdf(paste(opt$out,"pop1.manhattan.pdf",sep="."),height=1200,width=1600)
 par(mfrow = c(3, 1))
 manhattan(data,chr="chr",bp="pos",p="pi1",col=rainbow(4),chrlabs=chrlab,ylab="Pi",logp=TRUE,suggestiveline=quantile(data$pi1,prob=0.05))

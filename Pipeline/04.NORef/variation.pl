@@ -163,7 +163,7 @@ if ($step == 10) {
 	print LOG "stacks stat\n"; my $time=time();
 	print LOG "########################################\n";
 	my $stacks=ABSOLUTE_DIR("$outdir/06.correct/ustacks.list");
-	my $vcf=ABSOLUTE_DIR("$outdir/09.genotype/batch_1.vcf");
+	my $vcf=ABSOLUTE_DIR("$outdir/09.genotype/pop.recode.vcf");
 	my $job="perl $Bin/bin/step10.stackstat.pl -ulist $stacks -vcf $vcf -out $outdir/10.stacksstat -dsh $outdir/work_sh ";
 	print LOG "$job\n";
 	`$job`;

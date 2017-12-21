@@ -24,6 +24,8 @@ open In,$fIn;
 open Out,">$fOut";
 my @indi;
 my $n=0;
+my %stat;
+my %pmdep;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ || /^##/);
@@ -85,15 +87,16 @@ while (<In>) {
 				$info{$indi[$i]}{ad}=join(",",@dep);
 			}
 		}
-		next if ($info{$PID}{gt} eq "./." ||$info{$MID}{gt} eq "./." );#missing parent
+		if ($info{$PID}{gt} eq "./." ||$info{$MID}{gt} eq "./." ){$stat{miss}++;;next;};#missing parent
 		my ($p1,$p2)=split(/\//,$info{$PID}{gt});
 		my ($m1,$m2)=split(/\//,$info{$MID}{gt});
-		next if ($p1 eq $p2 && $m1 eq $m2 && $m1 eq $p2);#aaxaa
+		if ($p1 eq $p2 && $m1 eq $m2 && $m1 eq $p2){$stat{aaxaa}++;next;};#aaxaa
 		my @pd=split(/\,/,$info{$PID}{ad});
 		my @md=split(/\,/,$info{$MID}{ad});
 		my $sum1=$pd[$p1];$sum1+=$pd[$p2] if($p1 ne $p2);
 		my $sum2=$md[$m1];$sum2+=$md[$m2] if($m1 ne $m2);
-		next if ($sum1 < $ParentDepth || $sum2 < $ParentDepth);
+		$pmdep{"$sum1:$sum2"}++;
+		if ($sum1 < $ParentDepth || $sum2 < $ParentDepth){$stat{pmdep}++;next;}
 		my %geno;
 		$geno{$p1}++;
 		$geno{$p2}++;
@@ -110,6 +113,7 @@ while (<In>) {
 				$m2=>"d",
 			);
 			push @out,"abxcd";
+			$stat{abxcd}++;
 		}elsif (scalar keys %geno == 3 && $p1 eq $p2 && $m1 ne $m2) {#ccxab
 			 %ale=(
 				$p1=>"c",
@@ -117,6 +121,7 @@ while (<In>) {
 				$m2=>"b",
 			);
 			push @out,"ccxab";
+			$stat{ccxab}++;
 		}elsif (scalar keys %geno == 3 && $p1 ne $p2 && $m1 eq $m2) {#abxcc
 			 %ale=(
 				$p1=>"a",
@@ -124,6 +129,8 @@ while (<In>) {
 				$m1=>"c",
 			);
 			push @out,"abxcc";
+			$stat{abxcc}++;
+
 		}elsif (scalar keys %geno == 3 && $p1 ne $p2 && $m1 ne $m2) {#efxeg
 			my @ale=sort {$geno{$a}<=>$geno{$b}} keys %geno;
 			 %ale=(
@@ -132,12 +139,16 @@ while (<In>) {
 				$ale[2]=>"e",
 			);
 			push @out,"efxeg";
+			$stat{efxeg}++;
+
 		}elsif (scalar keys %geno == 2 && $info{$PID}{gt} eq $info{$MID}{gt}) {#hkxhk
 			%ale=(
 				$p1=>"h",
 				$p2=>"k",
 			);
 			push @out,"hkxhk";
+			$stat{hkxhk}++;
+
 		}elsif (scalar keys %geno == 2 && $p1 eq $p2 && $m1 ne $m2) {#nnxnp
 			my @ale=sort {$geno{$a}<=>$geno{$b}} keys %geno;
 			 %ale=(
@@ -145,6 +156,8 @@ while (<In>) {
 				$ale[1]=>"n",
 			);
 			push @out,"nnxnp";
+						$stat{nxxnp}++;
+
 		}elsif (scalar keys %geno == 2 && $p1 ne $p2 && $m1 eq $m2) {#lmxll
 			my @ale=sort {$geno{$a}<=>$geno{$b}} keys %geno;
 			 %ale=(
@@ -152,12 +165,16 @@ while (<In>) {
 				$ale[1]=>"l",
 			);
 			push @out,"lmxll";
+			$stat{lmxll}++;
+
 		}elsif (scalar keys %geno == 2 && $p1 eq $p2 && $m1 eq $m2) {#aaxbb
 			 %ale=(
 				$p1=>"a",
 				$m1=>"b",
 			);
 			push @out,"aaxbb";
+			$stat{aaxbb}++;
+
 		}
 		for (my $i=0;$i<@indi;$i++) {
 			next if ($indi[$i] eq $PID || $indi[$i] eq $MID);
@@ -187,7 +204,11 @@ while (<In>) {
 }
 close Out;
 close In;
-
+open Out,">$fOut.log";
+foreach my $stat (sort keys %stat) {
+	print Out join("\t",$stat,$stat{$stat}),"\n";
+}
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

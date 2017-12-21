@@ -70,13 +70,19 @@ for(i in 1:length(phe.name)){
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
-	if(min(scan.result$pval) >0.1){
+	if(min(scan.result$pval) >0.01){
 		scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1)
+		if(length(scan.result$lod$chr) < 1){
+			scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1)
+		}
 		pm.result<-c(3,2.5)
 		legend=pm.result
 	}else{	
 		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
-		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.01,drop=1)
+		if(length(scan.result$lod$chr) < 1){
+			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
+		}
 		legend=paste(rownames(pm.result),round(pm.result,2))
 	}
 	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
@@ -89,7 +95,9 @@ for(i in 1:length(phe.name)){
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
 	dev.off()
-
+	if(length(scan.result%lod$chr < 1)){
+		next;
+	}
 	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
 	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
