@@ -42,7 +42,7 @@ if ($fIn =~ /gz/) {
 	open In,$fIn;
 }
 open Out,">$fOut";
-print Out join("\t","#chr","pos","ref","alt","anno","PID","PAD","BID","BAD","INDEX"),"\n";
+print Out join("\t","#chr","pos","ref","alt","anno","PID","PAD","BID","BAD","INDEX","ED"),"\n";
 my @indi;
 while (<In>) {
 	chomp;

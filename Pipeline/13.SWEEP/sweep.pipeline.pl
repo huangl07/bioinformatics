@@ -110,10 +110,16 @@ if ($noref) {
 	for (my $i=0;$i<@groid;$i++) {
 		print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i]  --window-pi 2000000 --window-pi-step 10000 \n";
 		print SH "vcftools --vcf $out/pop.recode.vcf --keep $out/$groid[$i].list --out $out/$groid[$i] --TajimaD 10000 \n";
-		print SH "cd $out && RAiSD -n $groid[$i] -I pop.recode.vcf -f -S $out/$groid[$i].list -T 50000 -k 0.005 && ";
-		print SH "perl $Bin/bin/RAiSD.pl -i $out/RAiSD_Report.$groid[$i] -o $out/$groid[$i].raisd.out\n";
+		print SH "cd $out && RAiSD -n $groid[$i] -I $out/pop.recode.vcf -f -S $out/$groid[$i].list -T 50000 -k 0.005 && ";
+		print SH "perl $Bin/bin/sweep_result.pl -i $out/RAiSD_Report.$groid[$i] -o $out/$groid[$i].raisd.out\n";
+		print SH "cd $out && OmegaPlus-F -input $out/pop.recode.vcf -name $groid[$i] -sampleList $out/$groid[$i].list -grid 100000 -minwin 10000 -maxwin 2000000 -seed 1000000 -threads 8 && ";
+		print SH "perl $Bin/bin/sweep_result.pl -i $out/OmegaPlus_Report.$groid[$i] -o $out/$groid[$i].omega.out\n";
+		print SH "cd $out && SweeD-MPFR-P -input $out/pop.recode.vcf -name $groid[$i] -sampleList $out/$groid[$i] -grid 100000  -threads 8 \n";
+		print SH "perl $Bin/bin/sweep_result.pl -i $out/SweeD_Report.$groid[$i] -o $out/$groid[$i].sweed.out\n";
 		print SH2 "Rscript $Bin/bin/pi-tajima.R --tajima $out/$groid[$i].Tajima.D --pi $out/$groid[$i].windowed.pi --out $out/$groid[$i]\n";
-		print SH2 "Rscript $Bin/bin/raisd.R --input $out/$groid[$i].raisd.out --out $out/$groid[$i]\n";
+		print SH2 "Rscript $Bin/bin/sweep-manhattan.R --input $out/$groid[$i].raisd.out --out $out/$groid[$i].raisd\n";
+		print SH2 "Rscript $Bin/bin/sweep-manhattan.R --input $out/$groid[$i].sweed.out --out $out/$groid[$i].sweed\n";
+		print SH2 "Rscript $Bin/bin/sweep-manhattan.R --input $out/$groid[$i].omega.out --out $out/$groid[$i].omega\n";
 		for (my $j=$i+1;$j<@groid;$j++) {
 			print SH "vcftools --vcf $out/pop.recode.vcf --weir-fst-pop $out/$groid[$i].list --weir-fst-pop $out/$groid[$j].list --out $out/$groid[$i]-$groid[$j] --fst-window-size 2000000 --fst-window-step 10000 \n";
 			print SH2 "Rscript $Bin/bin/fst-pi.R --fst $out/$groid[$i]-$groid[$j].windowed.weir.fst --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$j].windowed.pi --out $out/$groid[$i]-$groid[$j] \n";
