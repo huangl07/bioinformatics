@@ -26,76 +26,61 @@ $ref=ABSOLUTE_DIR($ref);
 $dict=ABSOLUTE_DIR($dict);
 mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
-open SH,">$dShell/08.gvcf-typing2.sh";
-
+open In,$gvcflist;
+open Out,">$dOut/gvcf.list";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my ($id,$vcf)=split(/\s+/,$_);
+	if (!-f $vcf ||!-f "$vcf.idx") {
+		die "check $vcf!";
+	}else{
+		print Out $vcf,"\n";
+	}
+}
+close In;
+close Out;
+open SH,">$dShell/08-1.gvcf-typing.sh";
+open List,">$dOut/sub.vcf.list";
 open In,$dict;
 my %hand;
 my $nchr=0;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/);
+	next if ($_ eq ""||/^$/ ||!/^\@SQ/);
 	my $id=(split(/\t/,$_))[1];
 	$nchr++;
 	my $hand=$nchr % 25;
 	if (!exists $hand{$hand}) {
-		open $hand{$hand},">$dOut/$hand.internal";
+		open $hand{$hand},">$dOut/$hand.intervals";
+		print List "$dOut/$hand.vcf\n";
 		open Out,">$dOut/$hand.gtyping.json\n";
 		print Out "{\n";
-		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/total.gvcf.list\",\n";
+		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/gvcf.list\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Refdict\": \"$dict\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Refindex\": \"$ref.fai\",\n";
 		print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
 		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
-		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.internal\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.intervals\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\"\n";
 		print Out "}\n";
 		close Out;
 		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
 	}
+	$id =~ s/SN://g;
 	print {$hand{$hand}} $id,"\n";
 }
 close In;
 close SH;
-
-open In,$gvcflist;
-open List,">$dOut/total.gvcf.list";
-open SH,">$dShell/08.gvcf-typing1.sh";
-my $vcf;
-my $number=0;
-my %handfile;
-while (<In>) {
-	chomp;
-	next if ($_ eq "" || /^$/);
-	my ($sampleID,$gvcf)=split(/\s+/,$_);
-	if (!-f $gvcf) {
-		die "check $gvcf!";
-	}
-	$number++;
-	my $handfile=$number % 20;
-	if (!exists $handfile{$handfile}) {
-		open $handfile{$handfile},">$dOut/$handfile.gvcf.list";
-		open Out,">$dOut/$handfile.combine.json\n";
-		print Out "{\n";
-		print Out "\"CombinesGVCF.CombineVCF.inputVCFs\": \"$dOut/$handfile.gvcf.list\",\n";
-		print Out "\"CombinesGVCF.CombineVCF.Refdict\": \"$dict\",\n";
-		print Out "\"CombinesGVCF.CombineVCF.Refindex\": \"$ref.fai\",\n";
-		print Out "\"CombinesGVCF.CombineVCF.workdir\": \"$dOut\",\n";
-		print Out "\"CombinesGVCF.CombineVCF.RefFasta\": \"$ref\",\n";
-		print Out "\"CombinesGVCF.CombineVCF.Output\": \"$handfile\"\n";
-		print Out "}\n";
-		close Out;
-		print List "$dOut/$handfile.gvcf.list","\n";
-		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/CombineGVCF.wdl -i $dOut/$handfile.combine.json \n";
-	}
-	print {$handfile{$handfile}} "$gvcf\n";
-}
 close List;
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
+`$job`;
+open SH,">$dShell/08-2.mergeVCF.sh";
+print SH "java -cp /mnt/ilustre/users/dna/.env//bin/GenomeAnalysisTK.jar org.broadinstitute.gatk.tools.CatVariants --reference $ref --variant $dOut/sub.vcf.list --outfile $dOut/pop.noid.vcf \n ";
+print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
-close Out;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing1.sh";
-#`$job`;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing2.sh";
-#`$job`;
+$job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
+`$job`;
 
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -130,7 +115,7 @@ Description:
 
 Usage:
   Options:
-  -gvcf	<file>	input bamlist file
+  -gvcf	<file>	input g vcf file
   -ref	<file>	input reference file
   -dict	<file>	input reference dict
   -out	<dir>	output dir

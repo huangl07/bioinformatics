@@ -26,7 +26,8 @@ mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 open SH,">$dShell/08.gvcf-typing.sh";
 open In,$gvcflist;
-my $vcf;
+open Out,">$dOut/gvcf.list";
+#my $vcf;
 my $number=0;
 my $nct=8;
 while (<In>) {
@@ -36,10 +37,11 @@ while (<In>) {
 	if (!-f $gvcf || !-f "$gvcf.idx") {
 		die "check $gvcf!";
 	}
-	$vcf .=" -V $gvcf ";
+	print Out $gvcf,"\n";
 }
 close In;
-print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx120G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs $vcf -nt 32 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log -jdk_deflater -jdk_inflater && ";
+close Out;
+print SH "java -Djava.io.tmpdir=$dOut/tmp/ -Xmx120G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T GenotypeGVCFs -V $dOut/gvcf.list -nt 16 -o $dOut/pop.noid.vcf -R $ref -log $dOut/pop.variant.log -jdk_deflater -jdk_inflater && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 32 --maxjob $proc $dShell/08.gvcf-typing.sh";

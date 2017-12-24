@@ -17,7 +17,7 @@ task gvcftyping {
         -V ${inputVCFs} \
         -o ${workdir}/${Filename}.noid.vcf \
         --never_trim_vcf_format_field \
-		-L ${Internal}
+	-L ${Internal} \
 	-jdk_inflater \
 	-jdk_deflater \
 	-nt 16 \
