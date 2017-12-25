@@ -174,7 +174,7 @@ while (<In>) {
 			);
 			push @out,"aaxbb";
 			$stat{aaxbb}++;
-
+			#if($pos eq "1209058"){print Dumper $p1,"\t",$m1,"\n";print Dumper %info;die};
 		}
 		for (my $i=0;$i<@indi;$i++) {
 			next if ($indi[$i] eq $PID || $indi[$i] eq $MID);

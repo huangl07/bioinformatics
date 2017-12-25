@@ -50,11 +50,11 @@ while (<In>) {
 			$mapstat{coverage}=(split(/\t/,$_))[2];
 		}
 	}
-	if (/IS/) {
+	if (/^IS/) {
 		my (undef,$insert,$depth,undef,undef)=split("\t",$_);
 		print IS $insert,"\t",$depth,"\n";
 	}
-	if (/COV/) {
+	if (/^COV/) {
 		my (undef,undef,$deps,$cova)=split("\t",$_);
 		$cov{1}+=$cova if($deps >= 1);
 		$cov{5}+=$cova if($deps >= 5);

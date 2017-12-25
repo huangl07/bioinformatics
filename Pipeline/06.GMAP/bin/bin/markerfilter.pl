@@ -27,19 +27,28 @@ open In,$fIn;
 open Out,">$fOut.marker.stat";
 print Out "#MarkerID\ttype\tNind\tNmiss\tGeno\tNGeno\tSegretion\n";
 open Geno,">$fOut.filtered.marker";
+open Miss,">$fOut.miss.marker";
+open Type,">$fOut.type.marker";
+open Seg,">$fOut.seg.marker";
+
+
+
 my %stat;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ );
 	if (/^#/) {
 		print Geno "$_\n";
+		print Miss "$_\n";
+		print Type "$_\n";
+		print Seg "$_\n";
 		next;
 	}
 	my ($id,$type,@info)=split(/\s+/,$_);
 	$stat{total}++;
 	if ($type eq "aaxbb" && $popt eq "BC1") {
 		for (my $i=0;$i<@info;$i++) {
-			if ($info[$i] eq "bb") {
+			if ($info[$i] ne $homo || $info[$i] ne "ab") {
 				$info[$i] = "--";
 			}
 		}
@@ -87,14 +96,19 @@ while (<In>) {
 	print Out "$id\t$type\t",scalar @info,"\t",$miss,"\t",$order,"\t",$flag,"\n";
 	if ($miss / scalar @info > $mis) {
 		$stat{miss}++;
+		print Miss "$id\t$type\t",join("\t",@info),"\n";
+
 		next;
 	}
 	if (($popt eq "CP" && $type eq "aaxbb") || ($popt ne "CP" && $type ne "aaxbb")) {
 		$stat{type}++;
+		print Type "$id\t$type\t",join("\t",@info),"\n";
+
 		next;
 	}
 	if ($p < $seg) {
 		$stat{seg}++;
+		print Seg "$id\t$type\t",join("\t",@info),"\n";
 		next;
 	}
 	$stat{filtered}++;

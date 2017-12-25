@@ -10,6 +10,7 @@ task gvcftyping {
   File Refdict
   File Internal
   String Filename
+  String NT
   command {
     java -XX:+UseSerialGC -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
         -T  GenotypeGVCFs\
@@ -20,7 +21,7 @@ task gvcftyping {
 	-L ${Internal} \
 	-jdk_inflater \
 	-jdk_deflater \
-	-nt 16 \
+	-nt ${NT} \
 	-log ${workdir}/${Filename}.vcf-typing.log
   }
   output {
