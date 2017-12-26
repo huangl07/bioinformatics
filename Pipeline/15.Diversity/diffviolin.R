@@ -1,0 +1,17 @@
+library(vcfR)
+library(ggplot2)
+library(reshape2)
+vcf<-read.vcfR(file="pop.recode.vcf")
+pop<-read.table("group.list")
+idnames=colnames(vcf@gt)
+popid<-NULL
+for(i in 2:length(idnames)){popid[i-1]=pop$V2[pop$V1 == idnames[i]]}
+vcf<-genetic_diff(vcf,pop=as.factor(popid))
+n=length(unique(pop$V2))
+n1=length(colnames(vcf))
+dpf <- melt(vcf[,c(3:3+n,n1)], varnames=c('Index', 'Sample'), value.name = 'Depth', na.rm=TRUE)
+p <- ggplot(dpf, aes(x=variable, y=Depth)) + geom_violin(fill="#2ca25f", adjust = 1.2)
+p <- p + xlab("")
+p <- p + ylab("")
+p <- p + theme_bw()
+ggsave(filename="output.pdf",device="pdf",p)

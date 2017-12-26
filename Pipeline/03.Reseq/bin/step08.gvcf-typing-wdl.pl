@@ -62,7 +62,7 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.workdir\": \"$dOut\",\n";
 		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.intervals\",\n";
-		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\"\n";
+		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\",\n";
 		print Out "\"Gvcftyping.gvcftyping.NT\": \"16\"\n";
 		print Out "}\n";
 		close Out;
@@ -78,7 +78,8 @@ my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G 
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
 print SH "java -cp /mnt/ilustre/users/dna/.env//bin/GenomeAnalysisTK.jar org.broadinstitute.gatk.tools.CatVariants --reference $ref --variant $dOut/sub.vcf.list --outfile $dOut/pop.noid.vcf \n ";
-print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.variant.vcf\n";
+print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
+print SH "bcftools sort -m 100G -o $dOut/pop.variant.vcf -T $dOut/tmp/ $dOut/pop.nosort.vcf \n";
 close SH;
 $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
 `$job`;
