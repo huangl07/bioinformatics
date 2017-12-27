@@ -67,8 +67,12 @@ my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=20G -
 `$job`;
 mkdir "$oout/result/" if (!-d "$oout/result");
 my $resultdir="$oout/result";
+mkdir "$resultdir/report" if (!-d "$oout/report");
 mkdir "$resultdir/data/" if (!-d "$resultdir/data");
 mkdir "$resultdir/fig/" if (!-d "$resultdir/fig");
+`ln -s $out/index-calc.result.stat $resultdir/report/3-12.xls`;
+`grep @ $out/region.threshold.vcf.total|sed 's/@//g'|less -S > $resultdir/report/3-13.xls`;
+`perl $Bin/gatherdata.pl -i $out/region.threshold.gene.total -o $resultdir/report/`;
 `ln -s $out/index-calc.result $resultdir/data`;
 `ln -s $out/region*.total $resultdir/data`;
 `ln -s $out/region*.eff $resultdir/data`;

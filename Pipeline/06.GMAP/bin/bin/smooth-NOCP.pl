@@ -60,7 +60,7 @@ while (<In>) {
 	}
 }
 close In;
-my $win=10;
+my $win=15;
 my $step=1;
 my %OGeno;
 foreach my $Chr (sort keys %SORT) {
@@ -94,6 +94,7 @@ foreach my $Chr (sort keys %SORT) {
 					$OGeno{$indi}{$Order[$i]}="U";
 				}else{
 					$OGeno{$indi}{$Order[$i]}=$Geno[0];
+					$OGeno{$indi}{$Order[$i]}="U" if($n <10);
 				}
 			}
 		}

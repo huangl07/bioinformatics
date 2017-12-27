@@ -24,6 +24,7 @@ GetOptions(
 				) or &USAGE;
 &USAGE unless ($fIn and $dOut and $fLG);
 mkdir $dOut if (!-d $dOut);
+$type =~ s/F/RIL/;
 if ($type !~ /RI/ || $type !~/ri/) {
 	$type ="DH";
 }

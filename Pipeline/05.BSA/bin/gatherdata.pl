@@ -6,7 +6,6 @@ use Getopt::Long;
 my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
-use SVG;
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
@@ -16,42 +15,36 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($fIn and $fOut);
 open In,$fIn;
-my $id;
-my %group;
+open Out,">$fOut/3-14.xls";
+my %stat;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/);
-	if (/group/) {
-		$id=(split(/\s+/,$_))[-1];
-	}else{
-		my ($markerID,$pos)=split(/\s+/,$_);
-		$group{$id}{$pos}++;
+	next if ($_ eq ""||/^$/ || !/\@/);
+	my @info=split(/\s+/,$_);
+	print Out join("\t",@info[0..4]),"\n";
+	if (!/#/){
+		$stat{NR}{total}+=$info[5];
+		$stat{Uni}{total}+=$info[6];
+		$stat{KEGG}{total}+=$info[7];
+		$stat{GO}{total}+=$info[8];
+		$stat{EGGNOG}{total}+=$info[9];
+		$stat{NR}{eff}+=$info[10];
+		$stat{Uni}{eff}+=$info[11];
+		$stat{KEGG}{eff}+=$info[12];
+		$stat{GO}{eff}+=$info[13];
+		$stat{EGGNOG}{eff}+=$info[14];
 	}
 }
 close In;
-open Out,">$fOut";
-print  Out "#LGID\tNumber Marker\tNumber Uniq\tTotal Distance\tAvarage Distance\tGap < 5cM(%)\tMax Gap\n";
-foreach my $lgid (sort keys %group) {
-	my @pos=sort {$a<=>$b} keys %{$group{$lgid}};
-	my $distance=$pos[-1];
-	my $nuniq=scalar @pos;
-	my $nloc=0;
-	my $gap=scalar @pos -1;
-	my $gap5=0;
-	my $maxGap=0;
-	for (my $i=0;$i<@pos;$i++) {
-		$nloc+=$group{$lgid}{$pos[$i]};
-		if ($i > 0 && abs($pos[$i]-$pos[$i-1]) >5) {
-			$gap5++;
-		}
-		if ($i > 0 && abs($pos[$i]-$pos[$i-1]) > $maxGap) {
-			$maxGap = abs($pos[$i]-$pos[$i-1]);
-		}
-	}
-	print Out join("\t",$lgid,$nloc,$nuniq,$distance,sprintf("%.2f",$distance/($nloc-1)),$gap5,$maxGap),"\n";
-}
 close Out;
-
+open Out,">$fOut/3-15.xls";
+print Out "#Database\tTotal\tEFF\n";
+print Out join("\t","NR",$stat{NR}{total},$stat{NR}{eff}),"\n";
+print Out join("\t","Uni",$stat{Uni}{total},$stat{Uni}{eff}),"\n";
+print Out join("\t","KEGG",$stat{KEGG}{total},$stat{KEGG}{eff}),"\n";
+print Out join("\t","GO",$stat{GO}{total},$stat{GO}{eff}),"\n";
+print Out join("\t","EGGNOG",$stat{EGGNOG}{total},$stat{EGGNOG}{eff}),"\n";
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

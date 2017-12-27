@@ -10,7 +10,7 @@ VCF_PARSER_POP_FILE_QUESTION=/mnt/ilustre/users/long.huang/newmdt/demo/Diversity
 # What is the ploidy of the data?
 VCF_PARSER_PLOIDY_QUESTION=DIPLOID
 # Do you want to include a file with population definitions?
-VCF_PARSER_POP_QUESTION=false
+VCF_PARSER_POP_QUESTION=true
 # Output genotypes as missing if the phred-scale genotype quality is below:
 VCF_PARSER_GTQUAL_QUESTION=
 # Do you want to include non-polymorphic SNPs?

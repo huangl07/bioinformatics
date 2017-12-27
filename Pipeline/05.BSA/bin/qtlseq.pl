@@ -46,6 +46,7 @@ if ($fIn =~ /gz/) {
 open Out,">$fOut";
 print Out join("\t","#chr","pos","ref","alt","anno","P1GT","P1AD","P2GT","P2AD","B1GT","B1AD","B2GT","B2AD","INDEX1","INDEX2","DELTA"),"\n";
 my @indi;
+my %stat;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ ||/^##/);
@@ -140,10 +141,25 @@ while (<In>) {
 		$info{P1}{ad}||="--";
 		$info{P2}{gt}||="--";
 		$info{P2}{ad}||="--";
+		my $type="SNP";
+		if (length($ref) != length($alt)) {
+			$type = "InDel";
+		}
+		my $lchr=$chr;
+		if ($lchr !~ /chr/) {
+			$lchr = "scaffords";
+		}
+		$stat{$lchr}{$type}++;
 		print Out join("\t",$chr,$pos,$ref,$alt,$ann,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B1}{ad},$info{B2}{gt},$info{B2}{ad},$index1,$index2,$delta),"\n";
 	}
 }
 close In;
+close Out;
+open Out,">$fOut.stat";
+print Out "#chr\tsnp\tindel\n";
+foreach my $chr (sort keys %stat) {
+	print Out join("\t",$chr,$stat{$chr}{SNP},$stat{$chr}{InDel}),"\n";
+}
 close Out;
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
