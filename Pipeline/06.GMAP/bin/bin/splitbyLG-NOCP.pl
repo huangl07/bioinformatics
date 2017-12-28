@@ -24,7 +24,9 @@ GetOptions(
 				) or &USAGE;
 &USAGE unless ($fIn and $dOut and $fLG);
 mkdir $dOut if (!-d $dOut);
-$type =~ s/F/RIL/;
+if ($type eq "F2" || $type eq "f2") {
+	$type="RIL2";
+}
 if ($type !~ /RI/ || $type !~/ri/) {
 	$type ="DH";
 }
@@ -88,7 +90,7 @@ cut_off_p_value 2.0
 no_map_dist 15.0
 no_map_size 0
 missing_threshold 1.00
-estimation_before_clustering yes
+estimation_before_clustering no
 detect_bad_data yes
 objective_function ML
 number_of_loci $nloc

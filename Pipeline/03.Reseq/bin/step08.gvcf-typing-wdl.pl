@@ -74,7 +74,7 @@ while (<In>) {
 close In;
 close SH;
 close List;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
 print SH "java -cp /mnt/ilustre/users/dna/.env//bin/GenomeAnalysisTK.jar org.broadinstitute.gatk.tools.CatVariants --reference $ref --variant $dOut/sub.vcf.list --outfile $dOut/pop.noid.vcf \n ";

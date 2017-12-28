@@ -30,9 +30,6 @@ open Geno,">$fOut.filtered.marker";
 open Miss,">$fOut.miss.marker";
 open Type,">$fOut.type.marker";
 open Seg,">$fOut.seg.marker";
-
-
-
 my %stat;
 while (<In>) {
 	chomp;
@@ -48,7 +45,7 @@ while (<In>) {
 	$stat{total}++;
 	if ($type eq "aaxbb" && $popt eq "BC1") {
 		for (my $i=0;$i<@info;$i++) {
-			if ($info[$i] ne $homo || $info[$i] ne "ab") {
+			if ($info[$i] ne $homo && $info[$i] ne "ab") {
 				$info[$i] = "--";
 			}
 		}

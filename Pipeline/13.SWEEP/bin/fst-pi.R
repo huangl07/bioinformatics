@@ -58,7 +58,7 @@ hist_top<-hist_top+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.05)),line
 hist_right<-ggplot()+theme_bw()
 hist_right<-hist_right+geom_histogram(aes(pi$fst[pi$fst >= quantile(pi$fst,probs=0.95)]),colour='orange',fill='orange',binwidth=0.01)
 hist_right<-hist_right+geom_histogram(aes(pi$fst[pi$fst <= quantile(pi$fst,probs=0.95)]),colour='gray',fill='gray',binwidth=0.01)
-hist_right<-hist_right+theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Fst distribution")
+hist_right<-hist_right+theme(axis.title.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Fst distribution")
 hist_right<-hist_right+geom_vline(aes(xintercept=quantile(pi$fst,probs=0.95)),linetype=5,col="black")+ylab("Fst Count")
 scatter<-ggplot()+theme_bw()
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta > quantile(pi$theta,probs=0.05) & pi$theta < quantile(pi$theta,probs=0.95)],pi$fst[pi$theta > quantile(pi$theta,probs=0.05) & pi$theta < quantile(pi$theta,probs=0.95)]),colour='gray',fill='gray')

@@ -11,7 +11,7 @@ task haplotypeCaller {
   File Refindex
   File Refdict
   command {
-    java -XX:+UseSerialGC -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
+    java -XX:+UseSerialGC -Xmx120G -Djava.io.tmpdir=${workdir}/tmp/ -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
         -T HaplotypeCaller \
         -R ${RefFasta} \
         -I ${inputBAM} \

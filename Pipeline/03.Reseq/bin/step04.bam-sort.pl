@@ -44,8 +44,10 @@ while (<In>) {
 close In;
 close SH;
 close Out;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 8 --maxjob $proc  $dsh/04.bam-sort.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=20G --CPU 8 --maxjob $proc $dsh/04.bam-sort.sh";
+print $job;
 `$job`;
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

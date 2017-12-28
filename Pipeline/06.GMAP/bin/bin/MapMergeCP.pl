@@ -51,7 +51,7 @@ foreach my $map (@map) {
 	close In;
 	my $newdis=$max;
 	if ($adjust) {
-		$newdis=rand(100)+120;
+		$newdis=rand(80)+120;
 	}
 	foreach my $id (sort {$info{$a}{pos}<=>$info{$b}{pos}} keys %info) {
 		$info{$id}{pos}=$info{$id}{pos}*$newdis/$max;

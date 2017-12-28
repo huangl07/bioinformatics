@@ -39,7 +39,7 @@ foreach my $map (@map) {
 	close In;
 	my $newdis=$max;
 	if ($adjust) {
-		$newdis=rand(100)+120;
+		$newdis=rand(80)+120;
 	}
 	foreach my $id (@order) {
 		my ($lgid,$pos)=split(/\,/,$Marker{$id});

@@ -34,7 +34,7 @@ if (exists $chr{chr1}) {
 		}
 	}
 	foreach my $id (sort {$a<=>$b} keys %order) {
-		print $order{$id},"\n"
+		print Out $order{$id},"\t",$chr{$order{$id}},"\n";
 	}
 }else{
 	my $n=0;
