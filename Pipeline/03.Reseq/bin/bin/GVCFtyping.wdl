@@ -22,7 +22,8 @@ task gvcftyping {
 	-jdk_inflater \
 	-jdk_deflater \
 	-nt ${NT} \
-	-log ${workdir}/${Filename}.vcf-typing.log
+	-log ${workdir}/${Filename}.vcf-typing.log \
+	 --disable_auto_index_creation_and_locking_when_reading_rods 
   }
   output {
     File rawVCF = "${workdir}/${Filename}.noid.vcf"

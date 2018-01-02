@@ -17,13 +17,14 @@ my $day=$Times[3];
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($dOut,$marker,$Key,$lchr,$mlod);
+my ($dOut,$marker,$Key,$lchr,$mlod,$add);
 GetOptions(
 				"help|?" =>\&USAGE,
 				"i:s"=>\$mlod,
 				"o:s"=>\$dOut,
 				"2:s"=>\$marker,
 				"k:s"=>\$Key,
+				"add"=>\$add,
 				) or &USAGE;
 &USAGE unless ($mlod and $dOut and $marker );
 open In,$marker;
@@ -62,62 +63,70 @@ while (<In>) {
 	$PWD{$m2}{$m1}=$mlod;
 }
 close In;
-open Out,">$dOut/$Key.sca.stat";
-foreach my $sca (sort keys %sca) {
-	my %stat;
-	foreach my $marker (sort keys %{$sca{$sca}}) {
-		if (!exists $PWD{$marker}) {
-			next;
-		}
-		my @markers=sort {$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
-		if (scalar @markers == 0) {
-			next;
-		}
-		$stat{$pos{$markers[0]}}++ if ($PWD{$marker}{$markers[0]} > 5);
-	}
-	my $target=(sort{$stat{$b} <=> $stat{$a}} keys %stat)[0];
-	foreach my $marker (sort keys %{$sca{$sca}}) {
-		if (!exists $PWD{$marker}) {
-			next;
-		}
-		$LG{$target}{$marker}=1;
-	}
-	print Out ">$sca\n";
-	foreach my $sca (sort{$stat{$b} <=> $stat{$a}} keys %stat) {
-		print Out "$sca:$stat{$sca}\t";
-	}
-	print Out "\n";
-}
-foreach my $chr (sort keys %LG) {
-	foreach my $marker (sort keys %{$LG{$chr}}) {
-		if (!exists $PWD{$marker}) {
-			next;
-		}
-		my @markers=sort{$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
-		my $max;
-		for (my $i=0;$i<@markers;$i++) {
-			if (!exists $PWD{$markers[$i]}) {
+if ($add) {
+	open Out,">$dOut/$Key.sca.stat";
+	foreach my $sca (sort keys %sca) {
+		my %stat;
+		foreach my $marker (sort keys %{$sca{$sca}}) {
+			if (!exists $PWD{$marker}) {
 				next;
 			}
-			if ($pos{$markers[$i]} eq $chr) {
-				$max=$PWD{$marker}{$markers[$i]};
-				last;
+			my @markers=sort {$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
+			if (scalar @markers == 0) {
+				next;
+			}
+			$stat{$pos{$markers[0]}}++ if ($PWD{$marker}{$markers[0]} > 5);
+		}
+		my $target=(sort{$stat{$b} <=> $stat{$a}} keys %stat)[0];
+		foreach my $marker (sort keys %{$sca{$sca}}) {
+			if (!exists $PWD{$marker}) {
+				next;
+			}
+			$LG{$target}{$marker}=1;
+		}
+		print Out ">$sca\n";
+		foreach my $sca (sort{$stat{$b} <=> $stat{$a}} keys %stat) {
+			print Out "$sca:$stat{$sca}\t";
+		}
+		print Out "\n";
+	}
+	foreach my $chr (sort keys %LG) {
+		foreach my $marker (sort keys %{$LG{$chr}}) {
+			if (!exists $PWD{$marker}) {
+				next;
+			}
+			my @markers=sort{$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
+			my $max;
+			for (my $i=0;$i<@markers;$i++) {
+				if (!exists $PWD{$markers[$i]}) {
+					next;
+				}
+				if ($pos{$markers[$i]} eq $chr) {
+					$max=$PWD{$marker}{$markers[$i]};
+					last;
+				}
+			}
+			if ($max < 5) {
+				print Out "delete:$marker\t$max\n";
+				delete $LG{$chr}{$marker};
 			}
 		}
-		if ($max < 5) {
-			print Out "delete:$marker\t$max\n";
-			delete $LG{$chr}{$marker};
-		}
 	}
+	close Out;
+	open Out,">$dOut/$Key.lg";
+	foreach my $lg (sort keys %LG) {
+		print Out ">$lg\t",scalar keys %{$LG{$lg}},"\n";
+		print Out join("\t", keys %{$LG{$lg}}),"\n";
+	}
+	close Out;
+}else{
+	open Out,">$dOut/$Key.lg";
+	foreach my $lg (sort keys %LG) {
+		print Out ">$lg\t",scalar keys %{$LG{$lg}},"\n";
+		print Out join("\t", keys %{$LG{$lg}}),"\n";
+	}
+	close Out;
 }
-close Out;
-open Out,">$dOut/$Key.lg";
-foreach my $lg (sort keys %LG) {
-	print Out ">$lg\t",scalar keys %{$LG{$lg}},"\n";
-	print Out join("\t", keys %{$LG{$lg}}),"\n";
-}
-close Out;
-
 
 
 #######################################################################################

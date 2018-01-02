@@ -54,16 +54,16 @@ $split||=20;
 
 open SH,">$dShell/step05.call-variant.sh";
 open In,$bamlist;
-my @bam;
+open Out,">$dOut/bam.list";
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
 	my ($sampleID,$bam)=split(/\s+/,$_);
-	push @bam,$bam;
+	print Out $bam,"\n";
 }
 close In;
-my $bam=join(" ",@bam);
-print SH "samtools mpileup -t DP,AD -uf $ref $bam|bcftools call -mv --format-fields GQ,GP --output-type z --ploidy 2 > $dOut/var.raw.vcf.gz ";
+close Out;
+print SH "samtools mpileup -b -t DP,AD -uf $ref $dOut/bam.list|bcftools call -mv --format-fields GQ,GP --output-type z --ploidy 2 > $dOut/var.raw.vcf.gz ";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step05.call-variant.sh";
 print $job;

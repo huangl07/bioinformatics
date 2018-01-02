@@ -35,6 +35,7 @@ if ($lg) {
 	my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0.split.sh";
 	`$job`;
 	$fIn=ABSOLUTE_DIR("$out/pri.marker.list");
+	open In,$fIn;
 }
 $cycle||=1;
 if ($popt eq "CP") {

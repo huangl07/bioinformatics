@@ -57,7 +57,7 @@ while (<In>) {
 				$info[$i]="ll"
 			}elsif ($info[$i] eq "bc") {
 				$info[$i]="lm"
-			}elsif ($info[$i] eq "ab"||$info[$i] eq "cc") {
+			}elsif ($info[$i] eq "ab"||$info[$i] eq "cc" || $info[$i] eq "aa" || $info[$i] eq "bb") {
 				$info[$i]="--"
 			}
 		}
@@ -68,7 +68,7 @@ while (<In>) {
 				$info[$i]="np"
 			}elsif ($info[$i] eq "bc") {
 				$info[$i]="nn"
-			}elsif ($info[$i] eq "ab"|| $info[$i] eq "cc") {
+			}elsif ($info[$i] eq "ab"|| $info[$i] eq "cc"|| $info[$i] eq "aa" || $info[$i] eq "bb") {
 				$info[$i]="--"
 			}
 		}

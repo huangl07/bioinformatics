@@ -27,7 +27,7 @@ mkdir $dOut if (!-d $dOut);
 if ($type eq "F2" || $type eq "f2") {
 	$type="RIL2";
 }
-if ($type !~ /RI/ || $type !~/ri/) {
+if ($type !~ /RI/ && $type !~/ri/) {
 	$type ="DH";
 }
 open In,$fIn;
@@ -57,8 +57,8 @@ while (<In>) {
 	next if ($_ eq "" ||/^$/);
 	my ($id,$marker)=split(/\n/,$_,2);
 	$id=(split(/\s+/,$id))[0];
-	open Out,">$dOut/$id.marker";
-	print List $id,"\t","$dOut/$id.marker\n";
+	open Out,">$dOut/$id.pri.marker";
+	print List $id,"\t","$dOut/$id.pri.marker\n";
 	my @marker=split(/\s+/,$marker);
 	my @out;
 	my $nloc=scalar @marker;
@@ -92,7 +92,7 @@ no_map_size 0
 missing_threshold 1.00
 estimation_before_clustering no
 detect_bad_data yes
-objective_function ML
+objective_function COUNT
 number_of_loci $nloc
 number_of_individual $nind
 Headend
@@ -100,6 +100,7 @@ Headend
 	print Out $Head,"\n";
 	print Out join("\n",@out),"\n";
 	close Out;
+	``
 }
 close List;
 close In;

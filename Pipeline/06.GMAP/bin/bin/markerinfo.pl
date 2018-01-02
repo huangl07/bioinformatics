@@ -44,11 +44,13 @@ my %stat;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ ||/=/||/^#/ || /MarkerID/ );
-	last if(/^;/);
+	last if(/^;/ || /individual names/);
 	my ($id,$type,$phase,@info);
 
 	if ($popt eq "CP") {
 		 ($id,$type,$phase,@info) =split(/\t/,$_);
+		 $type=~s/\>//g;
+		 $type=~s/\<//g;
 	}else{
 		 s/\tX\t/\tab\t/g;
 		 s/\tA\t/\taa\t/g;

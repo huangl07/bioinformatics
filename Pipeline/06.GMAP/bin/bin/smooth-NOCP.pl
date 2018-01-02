@@ -94,7 +94,7 @@ foreach my $Chr (sort keys %SORT) {
 					$OGeno{$indi}{$Order[$i]}="U";
 				}else{
 					$OGeno{$indi}{$Order[$i]}=$Geno[0];
-					$OGeno{$indi}{$Order[$i]}="U" if($n <10);
+					#$OGeno{$indi}{$Order[$i]}="U" if($n <10);
 				}
 			}
 		}

@@ -94,13 +94,10 @@ Description:
 Usage:
   Options:
 
-  -vcf	<file>	input vcf files
+  -sv	<file>	input sv anno files
   -out	<dir>	output dir
-  -pop	<str>	group list
-  -maf	<num>	maf filter default 0.05
-  -mis	<num>	mis filter default 0.3
-  -dep	<num>	dep filter default 2
-
+  -bam	<file>	bam file
+  -ref	<file>	input reference files
   -h         Help
 
 USAGE

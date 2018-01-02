@@ -27,8 +27,9 @@ if ($sample) {
 	while (<In>) {
 		chomp;
 		next if ($_ eq "" ||/^$/);
-		$group{$_}=1;
-		print $_,"\n";
+		my $id=(split(/\s+/,$_))[0];
+		$group{$id}=1;
+		print Out $_,"\n";
 	}
 	close In;
 	close Out;

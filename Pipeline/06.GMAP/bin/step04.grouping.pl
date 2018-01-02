@@ -31,7 +31,7 @@ $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/step04.grouping.sh";
 if ($ref) {
-	print SH "perl $Bin/bin/linkage_by_ref.pl -i $mlod -2 $marker -o $out -k Total && ";
+	print SH "perl $Bin/bin/linkage_by_ref.pl -i $mlod -2 $marker -o $out -k Total -add && ";
 #	if ($popt eq "CP") {
 #		print SH "perl $Bin/bin/splitbyLG-CP.pl -l $out/Total.lg -i $marker -d $out/ -t $popt";
 #	}else{
