@@ -24,6 +24,7 @@ GetOptions(
 				) or &USAGE;
 &USAGE unless ($fIn and $dOut and $fLG);
 mkdir $dOut if (!-d $dOut);
+$dOut=ABSOLUTE_DIR($dOut);
 if ($type eq "F2" || $type eq "f2") {
 	$type="RIL2";
 }
@@ -58,6 +59,7 @@ while (<In>) {
 	my ($id,$marker)=split(/\n/,$_,2);
 	$id=(split(/\s+/,$id))[0];
 	open Out,">$dOut/$id.pri.marker";
+	open Map,">$dOut/$id.pri.map";
 	print List $id,"\t","$dOut/$id.pri.marker\n";
 	my @marker=split(/\s+/,$marker);
 	my @out;
@@ -66,10 +68,13 @@ while (<In>) {
 	my $chr;
 	$chr=$id;
 	for (my $i=0;$i<@marker;$i++) {
-		$pos{$chr}{$marker[$i]}=$i;
+		$pos{$marker[$i]}=$i;
+		if ($marker[$i] =~ /\_/) {
+			$pos{$marker[$i]}=(split(/\_/,$marker[$i]))[-1];
+		}
 	}
-	foreach my $chr (sort keys %pos) {
-		foreach my $m (sort {$pos{$chr}{$a}<=>$pos{$chr}{$b}} keys %{$pos{$chr}}) {
+		print Map "group $chr\n";
+		foreach my $m (sort {$pos{$a}<=>$pos{$b}} keys %pos) {
 			$info{$m}=~s/\ba\b/A/g;
 			$info{$m}=~s/\bb\b/B/g;
 			$info{$m}=~s/(..)x(..)//g;
@@ -80,8 +85,9 @@ while (<In>) {
 			$info{$m}=~s/ab/X/g;
 			$info{$m}=~s/-/U/g;
 			push @out,join("\t",$m,$info{$m});
+			print Map "$m\t$pos{$m}\n";
 		}
-	}
+	close Map;
 my $head = <<"Headend" ;
 population_type $type
 population_name $id
@@ -100,7 +106,6 @@ Headend
 	print Out $Head,"\n";
 	print Out join("\n",@out),"\n";
 	close Out;
-	``
 }
 close List;
 close In;
@@ -111,6 +116,25 @@ print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 # ------------------------------------------------------------------
 # sub function
 # ------------------------------------------------------------------
+sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
+{
+	my $cur_dir=`pwd`;chomp($cur_dir);
+	my ($in)=@_;
+	my $return="";
+	if(-f $in){
+		my $dir=dirname($in);
+		my $file=basename($in);
+		chdir $dir;$dir=`pwd`;chomp $dir;
+		$return="$dir/$file";
+	}elsif(-d $in){
+		chdir $in;$return=`pwd`;chomp $return;
+	}else{
+		warn "Warning just for file and dir \n$in";
+		exit;
+	}
+	chdir $cur_dir;
+	return $return;
+}
 
 sub GetTime {
 	my ($sec, $min, $hour, $day, $mon, $year, $wday, $yday, $isdst)=localtime(time());
@@ -125,7 +149,7 @@ Contact: huangl <long.huang\@majorbio.com>
 
 Options:
   -help			USAGE,
-  -i	genotype file£¬ forced
+  -i	genotype fileï¿½ï¿½ forced
   -l	linkage lg file
   -d	output dir
   -t	population type

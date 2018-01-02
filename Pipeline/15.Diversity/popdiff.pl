@@ -18,14 +18,10 @@ GetOptions(
 				"i:s"=>\$fIn,
 				"g:s"=>\$group,
 				"o:s"=>\$fOut,
-				"w:s"=>\$window,
-				"s:s"=>\$step,
 				) or &USAGE;
 &USAGE unless ($fIn and $fOut and $group);
 my %group;
 my %rgroup;
-$window||=20000;
-$step||=5000;
 $rgroup{Total}=1;
 if ($group){
 	open In,$group;
@@ -39,7 +35,6 @@ if ($group){
 	close In;
 }
 open In,$fIn;
-open Out,">$fOut";
 my @Indi;
 my %Geno;
 my %Alle;
@@ -75,65 +70,85 @@ while (<In>){
 	}
 }
 close In;
-my $shanon=shanon_calc(\%Alle);
-my $pic=pic_calc(\%Alle);
-my $home=home_calc(\%Alle);
-my @shanon=split(/\s+/,$shanon);
-my @pic=split(/\s+/,$pic);
-my @home=split(/\s+/,$home);
-my @out;
-my $n=0;
-for (my $i=0;$i<@shanon;$i++) {
-	push @{$out[$i]},$shanon[$i];
-	push @{$out[$i]},$pic[$i];
-	push @{$out[$i]},$home[$i];
+open Out,">$fOut";
+print Out join("\t","#groupID","Average Heterozygosity","Average Homozygosity","inbreeding coefficient","Shannon Index","PIC"),"\n";
+foreach my $pop (sort keys %Alle) {
+	my $home=home_calc(\%{$Alle{$pop}});
+	my $pic=pic_calc(\%{$Alle{$pop}});
+	my $shanon=shanon_calc(\%{$Alle{$pop}});
+	my $F=inbreed_calc(\%{$Alle{$pop}},\%{$Geno{$pop}});
+	print Out join("\t",$pop,$home,$F,$shanon,$pic),"\n";
 }
-my @Out;
-for (my $i=0;$i<@out;$i++) {
-	push @Out,join("\:",@{$out[$i]});
-}
-print Out join("\t",sort keys %rgroup),"\n";
-print Out join("\t","shanon:pic:hete:homo",@Out),"\n";
 close Out;
+
 #######################################################################################
 print "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+sub inbreed_calc{
+	my ($alle,$geno)=@_;
+	my $sumF=0;
+	my $npos=0;
+	foreach my $pos (sort keys %$alle) {
+		my @alle=sort{$$alle{$pos}{$b} <=> $$alle{$pos}{$a}} keys %{$$alle{$pos}};
+		my @value=sort{$b<=>$a} values %{$$alle{$pos}};
+		my @genotype=sort{$$geno{$pos}{$b} <=> $$geno{$pos}{$a}} keys %{$$geno{$pos}};
+		my @gvalue=sort {$b<=>$a} values %{$$geno{$pos}};
+		my $J=0;
+		my $Ho=0;
+		$npos++;
+		for (my $i=0;$i<@value;$i++) {
+			my $p=$value[$i]/sum(\@value);
+			$J+=$p*$p;
+			for (my $j=$i+1;$j<@value;$j++) {
+				my $type=join("/",sort ($alle[$i],$alle[$j]));
+				if (!defined $$geno{$pos}{$type}) {
+					next;
+				}
+				$Ho+=$$geno{$pos}{$type}/sum(\@gvalue);
+			}
+		}
+		my $He=1-$J;
+		if ($He == 0 ) {
+			$sumF+=1;
+		}else{
+			$sumF+=1-$Ho/$He;
+		}
+	}
+	return $sumF/$npos;
+}
 sub home_calc{#Average
 	my ($Geno)=@_;
-	my @return;
-	foreach my $pop (sort keys %$Geno){
-		my $sumH=0;
-		my $sumJ=0;
-		my $nPos=0;
-		foreach my $pos (sort keys %{$$Geno{$pop}}) {
-			my @alle=sort{$$Geno{$pop}{$pos}{$b} <=> $$Geno{$pop}{$pos}{$a}} keys %{$$Geno{$pop}{$pos}};
-			my @value=sort{$b<=>$a} values %{$$Geno{$pop}{$pos}};
-			my $J=0;
-			my $H=1;
-			for (my $i=0;$i<@value;$i++){
-				my $p=$value[$i]/sum(\@value);
-				$J+=$p*$p;
-			}
-			$H=1-$J;
-			$sumH+=$H;
-			$sumJ+=$J;
-			$nPos++;
+	my $sumH=0;
+	my $sumJ=0;
+	my $sumF=0;
+	my $nPos=0;
+	foreach my $pos (sort keys %$Geno) {
+		my @alle=sort{$$Geno{$pos}{$b} <=> $$Geno{$pos}{$a}} keys %{$$Geno{$pos}};
+		my @value=sort{$b<=>$a} values %{$$Geno{$pos}};
+		my $J=0;
+		my $H=1;
+		for (my $i=0;$i<@value;$i++){
+			my $p=$value[$i]/sum(\@value);
+			$J+=$p*$p;
 		}
-		my $AH=$sumH/$nPos;
-		my $AJ=$sumH/$nPos;
-		push @return,"$AH:$AJ";
+		$H=1-$J;
+		
+		$sumH+=$H;
+		$sumJ+=$J;
+		$nPos++;
 	}
-	return join("\t",@return);
+	my $AH=$sumH/$nPos;
+	my $AJ=$sumJ/$nPos;
+	return "$AH\t$AJ";
 }
 sub pic_calc{
 	my ($Geno)=@_;
 	my @return;
-	foreach my $pop(sort keys %$Geno){
 		my $sumPIC;
 		my $nPos=0;
-		foreach my $pos (sort keys %{$$Geno{$pop}}) {
-			my @alle=sort{$$Geno{$pop}{$pos}{$b} <=> $$Geno{$pop}{$pos}{$a}} keys %{$$Geno{$pop}{$pos}};
-			my @value=sort{$b<=>$a} values %{$$Geno{$pop}{$pos}};
+		foreach my $pos (sort keys %$Geno) {
+			my @alle=sort{$$Geno{$pos}{$b} <=> $$Geno{$pos}{$a}} keys %{$$Geno{$pos}};
+			my @value=sort{$b<=>$a} values %{$$Geno{$pos}};
 			my $PIC=1;
 			for(my $i=0;$i<@value;$i++){
 				for(my $j=1;$j<@value;$j++){
@@ -147,27 +162,26 @@ sub pic_calc{
 			$sumPIC+=$PIC;
 			$nPos++;
 		}
-		push @return,$sumPIC/$nPos;
-	}
-	return join("\t",@return);
+		
+	return $sumPIC/$nPos;
 }
 sub shanon_calc{
 	my ($Geno)=@_;
-	my @return;
-	foreach my $pop(sort keys %$Geno){
 		my $sumH=0;
-		foreach my $pos (sort keys %{$$Geno{$pop}}) {
-			my @alle=sort{$$Geno{$pop}{$pos}{$b} <=> $$Geno{$pop}{$pos}{$a}} keys %{$$Geno{$pop}{$pos}};
-			my @value=sort{$b<=>$a} values %{$$Geno{$pop}{$pos}}; 
+		my $npos=0;
+		foreach my $pos (sort keys %$Geno) {
+			my @alle=sort{$$Geno{$pos}{$b} <=> $$Geno{$pos}{$a}} keys %{$$Geno{$pos}};
+			my @value=sort{$b<=>$a} values %{$$Geno{$pos}}; 
 			my $H=0;
+			my $G=0;
 			for (my $i=0;$i<@value;$i++){
-				$H+=-1* $value[$i]/sum(\@value) * log($value[$i]/sum(\@value));
+				my $p=$value[$i]/sum(\@value);
+				$H+=-1* $p * log($p);
 			}
 			$sumH+=$H;
+			$npos++;
 		}
-		push @return,$sumH;
-	}
-	return join("\t",@return);
+	return join("\t",$sumH/$npos);
 }
 sub maf_calc{
 	my $Geno=@_;

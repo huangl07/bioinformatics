@@ -50,9 +50,16 @@ while (<In>) {
 	open Out,">$dOut/$id.marker";
 	print List "$id\t$dOut/$id.marker\n";
 	my @marker=split(/\s+/,$marker);
+	my %pos;
+	for (my $i=0;$i<@marker;$i++) {
+		$pos{$marker[$i]}=$i;
+		if ($marker[$i] =~ /\_/) {
+			$pos{$marker[$i]}=(split(/\_/,$marker[$i]))[-1];
+		}
+	}
 	my @out;
 	my $nloc=scalar @marker;
-	foreach my $m (@marker) {
+	foreach my $m (sort{$pos{$a}<=>$pos{$b}} keys %pos) {
 		push @out,join("\t",$m,$info{$m});
 	}
 	print Out $head,"\n";
@@ -68,6 +75,25 @@ print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 # ------------------------------------------------------------------
 # sub function
 # ------------------------------------------------------------------
+sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
+{
+	my $cur_dir=`pwd`;chomp($cur_dir);
+	my ($in)=@_;
+	my $return="";
+	if(-f $in){
+		my $dir=dirname($in);
+		my $file=basename($in);
+		chdir $dir;$dir=`pwd`;chomp $dir;
+		$return="$dir/$file";
+	}elsif(-d $in){
+		chdir $in;$return=`pwd`;chomp $return;
+	}else{
+		warn "Warning just for file and dir \n$in";
+		exit;
+	}
+	chdir $cur_dir;
+	return $return;
+}
 
 sub GetTime {
 	my ($sec, $min, $hour, $day, $mon, $year, $wday, $yday, $isdst)=localtime(time());
@@ -80,10 +106,10 @@ Program: $0
 Version: $version
 Contact: huangl <long.huang\@majorbio.com> 
 
-Usage:  ½«genotypeÎÄ¼þ°´Á¬ËøÈº·Ö¸î
+Usage:  ï¿½ï¿½genotypeï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èºï¿½Ö¸ï¿½
   Options:
   -help			USAGE,
-  -i	genotype file£¬ forced
+  -i	genotype fileï¿½ï¿½ forced
   -l	linkage lg file
   -o	output dir
   

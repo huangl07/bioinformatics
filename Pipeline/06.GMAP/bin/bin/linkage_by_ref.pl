@@ -132,6 +132,25 @@ if ($add) {
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
+{
+	my $cur_dir=`pwd`;chomp($cur_dir);
+	my ($in)=@_;
+	my $return="";
+	if(-f $in){
+		my $dir=dirname($in);
+		my $file=basename($in);
+		chdir $dir;$dir=`pwd`;chomp $dir;
+		$return="$dir/$file";
+	}elsif(-d $in){
+		chdir $in;$return=`pwd`;chomp $return;
+	}else{
+		warn "Warning just for file and dir \n$in";
+		exit;
+	}
+	chdir $cur_dir;
+	return $return;
+}
 
 # ------------------------------------------------------------------
 # sub function

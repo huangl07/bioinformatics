@@ -110,7 +110,8 @@ if ($step == 5) {
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	my $job="perl $Bin/bin/step05.markerOrder.pl -lg $lg -gen $marker -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1\n";
+	my $job="perl $Bin/bin/step05.markerOrder.pl -lg $lg -gen $marker -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1 ";
+	$job.= " -ref" if($ref);
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
