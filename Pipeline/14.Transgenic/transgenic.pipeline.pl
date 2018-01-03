@@ -94,9 +94,9 @@ Description:
 Usage:
   Options:
 
-  -sv	<file>	input sv anno files
+  -sv	<file>	input sv list files
   -out	<dir>	output dir
-  -bam	<file>	bam file
+  -bam	<file>	bam list file
   -ref	<file>	input reference files
   -h         Help
 

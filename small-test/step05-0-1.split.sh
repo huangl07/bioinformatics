@@ -1,1 +1,0 @@
-perl /home/huangl/bin/bioinformatics/Pipeline/06.GMAP/bin/bin/splitbyLG-NOCP.pl -l /home/huangl/bin/bioinformatics/small-test/Total.lg -i /home/huangl/bin/bioinformatics/small-test/pop.filtered.marker -d /home/huangl/bin/bioinformatics/small-test/ -t BC1

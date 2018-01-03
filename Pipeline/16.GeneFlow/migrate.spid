@@ -1,0 +1,45 @@
+# spid-file generated: Wed Jan 03 12:13:27 CST 2018
+
+# VCF Parser questions
+PARSER_FORMAT=VCF
+
+# Only output SNPs with a phred-scaled quality of at least:
+VCF_PARSER_QUAL_QUESTION=
+# Select population definition file:
+VCF_PARSER_POP_FILE_QUESTION=/mnt/ilustre/users/long.huang/newmdt/demo/Diversity/group.list
+# What is the ploidy of the data?
+VCF_PARSER_PLOIDY_QUESTION=DIPLOID
+# Do you want to include a file with population definitions?
+VCF_PARSER_POP_QUESTION=true
+# Output genotypes as missing if the phred-scale genotype quality is below:
+VCF_PARSER_GTQUAL_QUESTION=
+# Do you want to include non-polymorphic SNPs?
+VCF_PARSER_MONOMORPHIC_QUESTION=false
+# Only output following individuals (ind1, ind2, ind4, ...):
+VCF_PARSER_IND_QUESTION=
+# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):
+VCF_PARSER_REGION_QUESTION=
+# Output genotypes as missing if the read depth of a position for the sample is below:
+VCF_PARSER_READ_QUESTION=
+# Take most likely genotype if "PL" or "GL" is given in the genotype field?
+VCF_PARSER_PL_QUESTION=false
+# Do you want to exclude loci with only missing data?
+VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
+
+# MIGRATE Writer questions
+WRITER_FORMAT=MIGRATE
+
+# Numeric SNP data: enter the integer that codes for nucleotide A:
+MIGRATE_WRITER_CODE_A_QUESTION=
+# Numeric SNP data: enter the integer that codes for nucleotide T:
+MIGRATE_WRITER_CODE_T_QUESTION=
+# Numeric SNP data: enter the integer that codes for nucleotide C:
+MIGRATE_WRITER_CODE_C_QUESTION=
+# Specify the locus/locus combination you want to write to the MIGRATE file:
+MIGRATE_WRITER_LOCUS_COMBINATION_QUESTION=
+# Numeric SNP data: enter the integer that codes for nucleotide G:
+MIGRATE_WRITER_CODE_G_QUESTION=
+# Specify which data type should be included in the MIGRATE file  (MIGRATE can only analyze one data type per file):
+MIGRATE_WRITER_DATA_TYPE_QUESTION=DNA
+# Are the SNP loci linked?
+MIGRATE_WRITER_LINKED_LOCI_QUESTION=false

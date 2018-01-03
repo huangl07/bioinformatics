@@ -47,8 +47,10 @@ while (<In>) {
 	next if ($_ eq "" ||/^$/);
 	my ($id,$marker)=split(/\n/,$_);
 	$id=(split(/\s+/,$id))[0];
-	open Out,">$dOut/$id.marker";
-	print List "$id\t$dOut/$id.marker\n";
+	open Out,">$dOut/$id.pri.marker";
+	open Map,">$dOut/$id.pri.map";
+	print Map "group $id\n";
+	print List "$id\t$dOut/$id.pri.marker\n";
 	my @marker=split(/\s+/,$marker);
 	my %pos;
 	for (my $i=0;$i<@marker;$i++) {
@@ -60,11 +62,16 @@ while (<In>) {
 	my @out;
 	my $nloc=scalar @marker;
 	foreach my $m (sort{$pos{$a}<=>$pos{$b}} keys %pos) {
+		if (!exists $info{$m}) {
+			next;
+		}
 		push @out,join("\t",$m,$info{$m});
+		print Map join("\t",$m,$pos{$m}),"\n";
 	}
 	print Out $head,"\n";
 	print Out join("\n",@out),"\n";
 	close Out;
+	close Map;
 }
 close In;
 close List;

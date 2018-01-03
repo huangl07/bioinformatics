@@ -24,6 +24,10 @@ mkdir $dsh if (!-d $dsh);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
 $fIn=ABSOLUTE_DIR($fIn);
+mkdir "$out/pri-pwd" if (!-d "$out/pri-pwd");
+mkdir "$out/pwd" if (!-d "$out/pwd");
+
+$cycle||=1;
 if ($lg) {
 	$lg=ABSOLUTE_DIR($lg);
 	open SH,">$dsh/step05-0-1.split.sh";
@@ -38,7 +42,8 @@ if ($lg) {
 	$fIn=ABSOLUTE_DIR("$out/pri.marker.list");
 	if ($ref) {
 		if ($popt eq "CP") {
-			open SH,">$dsh/step05-0-1.calculatePWD.sh";
+			open SH,">$dsh/step05-0-2.calculatePWD.sh";
+			open In,$fIn;
 			my %lg;
 			while (<In>) {
 				chomp;
@@ -64,40 +69,36 @@ if ($lg) {
 				my $only=200;
 				my $split=int(scalar @Marker/$only)+1;
 				for (my $i=0;$i<$split;$i++) {
-					open Out,">$out/pwd/$lg.sub.$i.genotype";
+					open Out,">$out/pri-pwd/$lg.sub.$i.genotype";
 					print Out $head;
 					for (my $j= $only*$i;$j<@Marker;$j++) {
 						print Out $Marker[$j],"\n";
 					}
 					close Out;
 					if ($i == $split-1) {
-						print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ \n";
+						print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pri-pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pri-pwd/ \n";
 					}else{
-						print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pwd/ -p $only\n";
+						print SH "perl $Bin/bin/calculatePWDforCP.pl -i $out/pri-pwd/$lg.sub.$i.genotype -k $lg.sub.$i -d $out/pri-pwd/ -p $only\n";
 					}
 				}
 			}
 			close In;
 			close SH;
-			my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0-1.calculatePWD.sh";
+			my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0-2.calculatePWD.sh";
 			`$job`;
-			open SH,">$dsh/step05-0-2.ref.sh";
+			open SH,">$dsh/step05-0-3.ref.sh";
 			open List,">$out/ref.marker.list";
 			foreach my $lg (sort keys %lg) {
-				print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pwd/$lg.pwd.detail && ";
+				print SH "cat $out/pri-pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pri-pwd/$lg.pwd && cat $out/pri-pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pri-pwd/$lg.pwd.detail && ";
 				my $loc="$out/$lg.loc";
-				if ($cycle == 1) {
-					print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-				}else{
-					$loc="$out/$lg.pri.loc"
-				}
-				print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
+				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
+				print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pri-pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
 				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $loc -k $lg -d $out\n";
 				print List $lg,"\t","$out/$lg.correct.loc\n";
 			}
 			close List;
 			close SH;
-			$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0-2.ref.sh";
+			$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0-3.ref.sh";
 			`$job`;
 			$fIn=ABSOLUTE_DIR("$out/ref.marker.list");
 
@@ -123,7 +124,6 @@ if ($lg) {
 }
 $cycle||=1;
 if ($popt eq "CP") {
-	mkdir "$out/pwd" if (!-d "$out/pwd");
 	open In,$fIn;
 	open SH,">$dsh/step05-$cycle.1.calculatePWD.sh";
 	my %lg;

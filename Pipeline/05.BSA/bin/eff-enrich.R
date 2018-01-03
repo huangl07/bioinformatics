@@ -51,8 +51,8 @@ if(is.null(opt$eggnog)){
 }else{
 	p<-ggplot(draw,aes(x=id,y=eff))+ theme_bw()
 	p<-p+geom_bar(stat="identity",aes(fill=labels),width=0.5)+scale_fill_discrete(name="")
-	p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="right",legend.key.size=unit(1,"cm"))
-	p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")
+	p<-p+theme(plot.title=element_text(hjust=0.5),legend.position="right",legend.key.size=unit(0.8,"cm"))
+	p<-p+labs(x="Function", title="Most Effdata of Gene Function",y="Eff Number")+ guides(fill = guide_legend(ncol = 1)) 
 }
 ggsave(filename=paste(opt$output,"pdf",sep="."),p,height=9,width=16,device="pdf")
 ggsave(filename=paste(opt$output,"png",sep="."),p,height=9,width=16,device="png")
