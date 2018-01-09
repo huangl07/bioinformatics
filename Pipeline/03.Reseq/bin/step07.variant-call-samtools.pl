@@ -53,14 +53,14 @@ while (<In>) {
 	if (/LN:(\S+)/) {
 		$length=$1;
 	}
-	next if ($sca == 0 || $length == 0);
+	next if ($sca eq 0 || $length == 0);
 	$n++;
 	my $hand=$n % 25;
 	if (!exists $filehand{$hand}) {
 		open $filehand{$hand},">$dOut/$hand.bed";
 		print SH "samtools mpileup  -t DP,AD -uf $ref -l $dOut/$hand.bed -b $dOut/bam.list|bcftools call -mv --format-fields GQ,GP --output-type z > $dOut/$hand.vcf.gz \n";
 	}
-	print {$filehand{$hand}} "$sca\t1\t$length\n";
+	print {$filehand{$hand}} "$sca\t0\t$length\n";
 	print List " $dOut/$hand.vcf.gz\n";
 }
 close In;

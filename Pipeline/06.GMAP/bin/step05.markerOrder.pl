@@ -89,19 +89,18 @@ if ($lg) {
 			open SH,">$dsh/step05-0-3.ref.sh";
 			open List,">$out/ref.marker.list";
 			foreach my $lg (sort keys %lg) {
-				print SH "cat $out/pri-pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pri-pwd/$lg.pwd && cat $out/pri-pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pri-pwd/$lg.pwd.detail && ";
-				my $loc="$out/$lg.loc";
-				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-				print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pri-pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
+				print SH "cat $out/pri-pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pri-pwd/$lg.pri.pwd && cat $out/pri-pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pri-pwd/$lg.pri.pwd.detail && ";
+				my $loc="$out/$lg.pri.loc";
+				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pri.pwd -g $lg{$lg} -k $lg.pri -d $out/ && ";
+				print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pri-pwd/$lg.pri.pwd.detail -l $loc -k $lg.pri -d $out && ";
 				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $loc -k $lg.pri -d $out\n";
-				print List $lg,"\t","$out/$lg.correct.pri.loc\n";
+				print List $lg,"\t","$out/$lg.pri.correct.loc\n";
 			}
 			close List;
 			close SH;
 			$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-0-3.ref.sh";
 			`$job`;
 			$fIn=ABSOLUTE_DIR("$out/ref.marker.list");
-
 		}else{
 			open SH,">$dsh/step05-0-2.ref.sh";
 			open In,$fIn;

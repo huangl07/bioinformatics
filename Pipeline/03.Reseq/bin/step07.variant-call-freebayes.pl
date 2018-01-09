@@ -53,14 +53,14 @@ while (<In>) {
 	if (/LN:(\S+)/) {
 		$length=$1;
 	}
-	next if ($sca == 0 || $length == 0);
+	next if ($sca eq 0 || $length == 0);
 	$n++;
 	my $hand=$n % 25;
 	if (!exists $filehand{$hand}) {
 		open $filehand{$hand},">$dOut/$hand.bed";
 		print SH "freebayes  -f $ref -t $dOut/$hand.bed -L $dOut/bam.list -v $dOut/$hand.vcf \n";
 	}
-	print {$filehand{$hand}} "$sca\t1\t$length\n";
+	print {$filehand{$hand}} "$sca\t0\t$length\n";
 	print List " $dOut/$hand.vcf\n";
 }
 close In;
