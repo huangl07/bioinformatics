@@ -46,151 +46,162 @@ my $nloc = 0;   ## number of loci with linkage phase
 
 my @pwdMarker = loadPWD(\%pwd,$fPWD);
 
-loadGtype(\%G,$fGenotype);
+my $phase=loadGtype(\%G,$fGenotype);
+if ($phase == 1) {
+	open In,$fGenotype;
+	open Out,">$fKey.loc";
+	while (<In>) {
+		chomp;
+		next if ($_ eq ""||/^$/);
+		print Out $_,"\n";
+	}
+	close Out;
+	close In;
+}else{
+	&checkDataSet(\@pwdMarker,[keys %G]);
 
-&checkDataSet(\@pwdMarker,[keys %G]);
+	#-------------------------------------------------------------------
+	# determine linkage phase
+	#-------------------------------------------------------------------
 
-#-------------------------------------------------------------------
-# determine linkage phase
-#-------------------------------------------------------------------
+	open ($log,">$fKey.dlp.log") or die $!;
 
-open ($log,">$fKey.dlp.log") or die $!;
+	my @determined = anchorFirstPair(\%pwd,\%G);
+	$G{$determined[0]}{'lp'} = singleDetermine($G{$determined[0]}{'type'});
+	my @temp = pairDetermine($G{$determined[0]}{'lp'},$G{$determined[1]}{'type'},$pwd{$determined[0]}{$determined[1]}{'lp'});
+	#if (@temp == 1) {
+		$G{$determined[1]}{'lp'} = $temp[0];
+		$nloc = 2;
+	#}else{
 
-my @determined = anchorFirstPair(\%pwd,\%G);
-$G{$determined[0]}{'lp'} = singleDetermine($G{$determined[0]}{'type'});
-my @temp = pairDetermine($G{$determined[0]}{'lp'},$G{$determined[1]}{'type'},$pwd{$determined[0]}{$determined[1]}{'lp'});
-#if (@temp == 1) {
-	$G{$determined[1]}{'lp'} = $temp[0];
-	$nloc = 2;
-#}else{
+	#	die "unsuccessful in linkage phase determination\n";
+	#}
 
-#	die "unsuccessful in linkage phase determination\n";
-#}
+	##\\\\\\\\\\\\\\\\\\\\\\  DEBUG \\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-##\\\\\\\\\\\\\\\\\\\\\\  DEBUG \\\\\\\\\\\\\\\\\\\\\\\\\\\
+	print $log "-----------------------------------\n";
 
-print $log "-----------------------------------\n";
+	print $log "start with : @determined\t$pwd{$determined[0]}{$determined[1]}{'lp'} (rec = $pwd{$determined[0]}{$determined[1]}{'r'}  lod = $pwd{$determined[0]}{$determined[1]}{'lod'})\n";
 
-print $log "start with : @determined\t$pwd{$determined[0]}{$determined[1]}{'lp'} (rec = $pwd{$determined[0]}{$determined[1]}{'r'}  lod = $pwd{$determined[0]}{$determined[1]}{'lod'})\n";
+	print $log "\n--- LOCI --- TYPE --- LP -----\n";
 
-print $log "\n--- LOCI --- TYPE --- LP -----\n";
-
-foreach my $dLoci (@determined) {
-	print $log $dLoci,"\t",$G{$dLoci}{'type'},"\t{",$G{$dLoci}{'lp'},"}\n";
-}
-
-print $log "\n\n";
-
-#die;
-
-## \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-my @undetermined = su([keys %G],\@determined);
-
-my %undetermined = map {$_,1} @undetermined;
-my %buffer = map {$_,1} @undetermined;
-my $loop_control_flag = scalar keys %buffer;
-my $failure_flag = scalar keys %buffer;
-
-
-
-while (1) {
-
-	if (scalar keys %buffer == 0) {
-		last;
-	}elsif(scalar keys %buffer < $loop_control_flag){
-
-		%undetermined = %buffer;
-		if (scalar keys %buffer == $failure_flag) {
-
-			warn "determine linkage phase failed for loci:\n";
-			warn join("\t",keys %buffer),"\n";
-
-			open (ERROR,">$fKey.dlp.udl") or die $!;
-			
-			print ERROR $_,"\n" for(keys %buffer);
-			
-			close (ERROR) ;
-
-			last;
-		}
-		$failure_flag = scalar keys %buffer;
+	foreach my $dLoci (@determined) {
+		print $log $dLoci,"\t",$G{$dLoci}{'type'},"\t{",$G{$dLoci}{'lp'},"}\n";
 	}
 
-#	print scalar keys %buffer,"\n";
-#	<STDIN>;
+	print $log "\n\n";
+
+	#die;
+
+	## \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+	my @undetermined = su([keys %G],\@determined);
+
+	my %undetermined = map {$_,1} @undetermined;
+	my %buffer = map {$_,1} @undetermined;
+	my $loop_control_flag = scalar keys %buffer;
+	my $failure_flag = scalar keys %buffer;
+
+
 
 	while (1) {
 
-		last if (scalar keys %undetermined == 0) ;
+		if (scalar keys %buffer == 0) {
+			last;
+		}elsif(scalar keys %buffer < $loop_control_flag){
 
-		## choose the next loci 
+			%undetermined = %buffer;
+			if (scalar keys %buffer == $failure_flag) {
 
-		my $nextLoci = chooseNextLoci(\@determined,\%undetermined,\%pwd);
+				warn "determine linkage phase failed for loci:\n";
+				warn join("\t",keys %buffer),"\n";
 
-		print $log "next loci : $nextLoci \t $G{$nextLoci}{'type'} \n";
+				open (ERROR,">$fKey.dlp.udl") or die $!;
+				
+				print ERROR $_,"\n" for(keys %buffer);
+				
+				close (ERROR) ;
 
-	#	die;
-		
-		## determine all the possible linkage phase for the next loci
-
-		my %possibleLP = PossibleLP(\@determined,$nextLoci,\%G,\%pwd);
-
-		print $log $_,"\t",join("\t",keys %{$possibleLP{$_}}),"\n" for(keys %possibleLP);
-
-		my @maxiLikelihoodLP = std_dlp(\%possibleLP);
-
-		if (@maxiLikelihoodLP == 1) {
-
-			$G{$nextLoci}{'lp'} = $maxiLikelihoodLP[0];
-			$nloc++;
-
-			push @determined,$nextLoci;
-			delete $undetermined{$nextLoci};
-			delete $buffer{$nextLoci};
-			
-			print $log "\n--- LOCI --- TYPE --- LP -----\n";
-
-			foreach my $dLoci (@determined) {
-				print $log $dLoci,"\t",$G{$dLoci}{'type'},"\t{",$G{$dLoci}{'lp'},"}\n";
+				last;
 			}
-
-			print $log "\n\n";
-		
-		}else{
-
-			print $log "Sorry,It can't determine linkage Phase of $nextLoci currently \n";
-			
-			delete $undetermined{$nextLoci};
-
+			$failure_flag = scalar keys %buffer;
 		}
+
+	#	print scalar keys %buffer,"\n";
+	#	<STDIN>;
+
+		while (1) {
+
+			last if (scalar keys %undetermined == 0) ;
+
+			## choose the next loci 
+
+			my $nextLoci = chooseNextLoci(\@determined,\%undetermined,\%pwd);
+
+			print $log "next loci : $nextLoci \t $G{$nextLoci}{'type'} \n";
+
+		#	die;
+			
+			## determine all the possible linkage phase for the next loci
+
+			my %possibleLP = PossibleLP(\@determined,$nextLoci,\%G,\%pwd);
+
+			print $log $_,"\t",join("\t",keys %{$possibleLP{$_}}),"\n" for(keys %possibleLP);
+
+			my @maxiLikelihoodLP = std_dlp(\%possibleLP);
+
+			if (@maxiLikelihoodLP == 1) {
+
+				$G{$nextLoci}{'lp'} = $maxiLikelihoodLP[0];
+				$nloc++;
+
+				push @determined,$nextLoci;
+				delete $undetermined{$nextLoci};
+				delete $buffer{$nextLoci};
+				
+				print $log "\n--- LOCI --- TYPE --- LP -----\n";
+
+				foreach my $dLoci (@determined) {
+					print $log $dLoci,"\t",$G{$dLoci}{'type'},"\t{",$G{$dLoci}{'lp'},"}\n";
+				}
+
+				print $log "\n\n";
+			
+			}else{
+
+				print $log "Sorry,It can't determine linkage Phase of $nextLoci currently \n";
+				
+				delete $undetermined{$nextLoci};
+
+			}
+			
+		}
+	}
+
+	close ($log);
+
+	#-------------------------------------------------------------------
+	# Print
+	#-------------------------------------------------------------------
+	open (OUT,">$fKey.loc")|| die $!;
+
+	print OUT ";",GetTime(),"\n";
+	print OUT "name = ",basename($fKey),"\n";
+	print OUT "popt = CP\n";
+	print OUT "nloc = ",$nloc,"\n";
+	print OUT "nind = $nind\n\n";
+
+	foreach my $marker (keys %G) {
+
+		if (exists $G{$marker}{'lp'}) {
+
+			print OUT join("\t",($marker,$G{$marker}{'type'},"{$G{$marker}{'lp'}}",@{$G{$marker}{'indi'}})),"\n";
 		
+		}
 	}
+
+	close (OUT) ;
 }
-
-close ($log);
-
-#-------------------------------------------------------------------
-# Print
-#-------------------------------------------------------------------
-open (OUT,">$fKey.loc")|| die $!;
-
-print OUT ";",GetTime(),"\n";
-print OUT "name = ",basename($fKey),"\n";
-print OUT "popt = CP\n";
-print OUT "nloc = ",$nloc,"\n";
-print OUT "nind = $nind\n\n";
-
-foreach my $marker (keys %G) {
-
-	if (exists $G{$marker}{'lp'}) {
-
-		print OUT join("\t",($marker,$G{$marker}{'type'},"{$G{$marker}{'lp'}}",@{$G{$marker}{'indi'}})),"\n";
-	
-	}
-}
-
-close (OUT) ;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -531,17 +542,25 @@ sub loadGtype {#
 #	my $head = <IN>;
 #	my @head = split /\s+/,$head;
 #	$nind = @head - 2;
+	my $return=0;
 	while (<IN>) {
 		chomp;
 		next if (/^$/ or /^;/ or /[Tt]ype/ or /^name/ or /^popt/ or /^nloc/ or /^nind/ or /^#/) ;
 
 		my ($marker,$type,@indi) = split;
+		my $phase;
+		if (/\{..\}/) {
+			($marker,$type,$phase,@indi)=split;
+			$return=1;
+		}
 		$type=~s/<|>//g;
 		$ref_G->{$marker}{'type'} = $type;
 		$ref_G->{$marker}{'indi'} = \@indi;
+		$ref_G->{$marker}{'phase'}= $phase;
 		$nind = @indi unless (defined $nind) ;
 	}
 	close (IN) ;
+	return $return;
 }
 
 sub sum {#

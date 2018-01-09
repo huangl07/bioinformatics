@@ -130,8 +130,6 @@ if ($popt eq "CP") {
 		chomp;
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
-		die $file if (!-f $file);
-		`ln -s $file $out/$lg.pri.loc`;
 		$lg{$lg}=$file;
 		my $head;
 		my @Marker;
@@ -172,11 +170,7 @@ if ($popt eq "CP") {
 	foreach my $lg (sort keys %lg) {
 		print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pwd/$lg.pwd.detail && ";
 		my $loc="$out/$lg.loc";
-		if ($cycle == 1) {
-			print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-		}else{
-			$loc="$out/$lg.pri.loc"
-		}
+		print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
 		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
 		print SH "sgsMap -loc $loc -pwd $out/$lg.pwd -k $out/$lg &&";
 		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $loc -k $lg -d $out\n";
