@@ -126,7 +126,8 @@ while (<M>) {
 			push @{$haplo{$i}},[@unit];
 		}
 	}else{
-		die "info of $loci in map file not found in loc file \n";
+		print "info of $loci in map file not found in loc file \n";
+		next;
 	}
 	
 	push @marker,$loci;

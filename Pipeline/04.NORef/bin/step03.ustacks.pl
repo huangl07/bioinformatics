@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fqlist,$outdir,$dsh,$proc);
+my ($fqlist,$outdir,$dsh,$proc,$start);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -14,9 +14,11 @@ GetOptions(
 	"out:s"=>\$outdir,
 	"dsh:s"=>\$dsh,
 	"proc:s"=>\$proc,
+	"start:s"=>\$start,
 			) or &USAGE;
 &USAGE unless ($fqlist and $outdir and $dsh);
 $proc||=20;
+$start||=0;
 mkdir $outdir if (!-d $outdir);
 $outdir = ABSOLUTE_DIR($outdir);
 mkdir $dsh if(!-d $dsh);
@@ -24,7 +26,7 @@ $dsh = ABSOLUTE_DIR($dsh);
 open SH,">$dsh/step03.ustacks.sh";
 open Out,">$outdir/ustacks.list";
 open In,$fqlist;
-my $n=0;
+my $n=$start+1;
 my $max=0;
 while (<In>) {
 	chomp;
@@ -90,6 +92,7 @@ Usage:
   -out	<dir>	split windows sh
   -dsh	<dir>	output work sh	
   -proc	<num>	max proc number for qsub
+  -start <num>	number for multi run,default 1
   -h         Help
 
 USAGE

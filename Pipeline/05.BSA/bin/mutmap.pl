@@ -36,7 +36,7 @@ if ($PID ne "") {
 	}
 }
 $Indi{$BID}="B";
-if ($fIn =~ /gz/) {
+if ($fIn =~ /gz$/) {
 	open In,"gunzip -dc $fIn|";
 }else{
 	open In,$fIn;
@@ -55,7 +55,13 @@ while (<In>) {
 		my %info;
 		my @format=split(/:/,$format);
 		my $ann=$ids;
-		if($info=~/ANN=([^\;]*)/){$ann=$1;my @ann=split(/\|/,$ann);$ann=join("|",$ann[1],$ann[2],$ann[3],$ann[4])}
+		if($info=~/ANN=([^\;]*)/){
+			$ann=$1;
+			my @ann=split(/\|/,$ann);
+			$ann[4]="-" if($ann[2] eq "MODIFIER");
+			$ann[3]="-" if($ann[2] eq "MODIFIER");
+			$ann=join("|",$ann[1],$ann[2],$ann[3],$ann[4])
+		}
 		for (my $i=0;$i<@indi;$i++) {
 			next if (!exists $Indi{$indi[$i]});
 			my $id=$Indi{$indi[$i]};

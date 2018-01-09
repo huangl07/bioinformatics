@@ -94,6 +94,10 @@ for(i in 1:length(phe.name)){
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
 	dev.off()
+	if(length(scan.result$lod$chr) < 1){
+		next;
+	}
+
 	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
 	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)

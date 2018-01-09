@@ -93,8 +93,8 @@ if ($lg) {
 				my $loc="$out/$lg.loc";
 				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
 				print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pri-pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
-				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $loc -k $lg -d $out\n";
-				print List $lg,"\t","$out/$lg.correct.loc\n";
+				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $loc -k $lg.pri -d $out\n";
+				print List $lg,"\t","$out/$lg.correct.pri.loc\n";
 			}
 			close List;
 			close SH;

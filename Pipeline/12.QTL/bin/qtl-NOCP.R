@@ -58,7 +58,6 @@ for (i in 1:length(phe.name)){
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
-qtls<-matrix()
 print(length(phe.name))
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
@@ -95,7 +94,7 @@ for(i in 1:length(phe.name)){
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
 	dev.off()
-	if(length(scan.result$lod$chr < 1)){
+	if(length(scan.result$lod$chr) < 1){
 		next;
 	}
 	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))

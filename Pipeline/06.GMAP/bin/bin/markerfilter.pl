@@ -50,6 +50,41 @@ while (<In>) {
 			}
 		}
 	}
+	if ($type eq "abxcd" && $popt eq "CP") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] ne "ac" && $info[$i] ne "ad" && $info[$i] ne "bc" && $info[$i] ne "bd") {
+				$info[$i] = "--";
+			}
+		}
+	}
+	if ($type eq "efxeg" && $popt eq "CP") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] ne "ee" && $info[$i] ne "ef" && $info[$i] ne "eg" && $info[$i] ne "fg") {
+				$info[$i] = "--";
+			}
+		}
+	}
+	if ($type eq "nnxnp"  && $popt eq "CP") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] ne "nn" && $info[$i] ne "np" ) {
+				$info[$i] = "--";
+			}
+		}
+	}
+	if ($type eq "lmxll"  && $popt eq "CP") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] ne "lm" && $info[$i] ne "ll" ) {
+				$info[$i] = "--";
+			}
+		}
+	}
+	if ($type eq "hkxhk"  && $popt eq "CP") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] ne "hh" && $info[$i] ne "kk" && $info[$i] ne "hk") {
+				$info[$i] = "--";
+			}
+		}
+	}
 	if ($type eq "abxcc") {
 		$type = "lmxll";
 		for (my $i=0;$i<@info;$i++) {
@@ -57,7 +92,7 @@ while (<In>) {
 				$info[$i]="ll"
 			}elsif ($info[$i] eq "bc") {
 				$info[$i]="lm"
-			}elsif ($info[$i] eq "ab"||$info[$i] eq "cc" || $info[$i] eq "aa" || $info[$i] eq "bb") {
+			}else {
 				$info[$i]="--"
 			}
 		}
@@ -68,7 +103,7 @@ while (<In>) {
 				$info[$i]="np"
 			}elsif ($info[$i] eq "bc") {
 				$info[$i]="nn"
-			}elsif ($info[$i] eq "ab"|| $info[$i] eq "cc"|| $info[$i] eq "aa" || $info[$i] eq "bb") {
+			}else {
 				$info[$i]="--"
 			}
 		}
@@ -76,11 +111,6 @@ while (<In>) {
 	my %gstat;
 	my $miss=0;
 	for (my $i=0;$i<@info;$i++){
-		if ($info[$i] eq "ff" || $info[$i] eq "gg" ||$info[$i] eq "mm" || $info[$i] eq "pp") {
-			$info[$i] = "--";
-		}elsif (($info[$i] eq "ab"||$info[$i] eq "cd") && $type eq "abxcd") {
-			$info[$i] = "--";
-		}
 		if ($info[$i] eq "--"){
 			$miss++;
 			next;

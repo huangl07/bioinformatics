@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fqlist,$outdir,$method,$step,$stop,$sample);
+my ($fqlist,$outdir,$method,$step,$stop,$sample,$start);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -16,9 +16,11 @@ GetOptions(
 	"sample:s"=>\$sample,
 	"step:s"=>\$step,
 	"stop:s"=>\$stop,
+	"start:s"=>\$start,
 			) or &USAGE;
 &USAGE unless ($fqlist and $outdir);
 $method||="RAD";
+$start||=0;
 mkdir $outdir if (!-d $outdir);
 $fqlist=ABSOLUTE_DIR($fqlist);
 $outdir=ABSOLUTE_DIR($outdir);
@@ -57,7 +59,7 @@ if ($step == 3) {
 	print LOG "ustacks\n"; my $time=time();
 	print LOG "########################################\n";
 	my $fqlist=ABSOLUTE_DIR("$outdir/02.uniform/fq.list");
-	my $job="perl $Bin/bin/step03.ustacks.pl -fqlist $fqlist -out $outdir/03.ustacks -dsh $outdir/work_sh  -proc 20";
+	my $job="perl $Bin/bin/step03.ustacks.pl -fqlist $fqlist -out $outdir/03.ustacks -dsh $outdir/work_sh  -proc 20 -start $start";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";
@@ -228,6 +230,7 @@ Usage:
 	-outdir	<dir>	output dir
 	-sample	<file>	sample list for cstacks [P,M]
 	-method	<method>	GBS or RAD
+	-start	<num>	numbers of analysied data,default 0
 	-step	pipeline control
           01 fastq qc
           02 fastq uniform lenth

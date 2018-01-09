@@ -58,10 +58,10 @@ while (<In>) {
 	my $hand=$n % 25;
 	if (!exists $filehand{$hand}) {
 		open $filehand{$hand},">$dOut/$hand.bed";
-		print SH "samtools mpileup  -t DP,AD -uf $ref -l $dOut/$hand.bed -b $dOut/bam.list|bcftools call -mv --format-fields GQ,GP --output-type z > $dOut/$hand.vcf.gz \n";
+		print SH "freebayes  -f $ref -t $dOut/$hand.bed -L $dOut/bam.list -v $dOut/$hand.vcf \n";
 	}
 	print {$filehand{$hand}} "$sca\t1\t$length\n";
-	print List " $dOut/$hand.vcf.gz\n";
+	print List " $dOut/$hand.vcf\n";
 }
 close In;
 close SH;

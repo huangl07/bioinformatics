@@ -54,6 +54,7 @@ foreach my $map (@map) {
 		$newdis=rand(80)+120;
 	}
 	foreach my $id (sort {$info{$a}{pos}<=>$info{$b}{pos}} keys %info) {
+		next if ($info{$id}{lgID} ne $lgID);
 		$info{$id}{pos}=$info{$id}{pos}*$newdis/$max;
 		print Out $id,"\t",$info{$id}{pos},"\n";
 	}
@@ -62,7 +63,6 @@ foreach my $map (@map) {
 close Out;
 @map=glob("$dmap/*.male.map");
 open Out,">$dOut/total.male.map";
-my %male;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -72,6 +72,8 @@ foreach my $map (@map) {
 	print Out "group\t$lgID\n";
 	open In,$map;
 	my $max=0;
+	my %male;
+
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
@@ -94,7 +96,6 @@ foreach my $map (@map) {
 close Out;
 @map=glob("$dmap/*.female.map");
 open Out,">$dOut/total.female.map";
-my %female;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -103,6 +104,8 @@ foreach my $map (@map) {
 	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my %female;
+
 	my $max=0;
 	while (<In>) {
 		chomp;

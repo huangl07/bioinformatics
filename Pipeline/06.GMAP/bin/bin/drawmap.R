@@ -62,48 +62,48 @@ if(opt$pop == "cp"){
 	plotMap(d2,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
 	pdf("heatMap.sexAver.pdf")
-	heatMap(d,lmax=50)
+	heatMap(d,lmax=50,"both")
 	dev.off()
 	png("heatMap.sexAver.png")
-	heatMap(d,lmax=50)
+	heatMap(d,lmax=50,"both")
 	dev.off()
 	pdf("heatMap.male.pdf")
-	heatMap(d1,lmax=50)
+	heatMap(d1,lmax=50,"both")
 	dev.off()
 	png("heatMap.male.png")
-	heatMap(d1,lmax=50)
+	heatMap(d1,lmax=50,"both")
 	dev.off()
 	pdf("heatMap.female.pdf")
-	heatMap(d2,lmax=50)
+	heatMap(d2,lmax=50,"both")
 	dev.off()
 	png("heatMap.female.png")
-	heatMap(d2,lmax=50)
+	heatMap(d2,lmax=50,"both")
 	dev.off()
 	chrname<-chrnames(d);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.sexAver.pdf",sep=""))
-		heatMap(d,chr=i,lmax=50)
+		heatMap(d,chr=i,lmax=50,"both")
 		dev.off()
 		png(paste(i,".heatMap.sexAver.png",sep=""))
-		heatMap(d,chr=i,lmax=50)
+		heatMap(d,chr=i,lmax=50,"both")
 		dev.off()
 	}
 	chrname<-chrnames(d1);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.male.pdf",sep=""))
-		heatMap(d1,chr=i,lmax=50)
+		heatMap(d1,chr=i,lmax=50,"both")
 		dev.off()
 		png(paste(i,".heatMap.male.png",sep=""))
-		heatMap(d1,chr=i,lmax=50)
+		heatMap(d1,chr=i,lmax=50,"both")
 		dev.off()
 	}
 	chrname<-chrnames(d2);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.female.pdf",sep=""))
-		heatMap(d2,chr=i,lmax=50)
+		heatMap(d2,chr=i,lmax=50,"both")
 		dev.off()
 		png(paste(i,".heatMap.female.png",sep=""))
-		heatMap(d2,chr=i,lmax=50)
+		heatMap(d2,chr=i,lmax=50,"both")
 		dev.off()
 	}
 }else{
@@ -118,18 +118,18 @@ if(opt$pop == "cp"){
 	plotMap(d,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
 	pdf("total.heatMap.pdf")
-	heatMap(d,lmax=50)
+	heatMap(d,lmax=50,"both")
 	dev.off()
 	png("total.heatMap.png")
-	heatMap(d,lmax=50)
+	heatMap(d,lmax=50,"both")
 	dev.off()
 	chrname<-chrnames(d);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.pdf",sep=""))
-		heatMap(d,chr=i,lmax=50)
+		heatMap(d,chr=i,lmax=50,"both")
 		dev.off()
 		png(paste(i,".heatMap.png",sep=""))
-		heatMap(d,chr=i,lmax=50)
+		heatMap(d,chr=i,lmax=50,"both")
 		dev.off()
 	}
 }

@@ -77,7 +77,7 @@ close List;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
-print SH "java -cp /mnt/ilustre/users/dna/.env//bin/GenomeAnalysisTK.jar org.broadinstitute.gatk.tools.CatVariants --reference $ref --variant $dOut/sub.vcf.list --outfile $dOut/pop.noid.vcf \n ";
+print SH "bcftools concat -f $dOut/vcf.list -o $dOut/pop.noid.vcf -O v  && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
 print SH "bcftools sort -m 100G -o $dOut/pop.variant.vcf -T $dOut/tmp/ $dOut/pop.nosort.vcf \n";
 close SH;
