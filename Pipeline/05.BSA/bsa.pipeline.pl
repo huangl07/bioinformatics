@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$pid,$bid,$popt,$ann);
+my ($vcf,$out,$pid,$bid,$popt,$ann,$chr,$gff,);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,8 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"vcf:s"=>\$vcf,
 	"out:s"=>\$out,
+	"gff:s"=>\$gff,
+	"chr:s"=>\$chr,
 	"ann:s"=>\$ann,
 	"pid:s"=>\$pid,
 	"bid:s"=>\$bid,
@@ -46,6 +48,7 @@ if (scalar @bid == 1) {
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/fig/region.threshold.gene.kegg.stat --top 1 && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat --output $out/fig/region.threshold.gene.go.stat --top 1&& ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/fig/region.threshold.gene.eggnog.stat --eggnog && ";
+	print SH "perl $Bin/bin/draw-circos.pl --windows 100000 --gwindows 10000 -vcf $vcf --index $out/sliding-win.result --column 4 --chrlist $chr --gff $gff"
 
 }else{
 	print SH "perl $Bin/bin/qtlseq.pl -vcf $vcf -out $out/index-calc.result -bid $bid -popt $popt ";
@@ -62,7 +65,10 @@ if (scalar @bid == 1) {
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/region.threshold.gene.kegg.stat --top 1 && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.go.stat --output $out/region.threshold.gene.go.stat --top 1&& ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.eggnog.stat --output $out/region.threshold.gene.eggnog.stat --eggnog&& ";
+	print SH "perl $Bin/bin/draw-circos.pl --windows 100000 --gwindows 10000 -vcf $vcf --index $out/sliding-win.result --column 5 --chrlist $chr --gff $gff"
 }
+
+close SH;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=20G --CPU 1 $dsh/bsa.sh";
 `$job`;
 mkdir "$oout/result/" if (!-d "$oout/result");

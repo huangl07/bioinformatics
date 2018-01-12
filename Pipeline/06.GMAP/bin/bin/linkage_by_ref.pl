@@ -56,13 +56,36 @@ while (<In>) {
 	next if ($_ eq ""||/^$/ ||/MLOD/);
 	my ($m1,$m2,$mlod)=split(/\s+/,$_);
 	if (!defined $pos{$m1} || !defined $pos{$m2}) {
-		die $_;
+		next;
 	}
 	next if (!exists $chrID{$pos{$m1}} && !exists $chrID{$pos{$m2}});
 	$PWD{$m1}{$m2}=$mlod;
 	$PWD{$m2}{$m1}=$mlod;
 }
 close In;
+foreach my $chr (sort keys %LG) {
+	foreach my $marker (sort keys %{$LG{$chr}}) {
+		if (!exists $PWD{$marker}) {
+			next;
+		}
+		my @markers=sort{$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
+		my $max;
+		for (my $i=0;$i<@markers;$i++) {
+			if (!exists $PWD{$markers[$i]}) {
+				next;
+			}
+			if ($pos{$markers[$i]} eq $chr) {
+				$max=$PWD{$marker}{$markers[$i]};
+				last;
+			}
+		}
+		if ($max < 5) {
+			print Out "delete:$marker\t$max\n";
+			delete $LG{$chr}{$marker};
+		}
+	}
+}
+
 if ($add) {
 	open Out,">$dOut/$Key.sca.stat";
 	foreach my $sca (sort keys %sca) {
@@ -89,28 +112,6 @@ if ($add) {
 			print Out "$sca:$stat{$sca}\t";
 		}
 		print Out "\n";
-	}
-	foreach my $chr (sort keys %LG) {
-		foreach my $marker (sort keys %{$LG{$chr}}) {
-			if (!exists $PWD{$marker}) {
-				next;
-			}
-			my @markers=sort{$PWD{$marker}{$b}<=>$PWD{$marker}{$a}} keys %{$PWD{$marker}};
-			my $max;
-			for (my $i=0;$i<@markers;$i++) {
-				if (!exists $PWD{$markers[$i]}) {
-					next;
-				}
-				if ($pos{$markers[$i]} eq $chr) {
-					$max=$PWD{$marker}{$markers[$i]};
-					last;
-				}
-			}
-			if ($max < 5) {
-				print Out "delete:$marker\t$max\n";
-				delete $LG{$chr}{$marker};
-			}
-		}
 	}
 	close Out;
 	open Out,">$dOut/$Key.lg";
@@ -165,6 +166,7 @@ sub USAGE {#
 		-2	<file>	input marker file
 		-o	<dir>	output file
 		-k	<str>	output keys of filename
+		-add	add scaffolding markers
 		-h	Help
 
 USAGE

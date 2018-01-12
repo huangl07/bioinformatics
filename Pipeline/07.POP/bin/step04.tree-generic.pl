@@ -23,11 +23,15 @@ $dsh=ABSOLUTE_DIR($dsh);
 $vcf=ABSOLUTE_DIR($vcf);
 my $id="pop";
 open SH,">$dsh/step04.tree-generic1.sh";
-print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id \n";
+print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id &&";
+print SH "model-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test "
 open SH,">$dsh/step04.tree-generic2.sh";
-#print SH "cd $out/ && raxml-ng --all --msa $out/$id.fa  --prefix $out/$id --bs-trees 1000 2> $out/$id.raxmlHPC.log && ";
-print SH "cd $out/ && raxmlHPC -f a -x 12345 -T 16 -p 12345 -# 1000 -m GTRGAMMA -s $out/$id.phylip -n $id 2> $out/$id.raxmlHPC.log && ";
-print SH "ln -s $out/RAxML_bipartitionsBranchLabels.$id $out/$id.ml.tree && ";
+my $sh=`grep raxml $out/pop.model.test|uniq`;
+$sh=~s/>//g;chomp $sh;
+$sh .=" --threads 16 --bootstrap 1000 ";
+print SH "$sh && ";
+#print SH "cd $out/ && raxmlHPC -f a -x 12345 -T 16 -p 12345 -# 1000 -m GTRGAMMA -s $out/$id.phylip -n $id 2> $out/$id.raxmlHPC.log && ";
+print SH "ln -s $out/RAxML_bipartitionsBranchLabels.$id $out/$id.ml.tree --prefix $out/$id && ";
 print SH "Rscript $Bin/bin/tree.R --infile $out/RAxML_bipartitionsBranchLabels.$id  --outfile $out/$id.ml.tree  ";
 if ($gro) {
 	$gro=ABSOLUTE_DIR($gro);

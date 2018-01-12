@@ -34,6 +34,9 @@ highlight=NULL;name_highlighted=F;add_text=T;
 highlight_rows=which(is.element(as.numeric(row.names(res)),highlight))
 non_highlight_rows=setdiff(1:nrow(res),highlight_rows)
 outliers=as.integer(row.names(res[res[,colq]<=FDR,]))
+if(length(outliers == 0)){
+	outliers=as.integer(row.names(res[res[,colq]<=quantile(1-res[,colq],0.05)),]))
+}
 ok_outliers=TRUE
 if (sum(res[,colq]<=FDR)==0)
 	ok_outliers=FALSE;

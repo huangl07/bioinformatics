@@ -42,6 +42,7 @@ my %filehand;
 my $n=0;
 open SH,">$dShell/step05.call-variant1.sh";
 open List,">$dOut/vcf.list";
+my $vcfs;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ );
@@ -59,17 +60,23 @@ while (<In>) {
 	if (!exists $filehand{$hand}) {
 		open $filehand{$hand},">$dOut/$hand.bed";
 		print SH "samtools mpileup  -t DP,AD -uf $ref -l $dOut/$hand.bed -b $dOut/bam.list|bcftools call -mv --format-fields GQ,GP --output-type z > $dOut/$hand.vcf.gz \n";
+		print List " $dOut/$hand.vcf.gz\n";
+		$vcfs.=" $dOut/$hand.vcf.gz ";
 	}
+	
 	print {$filehand{$hand}} "$sca\t0\t$length\n";
-	print List " $dOut/$hand.vcf.gz\n";
 }
 close In;
 close SH;
 close List;
-open SH,">$dShell/step05.call-variant2.sh";
-print SH "bcftools concat -f $dOut/vcf.list -o $dOut/pop.noid.vcf -O v  && ";
+open SH,">$dShell/08-2.mergeVCF.sh";
+my $mem=`du -s ./*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
+$mem=$mem/1000000;
+$mem=(int($mem/100)+1)*100;
+print SH "cd $dOut/ && ";
+print SH "bcftools concat $vcfs -o $dOut/pop.noid.vcf -O v && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
-print SH "bcftools sort -m 100G -o $dOut/pop.variant.vcf -T $dOut/tmp/ $dOut/pop.nosort.vcf \n";
+print SH "bcftools sort -m $mem\G -T $dOut/temp/ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step05.call-variant1.sh";
 print $job;

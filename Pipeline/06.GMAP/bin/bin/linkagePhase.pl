@@ -44,7 +44,6 @@ my $nloc = 0;   ## number of loci with linkage phase
 # Get Data
 #-------------------------------------------------------------------
 
-my @pwdMarker = loadPWD(\%pwd,$fPWD);
 
 my $phase=loadGtype(\%G,$fGenotype);
 if ($phase == 1) {
@@ -58,6 +57,8 @@ if ($phase == 1) {
 	close Out;
 	close In;
 }else{
+	my @pwdMarker = loadPWD(\%pwd,$fPWD);
+
 	&checkDataSet(\@pwdMarker,[keys %G]);
 
 	#-------------------------------------------------------------------

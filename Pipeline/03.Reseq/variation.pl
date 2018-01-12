@@ -149,7 +149,7 @@ if ($step == 8) {
 	my $gvcf=ABSOLUTE_DIR("$outdir/07.haplotype/gvcf.list");
 	my $ref=ABSOLUTE_DIR("$outdir/02.ref-config/ref.fa");
 	my $dict=ABSOLUTE_DIR("$outdir/02.ref-config/ref.dict");
-	my $job="perl $Bin/bin/step08.gvcf-typing.pl -dict $dict -gvcf $gvcf -ref $ref  -out $outdir/08.gvcf-typing -dsh $outdir/work_sh -proc 20";
+	my $job="perl $Bin/bin/step08.gvcf-typing-wdl.pl -dict $dict -gvcf $gvcf -ref $ref  -out $outdir/08.gvcf-typing -dsh $outdir/work_sh -proc 20";
 	print LOG "$job\n";
 	`$job`;
 	print LOG "$job\tdone!\n";

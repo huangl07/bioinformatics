@@ -65,7 +65,7 @@ while (<In>) {
 	if (/^#/) {
 		next;	
 	}else{
-		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
+		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre)=split(/\t/,$_);
 		my @ids=split(/:/,$id);
 		my $pos=join("\t",$ids[2],$ids[3],$ids[4]);
 		$info{$ids[0]}||=join("\t",$ids[1],$ids[0],"--","--");
@@ -101,6 +101,7 @@ while (<In>) {
 			$enrich{$goid[$i]}{enrich}++ if($stat{$info}{high}+$stat{$info}{middle} > 0);
 			$gdetail{$goid[$i]}=$gdetail[$i];
 		}
+		my ($eid,$eanno)=split(/:/,$egid);
 		my @eid=split(/,/,$eid);
 		my @edetail=split(/;/,$eanno);
 		for (my $i=0;$i<@eid;$i++) {

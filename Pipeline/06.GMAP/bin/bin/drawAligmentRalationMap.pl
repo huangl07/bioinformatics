@@ -430,8 +430,6 @@ Contact: Li Tiancheng <litc\@biomarker.com.cn> <ltc_gs\@qq.com>
 Usage:
   Options:
   -m <file>  map file, JoinMap map format, forced.
-  -a <file>  alignmet file, tab format, forced.
-  -l <file>  info file of chromosome length , forced.
   -x <str>	 title of x axis ,default [linkage groups], optional.
   -y <str>   titile of y axis ,default [genome], optional.
   -w <str>   width of svg paper ,default [2500], optional.

@@ -45,6 +45,7 @@ open List,">$dOut/sub.vcf.list";
 open In,$dict;
 my %hand;
 my $nchr=0;
+my  $vcfs;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ ||!/^\@SQ/);
@@ -54,6 +55,7 @@ while (<In>) {
 	if (!exists $hand{$hand}) {
 		open $hand{$hand},">$dOut/$hand.intervals";
 		print List "$dOut/$hand.vcf\n";
+		$vcfs.=" $dOut/$hand.vcf ";
 		open Out,">$dOut/$hand.gtyping.json\n";
 		print Out "{\n";
 		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/gvcf.list\",\n";
@@ -77,12 +79,15 @@ close List;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
+my $mem=`du -s ./*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
+$mem=$mem/1000000;
+$mem=(int($mem/100)+1)*100;
 print SH "cd $dOut/ && ";
-print SH "bcftools concat -f $dOut/vcf.list -o $dOut/pop.noid.vcf -O v  && ";
+print SH "bcftools concat $vcfs -o $dOut/pop.noid.vcf -O v && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
-print SH "bcftools sort -m 100G -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
+print SH "bcftools sort -m $mem\G -T $dOut/temp/ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
 close SH;
-$job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=100G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=$mem\G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
 `$job`;
 
 #######################################################################################

@@ -56,7 +56,7 @@ while (<In>) {
 		$head=$_;
 		next;
 	}
-	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno)=split(/\t/,$_);
+	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre)=split(/\t/,$_);
 	my $regioned=0;
 	foreach my $region (sort keys %{$region{$chr}}) {
 		my ($pos3,$pos4)=split(/\t/,$region);
@@ -96,6 +96,8 @@ while (<In>) {
 		$enrich{$goid[$i]}{enrich}++ if($regioned ==1);
 		$gdetail{$goid[$i]}=$gdetail[$i];
 	}
+	my ($eid,$eanno)=split(/:/,$egid);
+
 	my @eid=split(/,/,$eid);
 	my @edetail=split(/;/,$eanno);
 	for (my $i=0;$i<@eid;$i++) {

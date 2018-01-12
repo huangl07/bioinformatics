@@ -35,7 +35,12 @@ if ( is.null(opt$pop) ) { print_usage(spec) }
 if ( is.null(opt$num) ) { opt$num=1000; }else{opt$num=as.numeric(opt$num)}
 if ( is.null(opt$out) ) { opt$out="./";}
 
-d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
+if(opt$pop =="bcsft" & is.null(opt$bc) & is.null(opt$f){print_usage(spec)}
+if(opt$pop =="bcsft" {	
+	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN",BC.gen=2,F.gen=2)
+}else{
+	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
+}
 if(!dir.exists(opt$out)){dir.create(opt$out)}
 setwd(opt$out);
 d<-jittermap(d)

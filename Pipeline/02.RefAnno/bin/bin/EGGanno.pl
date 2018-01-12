@@ -73,7 +73,7 @@ foreach my $blast (@blast) {
 		next if ($_ eq ""||/^$/||/^#/);
 		my @info=split(/\t/,$_);
 		if (scalar @info < 13) {
-			$anno{$info[0]}="S\tFunction unknown";
+			$anno{$info[0]}="--\t--";
 		}else{
 			my @type=split(/\,/,$info[11]);
 			my @detail;
@@ -81,7 +81,9 @@ foreach my $blast (@blast) {
 				$type=~s/\s//g;
 				push @detail,$EggNOG{$type};
 			}
-			$anno{$info[0]}=join("\t",join(",",@type),join(";",@detail));
+			my $NOG=(split(/\,/,$info[9]))[0];
+			my $NOGExpress=$info[12];
+			$anno{$info[0]}=join("\t",join(",",@type).":".join(";",@detail),"$NOG:$NOGExpress");
 		}
 	}
 	close In;
@@ -90,7 +92,7 @@ foreach my $blast (@blast) {
 open Out,">$fOut";
 print Out "#GeneID\tEGGNOG\tEGGNOG_ANNO\n";
 foreach my $query (sort keys %gene) {
-	$anno{$query}||="S\tFunction unknown";
+	$anno{$query}||="--\t--";
 	print Out $query,"\t",$anno{$query},"\n";
 }
 close Out;

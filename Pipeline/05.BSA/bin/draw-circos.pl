@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($snp,$indel,$index,$index_column,$chrlist,$gff,$outdir,$windows,$gff_windows);
+my ($snp,$indel,$index,$index_column,$chrlist,$gff,$outdir,$windows,$gff_windows,$vcf);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -13,15 +13,14 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"windows:s"=>\$windows,
     "gwindows:s"=>\$gff_windows,
-	"snp:s"=>\$snp,
-    "indel:s"=>\$indel,
+	"vcf:s"=>\$vcf,
     "index:s"=>\$index,
     "column:s"=>\$index_column,
 	"gff:s"=>\$gff,
     "chrlist:s"=>\$chrlist,
 	"outdir:s"=>\$outdir,
 			) or &USAGE;
-&USAGE unless ($windows and $snp and $gff and $chrlist);
+&USAGE unless ($windows and $vcf and $gff and $chrlist);
 ########
 ########work dir
 ########
@@ -310,50 +309,42 @@ y1    = 0r
 </background>
 </backgrounds>
 ";
-print $snp;
-if ($snp){######plot snp
-    #print $snp;
-    my $file_name=(split/\//,$snp)[-1];
-    open IN,"<$snp";
-    open OUT,">$outdir/draw.circos/windows.file/$file_name.win.txt";
-    my $max=slide($snp,\%hash_chr_num);
+    open IN,"<$vcf";
+    open SNP,">$outdir/draw.circos/windows.file/snp.win.txt";
+	open INDEL,">$outdir/draw.circos/windows.file/indel.win.txt";
+	my %max;
+	slide($vcf,\%hash_chr_num,\%max);
     $main_conf.="
-######plot snp
-<plot>
-type = line
-max_gap = 1u
-file    = $outdir/draw.circos/windows.file/$file_name.win.txt
-color   = white
-min     = 0
-max     = $max#0.015
-r0      = 0.85r#1.075r
-r1      = 0.95r#1.125r
-thickness = 1
-#fill_color = vdyellow
-</plot>
-######
-";
-}
-if($indel){######plot indel
-    my $file_name=(split/\//,$indel)[-1];
-    open IN,"<$indel";
-    open OUT,">$outdir/draw.circos/windows.file/$file_name.win.txt";
-    my $max=slide($indel,\%hash_chr_num);
-    $main_conf.="
-<plot>
-type=scatter
-file= $outdir/draw.circos/windows.file/$file_name.win.txt
-#fill_color=green
-stroke_color=blue
-glyph=rectangle#circle
-glyph_size=10
-max=$max#0.013
-min=0
-r1=0.75r
-r0=0.65r
-</plot>
-";
-}
+		######plot snp
+		<plot>
+		type = line
+		max_gap = 1u
+		file    = $outdir/draw.circos/windows.file/snp.win.txt
+		color   = white
+		min     = 0
+		max     = $max{snp} #0.015
+		r0      = 0.85r#1.075r
+		r1      = 0.95r#1.125r
+		thickness = 1
+		#fill_color = vdyellow
+		</plot>
+		######
+		";
+		$main_conf.="
+		<plot>
+			type=scatter
+			file= $outdir/draw.circos/windows.file/indel.win.txt
+			#fill_color=green
+			stroke_color=blue
+			glyph=rectangle#circle
+			glyph_size=10
+			max=$max{indel}#0.013
+			min=0
+			r1=0.75r
+			r0=0.65r
+		</plot>
+		";
+
 if($index){######plot sv
     my $file_name=basename($index);
     open IN,"<$index";
@@ -422,19 +413,33 @@ system("circos -conf $outdir/draw.circos/draw.conf -outputfile circos -outputdir
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
 sub slide{
-    my ($file,$chr)=@_;
-    my $max;
+    my ($file,$chr,$max)=@_;
     my %hash;
     my $win=$windows;
     my %hash_max;
+	$$max{snp}=0;
+	$$max{indel}=0;
     while(<IN>){
         #$_=~s/sca/chr/g;
         $_=~s/[\n\r]//g;
         my @array=split;
+
         next if /^#/;
         my $win_num=int($array[1]/$win)+1;
 		next if (!exists $$chr{$array[0]});
-        $hash{$array[0]}{$win_num}++;
+		my $lenr=length($array[3]);
+		my @all=split(/,/,$array[4]);
+		my $lena=0;
+		for (my $i=0;$i<@all;$i++) {
+			if (length($all[$i]) > $lena) {
+				$lena=length($all[$i]);
+			}
+		}
+		if ($lena == $lenr) {
+			$hash{$array[0]}{$win_num}{snp}++;
+		}else{
+			$hash{$array[0]}{$win_num}{indel}++;
+		}
     }
     foreach my $keys (sort keys %hash){
    # print "$keys\n";
@@ -442,14 +447,19 @@ sub slide{
             my $chr=$keys;
             my $start=1+$win*($num-1);
             my $end=$win*$num;
-            my $snp=$hash{$keys}{$num}/$win;
-       $hash_max{$snp}=1;
-            print OUT "$chr\t$start\t$end\t$snp\tfill_color=$chr_colour{$chr}\n";
+            my $snp=$hash{$keys}{$num}{snp}/$win;
+			my $indel=$hash{$keys}{$num}{indel}/$win;
+			if ($snp > $$max{$snp}) {
+				$$max{$snp}=$snp;
+			}
+			if ($indel > $$max{$indel}) {
+				$$max{$indel}=$indel;
+			}
+			print SNP "$chr\t$start\t$end\t$snp\tfill_color=$chr_colour{$chr}\n";
+			print INDEL "$chr\t$start\t$end\t$indel\tfill_color=$chr_colour{$chr}\n";
         
     }
     }
-    $max= (sort{$b<=>$a} keys %hash_max)[0];
-    return $max;
 }
 sub slide_index{
     my ($file,$chr)=@_;
