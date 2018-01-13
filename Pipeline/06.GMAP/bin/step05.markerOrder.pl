@@ -50,7 +50,6 @@ if ($lg) {
 				next if ($_ eq ""||/^$/);
 				my ($lg,$file)=split(/\s+/,$_);
 				die $file if (!-f $file);
-				`ln -s $file $out/$lg.pri.loc`;
 				$lg{$lg}=$file;
 				my $head;
 				my @Marker;
@@ -90,10 +89,9 @@ if ($lg) {
 			open List,">$out/ref.marker.list";
 			foreach my $lg (sort keys %lg) {
 				print SH "cat $out/pri-pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pri-pwd/$lg.pwd && cat $out/pri-pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pri-pwd/$lg.pwd.detail && ";
-				my $loc="$out/$lg.loc";
-				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $loc -k $lg -d $out -diff_ratio 0.7\n";
-				print List $lg,"\t","$out/$lg.correct.loc\n";
+				print SH "perl $Bin/bin/linkagePhase.pl -p $out/pri-pwd/$lg.pwd -g $lg{$lg} -k $lg.pri -d $out/ && ";
+				print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.pri.map -l $out/$lg.pri.loc -k $lg.pri -d $out\n";
+				print List $lg,"\t","$out/$lg.pri.correct.loc\n";
 			}
 			close List;
 			close SH;
@@ -109,8 +107,8 @@ if ($lg) {
 				chomp;
 				next if ($_ eq ""||/^$/);
 				my ($lg,$file)=split(/\s+/,$_);
-				print Out join("\t",$lg,"$out/$lg.cor.marker"),"\n";
-				print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -m $out/$lg.pri.map -o $out/$lg.cor.marker \n ";
+				print Out join("\t",$lg,"$out/$lg.pri.cor.marker"),"\n";
+				print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -m $out/$lg.pri.map -o $out/$lg.pri.cor.marker \n ";
 			}
 			close Out;
 			close In;
@@ -131,7 +129,6 @@ if ($popt eq "CP") {
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
 		die $file if (!-f $file);
-		`ln -s $file $out/$lg.pri.loc`;
 		$lg{$lg}=$file;
 		my $head;
 		my @Marker;
@@ -171,15 +168,10 @@ if ($popt eq "CP") {
 	open List,">$out/marker.list";
 	foreach my $lg (sort keys %lg) {
 		print SH "cat $out/pwd/$lg.sub.*.pwd|less|sort|uniq > $out/pwd/$lg.pwd && cat $out/pwd/$lg.sub.*.pwd.detail|less|sort|uniq > $out/pwd/$lg.pwd.detail && ";
-		my $loc="$out/$lg.loc";
-		if ($cycle == 1) {
-			print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
-		}else{
-			$loc="$out/$lg.pri.loc"
-		}
-		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $loc -k $lg -d $out && ";
-		print SH "sgsMap -loc $loc -pwd $out/$lg.pwd -k $out/$lg &&";
-		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $loc -k $lg -d $out\n";
+		print SH "perl $Bin/bin/linkagePhase.pl -p $out/pwd/$lg.pwd -g $lg{$lg} -k $lg -d $out/ && ";
+		print SH "perl $Bin/bin/extractPwdViaLP.pl -i  $out/pwd/$lg.pwd.detail -l $out/$lg.loc -k $lg -d $out && ";
+		print SH "sgsMap -loc $out/$lg.loc -pwd $out/$lg.pwd -k $out/$lg &&";
+		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $out/$lg.loc -k $lg -d $out\n";
 		print List $lg,"\t","$out/$lg.correct.loc\n";
 	}
 	close List;
@@ -195,8 +187,8 @@ if ($popt eq "CP") {
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
 		print SH "MSTmap $file $out/$lg.out &&";
-		print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -m $out/$lg.out -o $out/$lg.marker \n ";
-		print List "$lg\t$out/$lg.marker\n";
+		print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -m $out/$lg.out -o $out/$lg.correct.marker \n ";
+		print List "$lg\t$out/$lg.correct.marker\n";
 	}
 	close SH;
 	close In;
