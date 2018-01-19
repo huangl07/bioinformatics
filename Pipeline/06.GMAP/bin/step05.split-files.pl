@@ -14,7 +14,7 @@ GetOptions(
 	"gen:s"=>\$gen,
 	"out:s"=>\$dOut,
 	"dsh:s"=>\$dsh,
-	"ref:s"=>\$ref,
+	"ref"=>\$ref,
 	"popt:s"=>\$popt,
 			) or &USAGE;
 &USAGE unless ($lg and $gen and $dOut and $dsh and $popt);
@@ -31,7 +31,7 @@ if ($popt eq "CP") {
 	print SH "perl $Bin/bin/splitbyLG-NOCP.pl -l $lg -i $gen -d $dOut/ -t $popt";
 }
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step05-1.split.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step05-1.split.sh\n";
 print $job;
 `$job`;
 if ($ref) {
@@ -43,12 +43,12 @@ if ($ref) {
 		next if ($_ eq ""||/^$/);
 		my ($lg,$file)=split(/\s+/,$_);
 		my $map=$file;
-		$map=s/\.marker/\.map/g;
+		$map=~s/\.marker/\.map/g;
 		if ($popt eq "CP") {
-			print SH "crosslink_group --inp=$file --outbase=$dOut/$lg  --min_lod=-1 --ignore_cxr=1  --randomise_order=1 && ";
-			print SH "perl $Bin/bin/smooth-CP.pl -l $dOut/$lg\000.loc -m $dOut/$map -k $lg -d ./\n";
+			print SH "crosslink_group --inp=$file --outbase=$dOut/$lg.  --min_lod=-1 --ignore_cxr=1  --randomise_order=1 && ";
+			print SH "perl $Bin/bin/smooth-CP.pl -l $dOut/$lg.000.loc -m $map -k $lg -d $dOut\n";
 		}else{
-			print SH "perl $Bin/bin/smooth-NOCP.pl -i $dOut/$file -o $dOut/$lg.correct.loc -m $dOut/$map";
+			print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -o $dOut/$lg.correct.loc -m $map \n";
 		}
 		print Out "$lg\t$dOut/$lg.correct.loc\n";
 	}

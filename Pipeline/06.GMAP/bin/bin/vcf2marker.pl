@@ -18,8 +18,8 @@ GetOptions(
 	"Odep:s"=>\$OffDepth,
 			) or &USAGE;
 &USAGE unless ($fIn and $fOut and $PID and $MID);
-$ParentDepth||=5;
-$OffDepth||=1;
+$ParentDepth||=10;
+$OffDepth||=2;
 open In,$fIn;
 open Out,">$fOut";
 my @indi;

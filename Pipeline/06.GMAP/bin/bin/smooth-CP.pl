@@ -74,7 +74,6 @@ for (my $i=0;$i<@order;$i++) {
 	$end=scalar @order -1 if ($end > scalar @order -1);
 	for (my $j=0;$j<@{$pri{$order[$i]}{geno}};$j++) {
 		my %stat;
-
 		for (my $k=$start;$k<=$end;$k++) {
 			if (!exists $pri{$order[$k]}{geno}) {
 				print $k;die;
@@ -113,7 +112,7 @@ foreach my $id (sort {$order{$a}<=> $order{$b}} keys %order) {
 	for (my $i=0;$i<@{$correct{$id}{geno}};$i++) {
 		my @hap=split(//,$correct{$id}{geno}[$i]);
 		push @out,haplo2gene($pri{$id}{type},$pri{$id}{phase},$hap[0],$hap[1]);
-		if ($pri{$id}{geno}[$i] eq $correct{$id}{geno}[$i]) {
+		if ($pri{$id}{geno}[$i] eq $correct{$id}{geno}[$i] || ($correct{$id}{geno}[$i] eq "--" && $pri{$id}{geno}[$i] ne "--" )) {
 			push @outp,$pri{$id}{geno}[$i];
 		}else{
 			push @outp,$pri{$id}{geno}[$i]."->".$correct{$id}{geno}[$i];

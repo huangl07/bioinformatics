@@ -34,7 +34,9 @@ while (<In>) {#��ȡmatrix�����ÿ�������Դ
 		(undef,undef,@Head)=split(/\t/,$_);
 	}else{
 		my ($id,$type,@info)=split(/\t/,$_);
-		my ($chr,$pos)=split(/\_/,$id);
+		my @posinfo=split(/\_/,$id);
+		my $chr=join("_",@posinfo[0..$#posinfo-1]);
+		my $pos=$posinfo[-1];
 		if ($pos - $stepsize < 0) {
 			$pos{$chr}{0}{$id}=$pos;
 		}elsif ($pos - $winsize < 0) {
