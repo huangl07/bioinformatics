@@ -38,10 +38,13 @@ while (<In>) {
 	}else{
 		my ($id,$type,$phase,@geno)=split(/\s+/,$_);
 		$type=~s/<|>//g;
-		$phase=~s/[\{\}]//g;
+		$phase=~s/\{|\}//g;
 		$nind=scalar @geno;
 		for (my $i=0;$i<@geno;$i++) {
 			my $haplosource=determineHaploSource($type,$phase,$geno[$i]);
+			if ($haplosource eq "") {
+				$haplosource = "--";
+			}
 			push @{$pri{$id}{geno}},$haplosource;
 			$pri{$id}{phase}=$phase;
 			$pri{$id}{type}=$type;
@@ -76,9 +79,12 @@ for (my $i=0;$i<@order;$i++) {
 			if (!exists $pri{$order[$k]}{geno}) {
 				print $k;die;
 			}
+			if (length($pri{$order[$k]}{geno}[$j]) < 2) {
+				print $pri{$order[$k]}{geno}[$j],"\t",$order[$k],"\t","$j";die;
+			}
 			my ($b1,$b2)=split(//,$pri{$order[$k]}{geno}[$j]);
-			$stat{1}{$b1}++ if($b1 ne "-" && $b1 ne "0");
-			$stat{2}{$b2}++ if($b2 ne "-" && $b2 ne "0");
+			$stat{1}{$b1}++ if($b1 !~ /-/ && $b1 != 0);
+			$stat{2}{$b2}++ if($b2 !~ /-/ && $b2 != 0);
 		}
 		my @b1=sort{$stat{1}{$b}<=>$stat{1}{$a}} keys %{$stat{1}};
 		my @b2=sort{$stat{2}{$b}<=>$stat{2}{$a}} keys %{$stat{2}};
@@ -99,7 +105,7 @@ for (my $i=0;$i<@order;$i++) {
 open Out,">$dOut/$fKey.correct.loc";
 open Cor,">$dOut/$fKey.correct.log";
 open Phase,">$dOut/$fKey.correct.phase";
-print Out $head,"\n";
+#print Out $head,"\n";
 foreach my $id (sort {$order{$a}<=> $order{$b}} keys %order) {
 	my @out;
 	my @outl;

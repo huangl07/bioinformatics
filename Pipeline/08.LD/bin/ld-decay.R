@@ -16,7 +16,7 @@ if ( is.null(opt$infile)) { print_usage(spec)}
 if ( is.null(opt$outfile)){ print_usage(spec) }
 
 times<-Sys.time()
-ld<-read.table(opt$infile),head=TRUE,na.strings=c("nan","-nan"))
+ld<-read.table(opt$infile,head=TRUE,na.strings=c("nan","-nan"))
 distance=ld$V1
 R2=ld$V2
 n=length(R2)

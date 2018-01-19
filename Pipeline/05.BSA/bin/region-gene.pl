@@ -23,7 +23,7 @@ while (<In>) {
 	s/\"//g;
 	my ($chr,$pos1,$pos2,undef)=split(/\s+/,$_);
 	next if ($chr eq "chr");
-	my $regioned==0;
+	my $regioned=0;
 	foreach my $region (sort keys %{$region{$chr}}) {
 		my ($pos3,$pos4)=split(/\s+/,$region);
 		#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
@@ -67,13 +67,13 @@ while (<In>) {
 			$stat{$chr}{$region}{totaluni}++ if($uniid ne "--");
 			$stat{$chr}{$region}{totalkegg}++ if($koid ne "--");
 			$stat{$chr}{$region}{totalgo}++ if($goid ne "--");
-			$stat{$chr}{$region}{totaleggnog}++ if($eid ne "S");
+			$stat{$chr}{$region}{totaleggnog}++ if($egid ne "S");
 			$stat{$chr}{$region}{eff}++ if($High+$Moderate > 0);
 			$stat{$chr}{$region}{effnr}++ if($nrid ne "--" && $High+$Moderate > 0);
 			$stat{$chr}{$region}{effuni}++ if($uniid ne "--" && $High+$Moderate > 0 );
 			$stat{$chr}{$region}{effkegg}++ if($koid ne "--" && $High+$Moderate > 0);
 			$stat{$chr}{$region}{effgo}++ if($goid ne "--" && $High+$Moderate > 0);
-			$stat{$chr}{$region}{effeggnog}++ if($eid ne "S" && $High+$Moderate > 0);
+			$stat{$chr}{$region}{effeggnog}++ if($egid ne "S" && $High+$Moderate > 0);
 			$regioned=1;
 		}
 	}

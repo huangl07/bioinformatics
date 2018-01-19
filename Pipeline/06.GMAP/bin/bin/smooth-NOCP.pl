@@ -53,7 +53,10 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($id,@info)=split;
-	push @Head,$_ if(scalar @info < 3 || /MarkerID/);
+	 if(scalar @info < 3 || /MarkerID/ || $info[0] eq ""){
+		push @Head,$_;
+		next;
+	}
 	$nind=scalar @info;
 	for (my $i=0;$i<@info;$i++) {
 		$Geno{"indi$i"}{$id}=$info[$i];
@@ -82,6 +85,10 @@ foreach my $Chr (sort keys %SORT) {
 			my %stat;
 			my $n=0;
 			for (my $j=$start;$j<=$end;$j++) {
+				
+				if (!exists $Geno{$indi}{$Order[$j]}) {
+					next;
+				}
 				next if ($Geno{$indi}{$Order[$j]} eq "U");
 				$stat{$Geno{$indi}{$Order[$j]}}++;
 				$n++;

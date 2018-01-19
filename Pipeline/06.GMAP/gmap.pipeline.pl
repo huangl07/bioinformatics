@@ -98,10 +98,16 @@ if ($step == 4) {
 	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
 	print Log "########################################\n";
 	$step++ ;
+	if ($popt ne "CP") {
+		$step++;
+	}
+	if (!$ref) {
+		$step++;
+	}
 }
-if ($step == 5) {
+if ($step == 5 and $popt eq CP) {
 	print Log "########################################\n";
-	print Log "map cycle1 \n",my $time=time();
+	print Log "linkage phase \n",my $time=time();
 	print Log "########################################\n";
 	my $lg=ABSOLUTE_DIR("$out/04.grouping/Total.lg");
 	my $marker;
@@ -110,19 +116,19 @@ if ($step == 5) {
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	my $job="perl $Bin/bin/step05.markerOrder.pl -lg $lg -gen $marker -popt $popt -out $out/05.map-cycle1 -dsh $dsh  -cycle 1 ";
+	my $job="perl $Bin/bin/step05.linkage-phase.pl -lg $lg -gen $marker -out $out/05.map-cycle1 -dsh $dsh ";
 	$job.= " -ref" if($ref);
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
 	print Log "########################################\n";
-	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
+	print Log "linkage phase Done and elapsed time : ",time()-$time,"s\n";
 	print Log "########################################\n";
 	$step++ ;
 }
-if ($step == 6) {
+if ($step == 6 and $ref) {
 	print Log "########################################\n";
-	print Log "map cycle2 \n",my $time=time();
+	print Log "modify for ref \n",my $time=time();
 	print Log "########################################\n";
 	my $gen=ABSOLUTE_DIR("$out/05.map-cycle1/marker.list");
 	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/06.map-cycle2 -dsh $dsh -cycle 2\n";
@@ -130,13 +136,13 @@ if ($step == 6) {
 	`$job`;
 	print Log "$job\tdone!\n";
 	print Log "########################################\n";
-	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
+	print Log "modify for ref Done and elapsed time : ",time()-$time,"s\n";
 	print Log "########################################\n";
 	$step++ ;
 }
 if ($step == 7) {
 	print Log "########################################\n";
-	print Log "map cycle3 \n",my $time=time();
+	print Log "map cycle1 \n",my $time=time();
 	print Log "########################################\n";
 	my $gen=ABSOLUTE_DIR("$out/06.map-cycle2/marker.list");
 	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle3 -dsh $dsh -cycle 3\n";
@@ -150,24 +156,10 @@ if ($step == 7) {
 }
 if ($step == 8) {
 	print Log "########################################\n";
-	print Log "map cycle4 \n",my $time=time();
+	print Log "map cycle2 \n",my $time=time();
 	print Log "########################################\n";
-	my $gen=ABSOLUTE_DIR("$out/07.map-cycle3/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/08.map-cycle4 -dsh $dsh -cycle 4\n";
-	print Log "$job\n";
-	`$job`;
-	print Log "$job\tdone!\n";
-	print Log "########################################\n";
-	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
-	print Log "########################################\n";
-	$step++ ;
-}
-if ($step == 9) {
-	print Log "########################################\n";
-	print Log "map cycle5 \n",my $time=time();
-	print Log "########################################\n";
-	my $gen=ABSOLUTE_DIR("$out/08.map-cycle4/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/09.map-cycle5 -dsh $dsh -cycle 5\n";
+	my $gen=ABSOLUTE_DIR("$out/06.map-cycle2/marker.list");
+	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle3 -dsh $dsh -cycle 3\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -177,7 +169,7 @@ if ($step == 9) {
 	$step++ ;
 }
 
-if ($step == 10) {
+if ($step == 9) {
 	print Log "########################################\n";
 	print Log "evalutaion\n",my $time=time();
 	print Log "########################################\n";

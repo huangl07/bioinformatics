@@ -19,10 +19,12 @@ mkdir $dOut if (!-d $dOut);
 my @map=glob("$dmap/*.out");
 open Out,">$dOut/total.map";
 my %Marker;
+my %lg;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
-	$lgID=~s/\D+//g;
-	print Out "group\t$lgID\n";
+	$lg{$lgID}=1;
+	$lgID=scalar keys %lg;
+	print Out "group\t",$lgID,"\n";
 	open In,$map;
 	my $max=0;
 	my @order;
@@ -49,7 +51,7 @@ foreach my $map (@map) {
 	}	
 }
 close Out;
-my @marker=glob("$dmap/*.marker");
+my @marker=glob("$dmap/*.correct.marker");
 open Out,">$dOut/total.marker";
 open CSV,">$dOut/total.csv";
 my $head;
@@ -70,13 +72,16 @@ foreach my $marker (@marker) {
 			my @head=split(/\,/,$nhead);
 			$chead="Genotype,,,".join(",",@head);
 		}else{
-			push @out,$_;
+
 			my ($id,$info)=split(/\s+/,$_,2);
+			if (!exists $Marker{$id}) {
+				next;
+			}
+			push @out,$_;
 			$info=~s/\t/,/g;
 			$info=~s/X/H/g;
 			$info=~s/U/-/g;
 			push @cout,join(",",$id,$Marker{$id},$info);
-
 		}
 	}
 	close In;

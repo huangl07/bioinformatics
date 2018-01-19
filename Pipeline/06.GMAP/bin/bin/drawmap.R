@@ -31,6 +31,8 @@ if ( is.null(opt$out) ) { opt$out="./";}
 if(!dir.exists(opt$out)){dir.create(opt$out)}
 library('qtl');
 library('ASMap');
+
+
 opt$pop=tolower(opt$pop)
 if(opt$pop == "cp"){
 	d<-read.cross(genfile=paste(opt$mark,"qtl",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"sexAver.map",sep="."),format="mapqtl")
@@ -38,11 +40,8 @@ if(opt$pop == "cp"){
 	d2<-read.cross(genfile=paste(opt$mark,"qtl",sep="."),phefile=paste(opt$mark,"trt",sep="."),mapfile=paste(opt$mark,"female.map",sep="."),format="mapqtl")
 	setwd(opt$out)
 	d<-jittermap(d)
-	d<-est.rf(d)
 	d1<-jittermap(d1)
-	d1<-est.rf(d1)
 	d2<-jittermap(d2)
-	d2<-est.rf(d2)
 	pdf("total.sexAver.pdf");
 	plotMap(d,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
@@ -60,24 +59,6 @@ if(opt$pop == "cp"){
 	dev.off()
 	png("total.female.png");
 	plotMap(d2,shift=TRUE,alternate.chrid=TRUE)
-	dev.off()
-	pdf("heatMap.sexAver.pdf")
-	heatMap(d,lmax=50,"both")
-	dev.off()
-	png("heatMap.sexAver.png")
-	heatMap(d,lmax=50,"both")
-	dev.off()
-	pdf("heatMap.male.pdf")
-	heatMap(d1,lmax=50,"both")
-	dev.off()
-	png("heatMap.male.png")
-	heatMap(d1,lmax=50,"both")
-	dev.off()
-	pdf("heatMap.female.pdf")
-	heatMap(d2,lmax=50,"both")
-	dev.off()
-	png("heatMap.female.png")
-	heatMap(d2,lmax=50,"both")
 	dev.off()
 	chrname<-chrnames(d);
 	for(i in chrname){
@@ -117,23 +98,16 @@ if(opt$pop == "cp"){
 	png("total.lg.png");
 	plotMap(d,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
-	pdf("total.heatMap.pdf")
-	heatMap(d,lmax=50,"both")
-	dev.off()
-	png("total.heatMap.png")
-	heatMap(d,lmax=50,"both")
-	dev.off()
 	chrname<-chrnames(d);
 	for(i in chrname){
 		pdf(paste(i,".heatMap.pdf",sep=""))
-		heatMap(d,chr=i,lmax=50,"both")
+		plotRF(d,chr=i,what='both')
 		dev.off()
 		png(paste(i,".heatMap.png",sep=""))
-		heatMap(d,chr=i,lmax=50,"both")
+		plotRF(d,chr=i,what='both')
 		dev.off()
 	}
 }
-
 
 escaptime=Sys.time()-times;
 print("Done!\n")

@@ -22,6 +22,8 @@ Usage:
 	--pop	pop type
 	--out	out dir
 	--num	pm number
+	--bc	bc gen for bcsft
+	--f		f gen for bcsft
 	--help		usage
 \n")
 	q(status=1);
@@ -34,8 +36,12 @@ if ( is.null(opt$trt) ) { print_usage(spec) }
 if ( is.null(opt$pop) ) { print_usage(spec) }
 if ( is.null(opt$num) ) { opt$num=1000; }else{opt$num=as.numeric(opt$num)}
 if ( is.null(opt$out) ) { opt$out="./";}
-
-d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
+if(opt$pop =="bcsft" & is.null(opt$bc) & is.null(opt$f){print_usage(spec)}
+if(opt$pop =="bcsft" {	
+	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN",BC.gen=2,F.gen=2)
+}else{
+	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
+}
 if(!dir.exists(opt$out)){dir.create(opt$out)}
 setwd(opt$out);
 d<-jittermap(d)
@@ -99,7 +105,11 @@ for(i in 1:length(phe.name)){
 	}
 	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
 	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
-	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
+	if(opt$pop =="bcsft" {	
+		fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
+	}else{
+		fitqtl<-fitqtl(cross=d,qtl=qtl,pheno.col=i)
+	}
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
 	var<-fitqtl$result.drop[,"%var"]
 	if (length(qtl$name) == 1){var<-fitqtl$result.full["Model","%var"]}

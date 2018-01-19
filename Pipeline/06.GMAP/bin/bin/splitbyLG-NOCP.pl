@@ -40,7 +40,7 @@ while (<In>) {
 	next if ($_ eq ""||/^$/);
 	if (/^#/) {
 		my ($id,$type,$info)=split(/\s+/,$_,3);
-		$id=~s/#//g;
+		$id=~s/\#//g;
 		$Head=join("\t",$id,$info);
 		next;
 	}
@@ -63,7 +63,6 @@ while (<In>) {
 	print List $id,"\t","$dOut/$id.pri.marker\n";
 	my @marker=split(/\s+/,$marker);
 	my @out;
-	my $nloc=scalar @marker;
 	my %pos;
 	my $chr;
 	$chr=$id;
@@ -75,6 +74,7 @@ while (<In>) {
 	}
 		print Map "group $chr\n";
 		foreach my $m (sort {$pos{$a}<=>$pos{$b}} keys %pos) {
+			next if (!exists $info{$m});
 			$info{$m}=~s/\ba\b/A/g;
 			$info{$m}=~s/\bb\b/B/g;
 			$info{$m}=~s/(..)x(..)//g;
@@ -87,6 +87,8 @@ while (<In>) {
 			push @out,join("\t",$m,$info{$m});
 			print Map "$m\t$pos{$m}\n";
 		}
+		my $nloc=scalar @out;
+
 	close Map;
 my $head = <<"Headend" ;
 population_type $type

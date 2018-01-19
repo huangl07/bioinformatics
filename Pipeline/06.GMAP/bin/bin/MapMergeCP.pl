@@ -134,6 +134,7 @@ my $nloc=0;
 my $nind=0;
 my @out;
 foreach my $marker (@marker) {
+	next if ($marker  !~ /pri/);
 	open In,$marker;
 	while (<In>) {
 		chomp;

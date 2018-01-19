@@ -28,7 +28,7 @@ mkdir $dir if (!-d $dir);
 mkdir $dShell if (!-d $dShell);
 $dir=ABSOLUTE_DIR($dir);
 $dShell=ABSOLUTE_DIR($dShell);
-$winsize||=500;
+$winsize||=20;
 $stepsize||=$winsize/5;
 $popt||="F2";
 my $Key="Total";

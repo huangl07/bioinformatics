@@ -26,6 +26,7 @@ open In,$fIn;
 my %info;
 my $head;
 my $nind;
+my %type;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
@@ -33,8 +34,9 @@ while (<In>) {
 		$head=$_;
 		next;
 	}
-	my ($id,$info)=split(/\s+/,$_,2);
+	my ($id,$type,$info)=split(/\s+/,$_,3);
 	$info{$id}=$info;
+	$type{$id}=$type;
 	my @ind=split(/\t/,$info);
 	$nind=scalar @ind;
 }
@@ -65,10 +67,10 @@ while (<In>) {
 		if (!exists $info{$m}) {
 			next;
 		}
-		push @out,join("\t",$m,$info{$m});
-		print Map join("\t",$m,$pos{$m}),"\n";
+		push @out,join(" ",$m,"<".$type{$m}.">","{--}",$info{$m});
+		print Map join(" ",$m,$pos{$m}),"\n";
 	}
-	print Out $head,"\n";
+#	print Out $head,"\n";
 	print Out join("\n",@out),"\n";
 	close Out;
 	close Map;
