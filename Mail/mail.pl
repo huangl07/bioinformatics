@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($maillist,$Subject,$fOut,$Content);
+my ($maillist,$Subject,$Attach,$Content);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -15,7 +15,7 @@ GetOptions(
 	"Attach:s"=>\$Attach,
 	"Content:s"=>\$Content,
 			) or &USAGE;
-&USAGE unless ($fIn and $fOut);
+&USAGE unless ($maillist and $Subject and $Content);
  my $mail_content = `less -S $Content`;
  my $mail_from="long.huang\@majorbio.com";
  my $mail_subject=$Subject;

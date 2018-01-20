@@ -19,7 +19,7 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($fIn and $fOut and $PID and $MID);
 $ParentDepth||=10;
-$OffDepth||=2;
+$OffDepth||=1;
 open In,$fIn;
 open Out,">$fOut";
 my @indi;
