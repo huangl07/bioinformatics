@@ -105,9 +105,9 @@ if ($step == 4) {
 		$step++;
 	}
 }
-if ($step == 5 and $popt eq CP) {
+if ($step == 5 ) {
 	print Log "########################################\n";
-	print Log "linkage phase \n",my $time=time();
+	print Log "split files \n",my $time=time();
 	print Log "########################################\n";
 	my $lg=ABSOLUTE_DIR("$out/04.grouping/Total.lg");
 	my $marker;
@@ -116,7 +116,7 @@ if ($step == 5 and $popt eq CP) {
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	my $job="perl $Bin/bin/step05.linkage-phase.pl -lg $lg -gen $marker -out $out/05.map-cycle1 -dsh $dsh ";
+	my $job="perl $Bin/bin/step05.split-files.pl -lg $lg -gen $marker -out $out/05.map-cycle1 -dsh $dsh ";
 	$job.= " -ref" if($ref);
 	print Log "$job\n";
 	`$job`;

@@ -56,6 +56,11 @@ close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=3G --CPU 1  --maxjob $proc $dShell/06.map-stat.sh";
 print $job;
 `$job`;
+`paste $dOut/*.all.mapstat > $dOut/total.mapstat`;
+my $who=`whoami`;
+chomp($who);
+SendAttachMail("mapping done!you must check $dOut/total.mapstat",'$dOut/total.mapstat',"who\@majorbio.com");
+
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -77,6 +82,29 @@ sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 	}
 	chdir $cur_dir;
 	return $return;
+}
+sub SendAttachMail
+{
+    my $mail_content = shift;
+    my $mail_attach = shift;
+	my $mail_to=shift;
+	my $mail_from="long.huang\@majorbio.com";
+	my $mail_cc="long.huang\@majorbio.com,dna\@majorbio.com";
+	my $mail_subject="poor luck,qsub error";
+    my $msg=MIME::Lite->new(
+                    From=>$mail_from,
+                    To=>$mail_to,
+                    Cc=>$mail_cc,
+                    Subject=>$mail_subject,
+                    Type=>'TEXT',
+                    Data=>$mail_content,);
+	if ($mail_attach != "") {
+		    $msg->attach(
+            Type=>'AUTO',
+            Path=>$mail_attach,
+            Filename=>$mail_attach,);
+	}
+	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"long.huang\@majorbio.com", AuthPass=>"cwn.711hl" );
 }
 
 sub USAGE {#

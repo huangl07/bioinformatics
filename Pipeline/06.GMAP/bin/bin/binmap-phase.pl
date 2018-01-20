@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fIn,$dOut,$Key);
+my ($fIn,$dOut,$Key,$popt);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -13,8 +13,10 @@ GetOptions(
 	"i:s"=>\$fIn,
 	"o:s"=>\$dOut,
 	"k:s"=>\$Key,
+	"p:s"=>\$popt,
 			) or &USAGE;
 &USAGE unless ($fIn and $dOut and $Key);
+$popt||="F2";
 open In,$fIn;
 my %info;
 my %pos;
@@ -46,8 +48,8 @@ foreach my $chr (sort keys %info) {
 		my %phase;
 		my %break;
 		for (my $i=0;$i<@win;$i++) {##确定每个marker的连锁相，用当前染色体所有marker与其连锁相的加和，少数服从多数原则
+			my @g1=split(/\s+/,$info{$chr}{$win[$i]});
 			for (my $j=$i+1;$j<@win;$j++) {
-				my @g1=split(/\s+/,$info{$chr}{$win[$i]});
 				my @g2=split(/\s+/,$info{$chr}{$win[$j]});
 				my $diff1=0;
 				my $diff2=0;
@@ -55,16 +57,16 @@ foreach my $chr (sort keys %info) {
 					$diff1++ if ($g1[$k] != $g2[$k]  && $g1[$k]!=0 && $g2[$k]!=0);
 					$diff2++ if ($g1[$k] != $g2[$k]*-1 && $g1[$k]!=0 && $g2[$k]!=0);
 				}
-				if ($diff1 < $diff2) {#不需要进行连锁相转换
+				if ($diff1 < $diff2 || $popt ne "CP") {#不需要进行连锁相转换
 					$phase{$win[$i]}++;
 					$phase{$win[$j]}++;
-					if ($j-$i==1 && $diff1 > 0.05 * scalar @g1) {
+					if ($j-$i==1 && $diff1 > 0) {
 						$break{$i}=1;
 					}
 				}else {#需要进行连锁相转换
 					$phase{$win[$i]}--;
 					$phase{$win[$j]}--;
-					if ($j-$i == 1 && $diff2 > 0.05 * scalar @g1) {
+					if ($j-$i == 1 && $diff2 > 0) {
 						$break{$i}=1;
 					}
 				}

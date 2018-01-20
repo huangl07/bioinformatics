@@ -86,14 +86,12 @@ while (<In>) {
 	}
 }
 close In;
-open Out,">$fOut";
+open Out,">$fOut";r -
 print Out "#type\t$Key\n";
-print Out "total reads\t",$mapstat{total},"\n";
-print Out "mapped reads\t",$mapstat{mapped},"\n";
-print Out "paired reads\t",$mapstat{paired},"\n";
-print Out "proper reads\t",$mapstat{properly},"\n";
+print Out "mapped ratio(%)\t",sprintf("%.2f",$mapstat{mapped}/$mapstat{total}*100),"\n";
+print Out "proper ratio(%)\t",sprintf("%.2f",$mapstat{properly}/$mapstat{total}*100),"\n";
 print Out "duplicate ratio(%)\t",sprintf("%.2f",$mapstat{dup}*100),"\n";
-print Out "average insert insert\t",$mapstat{insert},"\n";
+print Out "average insert size\t",$mapstat{insert},"\n";
 #print Out "genome coverage\t",sprintf("%.2f",$mapstat{mapbase}/$reflen),"\n";
 print Out "average depth\t",sprintf("%.2f",$mapstat{coverage}/$reflen),"\n";
 print Out "real depth\t",sprintf("%.2f",$mapstat{coverage}/$cov{1}),"\n";

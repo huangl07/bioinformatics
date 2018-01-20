@@ -6,6 +6,8 @@ use Getopt::Long;
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use MIME::Lite;
+
 my $version="1.0.0";
 my ($Queue,$CPU,$Nodes,$maxjob,$Resource,$runtime);
 GetOptions(
@@ -119,9 +121,40 @@ foreach my $Shell (@Shell) {
 	}
 }
 close Out;
+my $nline=`wc -l $worksh.reqsub.sh`;
+$nline=chomp($nline);
+my $who=`whoami`;
+chomp($who);
+if ($nline > 0) {
+	SendAttachMail("poor luck!you must check $worksh.reqsub.sh",'',"$who\@majorbio.com");
+}
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+sub SendAttachMail
+{
+    my $mail_content = shift;
+    my $mail_attach = shift;
+	my $mail_to=shift;
+	my $mail_from="long.huang\@majorbio.com";
+	my $mail_cc="long.huang\@majorbio.com";
+	my $mail_subject="poor luck,qsub error";
+    my $msg=MIME::Lite->new(
+                    From=>$mail_from,
+                    To=>$mail_to,
+                    Cc=>$mail_cc,
+                    Subject=>$mail_subject,
+                    Type=>'TEXT',
+                    Data=>$mail_content,);
+	if ($mail_attach != "") {
+		    $msg->attach(
+            Type=>'AUTO',
+            Path=>$mail_attach,
+            Filename=>$mail_attach,);
+	}
+	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"long.huang\@majorbio.com", AuthPass=>"cwn.711hl" );
+}
+
 sub PATH{
         my ($in)=@_;
         my $return="";
