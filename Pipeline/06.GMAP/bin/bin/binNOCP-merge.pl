@@ -112,7 +112,7 @@ foreach my $chr (sort keys %pos) {
 			for (my $i=0;$i<@g1;$i++) {
 				if ($g1[$i] == 1 && $g2[$i] == 1) {#np,lm
 					push @out,"aa $g1[$i] $g2[$i]";
-					push @outG,"bd";
+					push @outG,"aa";
 				}elsif ($g1[$i] == 1 && $g2[$i] == -1) {#lm,nn
 					push @out,"ab $g1[$i] $g2[$i]";
 					push @outG,"ab";

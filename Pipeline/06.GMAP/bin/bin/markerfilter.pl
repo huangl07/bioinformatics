@@ -50,6 +50,14 @@ while (<In>) {
 			}
 		}
 	}
+	if ($type eq "aaxbb" && $popt eq "DH") {
+		for (my $i=0;$i<@info;$i++) {
+			if ($info[$i] eq "ab") {
+				$info[$i] = "--";
+			}
+		}
+	}
+
 	if ($type eq "abxcd" && $popt eq "CP") {
 		for (my $i=0;$i<@info;$i++) {
 			if ($info[$i] ne "ac" && $info[$i] ne "ad" && $info[$i] ne "bc" && $info[$i] ne "bd") {

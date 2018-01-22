@@ -28,7 +28,7 @@ mkdir $dir if (!-d $dir);
 mkdir $dShell if (!-d $dShell);
 $dir=ABSOLUTE_DIR($dir);
 $dShell=ABSOLUTE_DIR($dShell);
-$winsize||=20;
+$winsize||=500;
 $stepsize||=$winsize/5;
 $popt||="F2";
 my $Key="Total";
@@ -145,8 +145,8 @@ Usage:
 	-popt	<str>	popt type
 	-out	<dir>	output file dir
 	-dsh	<dir>	output shell dir
-	-winsize	<num>	winsize
-	-stepsize	<num>	stepsize
+	-winsize	<num>	winsize [k]
+	-stepsize	<num>	stepsize [k]
 USAGE
 	print $usage;
 	exit;

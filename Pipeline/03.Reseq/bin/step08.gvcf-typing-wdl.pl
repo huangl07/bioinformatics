@@ -55,7 +55,7 @@ while (<In>) {
 	if (!exists $hand{$hand}) {
 		open $hand{$hand},">$dOut/$hand.intervals";
 		print List "$dOut/$hand.vcf\n";
-		$vcfs.=" $dOut/$hand.vcf ";
+		$vcfs.=" $dOut/$hand.noid.vcf ";
 		open Out,">$dOut/$hand.gtyping.json\n";
 		print Out "{\n";
 		print Out "\"Gvcftyping.gvcftyping.inputVCFs\": \"$dOut/gvcf.list\",\n";
@@ -79,7 +79,7 @@ close List;
 my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
-my $mem=`du -s ./*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
+my $mem=`du -s $dOut/*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
 $mem=$mem/1000000;
 $mem=(int($mem/100)+1)*100;
 print SH "cd $dOut/ && ";

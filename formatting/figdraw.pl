@@ -36,7 +36,7 @@ print MAPTMP "id\tcm\tlg\n";
 while (<MAPIN>) {
 	chomp;
 	if (/^group (.*)/){
-		$groupnumber = $1;
+		$groupnumber=(split(/\s+/,$_))[-1];
 	}else{
 		print MAPTMP "$_\t$groupnumber\n";
 	}

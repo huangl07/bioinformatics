@@ -136,6 +136,8 @@ sub SendAttachMail
     my $mail_content = shift;
     my $mail_attach = shift;
 	my $mail_to=shift;
+	my $path=dirname($mail_attach);
+	my $file=basename($mail_attach);
 	my $mail_from="long.huang\@majorbio.com";
 	my $mail_cc="long.huang\@majorbio.com";
 	my $mail_subject="poor luck,qsub error";
@@ -149,10 +151,10 @@ sub SendAttachMail
 	if ($mail_attach != "") {
 		    $msg->attach(
             Type=>'AUTO',
-            Path=>$mail_attach,
-            Filename=>$mail_attach,);
+            Path=>$path,
+            Filename=>$file,);
 	}
-	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"long.huang\@majorbio.com", AuthPass=>"cwn.711hl" );
+	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"dna\@majorbio.com", AuthPass=>"majorbio-genome-2017" );
 }
 
 sub PATH{

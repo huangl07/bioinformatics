@@ -30,6 +30,8 @@ while (<In>) {
 close In;
 my @map=glob("$dmap/*.sexAver.map");
 open Out,">$dOut/total.sexAver.map";
+open Draw,">$dOut/total.sexAver.map.draw";
+print Draw,"id\tcm\tlg";
 my %info;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
@@ -57,12 +59,17 @@ foreach my $map (@map) {
 		next if ($info{$id}{lgID} ne $lgID);
 		$info{$id}{pos}=$info{$id}{pos}*$newdis/$max;
 		print Out $id,"\t",$info{$id}{pos},"\n";
+		print Draw $id,"\t",$info{$id}{pos},"\t",$lgID\n;
 	}
 
 }
 close Out;
+close Draw;
 @map=glob("$dmap/*.male.map");
 open Out,">$dOut/total.male.map";
+open Draw,">$dOut/total.male.map.draw";
+print Draw,"id\tcm\tlg";
+
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -90,12 +97,18 @@ foreach my $map (@map) {
 	foreach my $id (sort {$male{$a}{pos}<=>$male{$b}{pos}} keys %male) {
 		$male{$id}{pos}=$male{$id}{pos}*$newdis/$max;
 		print Out $id,"\t",$male{$id}{pos},"\n";
+		print Draw $id,"\t",$info{$id}{pos},"\t",$lgID\n;
+
 	}
 
 }
+close Draw;
 close Out;
 @map=glob("$dmap/*.female.map");
 open Out,">$dOut/total.female.map";
+open Draw,">$dOut/total.female.map.draw";
+print Draw,"id\tcm\tlg";
+
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lgID=~s/\D+//g;
@@ -123,6 +136,7 @@ foreach my $map (@map) {
 	foreach my $id (sort {$female{$a}{pos}<=>$female{$b}{pos}} keys %female) {
 		$female{$id}{pos}=$female{$id}{pos}*$newdis/$max;
 		print Out $id,"\t",$female{$id}{pos},"\n";
+		print Draw $id,"\t",$info{$id}{pos},"\t",$lgID\n;
 	}
 	
 }

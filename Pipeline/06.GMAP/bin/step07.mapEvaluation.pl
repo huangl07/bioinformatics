@@ -24,6 +24,7 @@ $mark=ABSOLUTE_DIR($mark);
 $out=ABSOLUTE_DIR($out);
 $dsh=ABSOLUTE_DIR($dsh);
 $dmap=ABSOLUTE_DIR($dmap);
+mkdir "$out/fig" if (!-d "$out/fig");
 open SH1,">$dsh/step06.mapEvaluation1.sh";
 open SH2,">$dsh/step06.mapEvaluation2.sh";
 if ($pop ne "CP") {
@@ -31,8 +32,10 @@ if ($pop ne "CP") {
 	print SH1 "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out -adjust && ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.map -o $out/total.mapstat \n ";
 	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.mapstat --output $out/fig/total \n";
-	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.map -input $out/total.marker --pop $pop -out $out/total.marker.info \n";
+	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.map -input $out/total.marker --pop $pop -out $out/total.marker.info &&";
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop $pop \n";
+	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.map.draw  --out $out/fig/total.map \n";
+
 	print SH2 "Rscript $Bin/bin/drawbinNOCP.R --mark $out/total.csv  --out $out/fig/total.bin \n";
 	if ($ref) {
 		print SH2 "perl $Bin/bin/drawAligmentRalationMap.pl -m $out/total.map -o $out/fig/ -k total.phy\n";
@@ -49,6 +52,9 @@ if ($pop ne "CP") {
 	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.male.mapstat --output $out/fig/total.male \n ";
 	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.female.mapstat --output $out/fig/total.female \n ";
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop cp \n";
+	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.sexAver.map.draw  --out $out/fig/total.sexAver.map \n";
+	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.male.map.draw  --out $out/fig/total.male.map \n";
+	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.female.map.draw  --out $out/fig/total.female.map \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/fig/total.female.bin \n";

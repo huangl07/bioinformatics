@@ -82,9 +82,9 @@ while (<In>) {
 		$fun{eff}{kegg}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $koid ne "--");
 		$fun{total}{go}++ if($goid ne "--");
 		$fun{eff}{go}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $goid ne "--");
-		$fun{total}{eggnog}++ if($eid ne "--");
-		$fun{eff}{eggnog}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $eid ne "--");
-		print Out join("\t",$info,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$eid,$eanno),"\n";
+		$fun{total}{eggnog}++ if($egid ne "--");
+		$fun{eff}{eggnog}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $egid ne "--");
+		print Out join("\t",$info,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre),"\n";
 		my @koid=split(/:/,$koid);
 		my @kdetail=split(/:/,$koanno);
 		for (my $i=0;$i<@koid;$i++) {
@@ -103,7 +103,7 @@ while (<In>) {
 		}
 		my ($eid,$eanno)=split(/:/,$egid);
 		my @eid=split(/,/,$eid);
-		my @edetail=split(/;/,$eanno);
+		my @edetail=split(/;/,$expre);
 		for (my $i=0;$i<@eid;$i++) {
 			next if ($eid[$i] eq "--");
 			$enrich{$eid[$i]}{total}++;

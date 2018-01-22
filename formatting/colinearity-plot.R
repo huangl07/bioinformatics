@@ -5,35 +5,28 @@
 #b<-read.table(Args[7],header=T)
 
 library(getopt)
+options(bitmapType='cairo')
+
 opt = getopt(matrix(c(
-  'map','m',1,'character',
-  'pos','p',2,'character',
-  'dir','d',3,'character',
-  'fkey','k',4,'character',
+  'input','i',1,'character',
+  'output','o',2,'character',
   'help','h',0,'logical'
 ),byrow=TRUE, ncol=4));
 usage<-function(){
 cat("This script is used to draw colinear figure
 Usage	Rscript colinearity-plot.R for fig 3-14 [options]
 Options:
-	-m, --map	map file with marker codes, forced
-	-p, --pos	pos file with marker codes, forced
-	-d, --dir 	outputdir, forced
-	-k, --fkey 	output file stem, forced
+	-input, --input	mapinfo file
+	-output, --output file name
 	-h, --help	print display this help and exit
 ")
   q(status=1);
 }
 if (!is.null(opt$help) ) { usage() }
-if (is.null(opt$map) ) { usage() }
-if (is.null(opt$pos) ) { usage() }
-if (is.null(opt$dir) ) { usage() }
-if (is.null(opt$fkey)) { usage() }
+if (is.null(opt$input) ) { usage() }
+if (is.null(opt$output) ) { usage() }
 
-m<-read.table(opt$map,header=T)
-b<-read.table(opt$pos,header=T)
-mb<-merge(b,m,by="id")
-
+mb<-read.table(opt$input,header=T)
 library(MASS)
 library(plyr)
 mbs<-mb[order(mb$chr),]
@@ -82,9 +75,8 @@ h2<-h1[order(h1$chr),]
 library(ggplot2)
 chrs<-as.character(d4$chr)
 col<-colors()[c(rep(c(26,258,24,552),times=ceiling(length(unique(chrs))/4))[1:length(unique(chrs))])]
-p=ggplot(d4,aes(x=pos,y=cm,colour=chrs))+geom_point(shape=20,size=0.5)+scale_colour_manual(values=col,guide=FALSE)+xlab("Chromosome") + ylab("Linkage Group")+scale_y_continuous(breaks=lg3$cm,labels=lg3$lg)+scale_x_continuous(breaks=chr$pos,labels=chr$chr)+theme_bw()
-p=p+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+geom_vline(xintercept=v$pos[1:length(v$pos)-1],size=0.1,colour="gray80")+geom_hline(yintercept=h2$cm[1:length(h2$cm)-1],size=0.1,colour="gray80")
-
+p=ggplot(d4,aes(x=pos,y=cm,colour=chrs))+geom_point(shape=20,size=0.5)+scale_colour_manual(values=col,guide=FALSE)+xlab("Chromosome") + ylab("Linkage Group")+scale_y_continuous(breaks=lg3$cm,labels=lg3$lg)+scale_x_continuous(breaks=chr$pos,labels=chr$chr)+theme_bw()+labs(title="Collinary by Reference")
+p=p+theme(panel.grid.major = element_blank(),plot.title = element_text(hjust = 0.5), panel.grid.minor = element_blank())+geom_vline(xintercept=v$pos[1:length(v$pos)-1],size=0.1,colour="gray80")+geom_hline(yintercept=h2$cm[1:length(h2$cm)-1],size=0.1,colour="gray80")
 lgfac<-factor(d4$lg,ordered=T)
 table318<-data.frame()
 for (j in levels(lgfac)){
@@ -95,15 +87,7 @@ for (j in levels(lgfac)){
 }
 colnames(table318)=c("LG ID","Spearman")
 
-nam1=paste(opt$dir,"/figure_3_14_",opt$fkey,".pdf",sep="")
-pdf(nam1,width=8)
-print(p)
-dev.off()
+ggsave(paste(opt$output,".pdf",sep=""), p)
+ggsave(paste(opt$output,".png",sep=""), p)
 
-nam3=paste(opt$dir,"/figure_3_14_",opt$fkey,".png",sep="")
-png(nam3,width=8,height=8,units="in",res=300)
-print(p)
-dev.off()
-
-nam2=paste(opt$dir,"/table_3_18_",opt$fkey,".xls",sep="")
-write.table(table318,file=nam2,row.names=F,sep="\t")
+write.table(table318,file=paste(opt$output,".xls",sep=""),row.names=F,sep="\t")

@@ -58,7 +58,7 @@ print $job;
 open SH,">$dsh/step03-2.merge-mlod.sh";
 print SH "cat $dOut/sub/sub*.mlod > $dOut/Total.mlod";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step03-2.merge-mlod.sh";
+$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=3G --CPU 1 $dsh/step03-2.merge-mlod.sh";
 print $job;
 `$job`;
 

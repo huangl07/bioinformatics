@@ -86,7 +86,7 @@ while (<In>) {
 	}
 }
 close In;
-open Out,">$fOut";r -
+open Out,">$fOut";
 print Out "#type\t$Key\n";
 print Out "mapped ratio(%)\t",sprintf("%.2f",$mapstat{mapped}/$mapstat{total}*100),"\n";
 print Out "proper ratio(%)\t",sprintf("%.2f",$mapstat{properly}/$mapstat{total}*100),"\n";

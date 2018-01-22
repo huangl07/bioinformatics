@@ -5,6 +5,7 @@ my $BEGIN_TIME=time();
 use Getopt::Long;
 my ($proc,$vcflist,$bamlist,$chrlist,$annolist,$svlist,$cnvlist,$dOut,$dShell,$metric,$dictfile);
 use Data::Dumper;
+use MIME::Lite;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
@@ -56,10 +57,24 @@ close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=3G --CPU 1  --maxjob $proc $dShell/06.map-stat.sh";
 print $job;
 `$job`;
-`paste $dOut/*.all.mapstat > $dOut/total.mapstat`;
+open In,"paste $dOut/*.result.stat|";
+open Out,">$dOut/total.map.result";
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	my @a=split(/\t/,$_);
+	my @out;
+	push @out,$a[0];
+	for (my $i=1;$i<@a;$i+=2) {
+		push @out,$a[$i];
+	}
+	print Out join("\t",@out),"\n";
+}
+close Out;
+close In;
 my $who=`whoami`;
 chomp($who);
-SendAttachMail("mapping done!you must check $dOut/total.mapstat",'$dOut/total.mapstat',"who\@majorbio.com");
+SendAttachMail("mapping done!you must check $dOut/total.map.result ","$dOut/total.map.result","$who\@majorbio.com");
 
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
@@ -88,9 +103,14 @@ sub SendAttachMail
     my $mail_content = shift;
     my $mail_attach = shift;
 	my $mail_to=shift;
-	my $mail_from="long.huang\@majorbio.com";
+	my $path=dirname($mail_attach);
+	my $file=basename($mail_attach);
+	if (!-f "$path/$file") {
+		die;
+	}
+	my $mail_from="dna\@majorbio.com";
 	my $mail_cc="long.huang\@majorbio.com,dna\@majorbio.com";
-	my $mail_subject="poor luck,qsub error";
+	my $mail_subject="mapping done!";
     my $msg=MIME::Lite->new(
                     From=>$mail_from,
                     To=>$mail_to,
@@ -98,13 +118,13 @@ sub SendAttachMail
                     Subject=>$mail_subject,
                     Type=>'TEXT',
                     Data=>$mail_content,);
-	if ($mail_attach != "") {
+	if ($mail_attach ne "") {
 		    $msg->attach(
             Type=>'AUTO',
-            Path=>$mail_attach,
-            Filename=>$mail_attach,);
+            Path=>$path,
+            Filename=>$file,);
 	}
-	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"long.huang\@majorbio.com", AuthPass=>"cwn.711hl" );
+	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"dna\@majorbio.com", AuthPass=>"majorbio-genome-2017" );
 }
 
 sub USAGE {#

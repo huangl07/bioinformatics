@@ -38,7 +38,7 @@ $homo||="aa";
 $mis||=0.3;
 $seg||=0.05;
 open In,$fIn;
-open Out,">$fOut.marker.stat";
+open Out,">$fOut";
 print Out "#MarkerID\tGroupID\tDis\ttype\tNind\tNmiss\tGeno\tNGeno\tpvalue\tSegretion\n";
 my %stat;
 while (<In>) {
