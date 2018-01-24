@@ -105,9 +105,6 @@ sub SendAttachMail
 	my $mail_to=shift;
 	my $path=dirname($mail_attach);
 	my $file=basename($mail_attach);
-	if (!-f "$path/$file") {
-		die;
-	}
 	my $mail_from="dna\@majorbio.com";
 	my $mail_cc="long.huang\@majorbio.com,dna\@majorbio.com";
 	my $mail_subject="mapping done!";
@@ -117,11 +114,11 @@ sub SendAttachMail
                     Cc=>$mail_cc,
                     Subject=>$mail_subject,
                     Type=>'TEXT',
-                    Data=>$mail_content,);
+                    Data=>$mail_content);
 	if ($mail_attach ne "") {
 		    $msg->attach(
             Type=>'AUTO',
-            Path=>$path,
+            Path=>$mail_attach,
             Filename=>$file,);
 	}
 	$msg->send('smtp', "smtp.majorbio.com", AuthUser=>"dna\@majorbio.com", AuthPass=>"majorbio-genome-2017" );

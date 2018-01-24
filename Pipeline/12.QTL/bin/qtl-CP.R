@@ -37,9 +37,8 @@ if ( is.null(opt$out) ) { opt$out="./";}
 if(!dir.exists(opt$out)){dir.create(opt$out)}
 
 
-d<-read.cross(mapfile=opt$map,genfile=opt$loc,phefile=opt$trt,format="mapqtl")
+d<-read.cross(mapfile=opt$map,genfile=opt$loc,phefile=opt$trt,format="mapqtl",crosstype="4way")
 setwd(opt$out);
-
 d<-jittermap(d)
 d<-sim.geno(d)
 d<-calc.genoprob(d)
@@ -65,13 +64,13 @@ for (i in 1:length(phe.name)){
 dev.off()
 qtls<-matrix()
 for(i in 1:length(phe.name)){
-	if(phe.name[i] == "Genotype"){next;}
+	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	print(paste(opt$method,"trait",phe.name[i],sep="\t"))
-	eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
+	#eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
 	scan<-scanone(d,pheno.col=phe.name[i]);
-	scan.pm<-scanone.pm(d,pheno.col=phe.name[i],n.perm=opt$num);
-	markerid<-find.marker(d,chr=eff$chr,pos=eff$pos)
-	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod,eff=eff$a);
+	scan.pm<-scanone(d,pheno.col=phe.name[i],n.perm=opt$num);
+	markerid<-find.marker(d,chr=scan$chr,pos=scan$pos)
+	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
@@ -97,7 +96,6 @@ for(i in 1:length(phe.name)){
 	if(length(scan.result$lod$chr) < 1){
 		next;
 	}
-
 	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
 	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)

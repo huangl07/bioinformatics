@@ -25,6 +25,7 @@ GetOptions(
 &USAGE unless ($fIn and $dOut and $fLG);
 mkdir $dOut if (!-d $dOut);
 $dOut=ABSOLUTE_DIR($dOut);
+my $popt=$type;
 if ($type eq "F2" || $type eq "f2") {
 	$type="RIL2";
 }
@@ -83,6 +84,9 @@ while (<In>) {
 			$info{$m}=~s/bb/B/g;
 			$info{$m}=~s/--/U/g;
 			$info{$m}=~s/ab/X/g;
+			if ($popt eq  "DH") {
+				$info{$m}=~s/X/U/g;
+			}
 			$info{$m}=~s/-/U/g;
 			push @out,join("\t",$m,$info{$m});
 			print Map "$m\t$pos{$m}\n";

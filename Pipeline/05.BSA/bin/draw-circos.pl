@@ -73,14 +73,11 @@ $gff_windows||=$windows;
 while(<GFF>){
     next if /^#/;
     $_=~s/[\n\r]//g;
-    my ($chr,undef,$type,$start,@others)=split(/\t/,$_);
+    my (undef,undef,undef,undef,$chr,$start,@others)=split(/\t/,$_);
     my $win_num=int($start/$gff_windows)+1;
-      #print OUTT $win_num."\n";
-    if (exists $hash_chr_num{$chr} and ($type=~/gene/ || ($type !~ /CDS/ && $type !~/exon/)) ){
-        if ($chr =~ /chr/) {$chr=~s/chr//g;}
-        if ($chr =~ /sca/) {$chr=~s/sca//g;}
-        $hash_gff{$chr}{$win_num}++;
-        }
+    if ($chr =~ /chr/) {$chr=~s/chr//g;}
+	   if ($chr =~ /sca/) {$chr=~s/sca//g;}
+     $hash_gff{$chr}{$win_num}++;
 }
 #foreach my $keys (sort {$hash_chr_num{$a}<=>$hash_chr_num{$b}} keys %hash_chr_num){
  #       print CHRBAND "chr"."\t"."-"."\t".$keys."\t".$hash_chr_num{$keys}."\t"."0"."\t"."$hash_chr_length{$keys}"."\t".$keys."\n";
@@ -417,8 +414,8 @@ sub slide{
     my %hash;
     my $win=$windows;
     my %hash_max;
-	$$max{snp}=0;
-	$$max{indel}=0;
+	$$max{snp}||=0;
+	$$max{indel}||=0;
     while(<IN>){
         #$_=~s/sca/chr/g;
         $_=~s/[\n\r]//g;
@@ -444,16 +441,18 @@ sub slide{
     foreach my $keys (sort keys %hash){
    # print "$keys\n";
         foreach my $num (sort keys %{$hash{$keys}}){
+			$hash{$keys}{$num}{snp}||=0;
+			$hash{$keys}{$num}{indel}||=0;
             my $chr=$keys;
             my $start=1+$win*($num-1);
             my $end=$win*$num;
             my $snp=$hash{$keys}{$num}{snp}/$win;
 			my $indel=$hash{$keys}{$num}{indel}/$win;
-			if ($snp > $$max{$snp}) {
-				$$max{$snp}=$snp;
+			if ($snp > $$max{snp}) {
+				$$max{snp}=$snp;
 			}
-			if ($indel > $$max{$indel}) {
-				$$max{$indel}=$indel;
+			if ($indel > $$max{indel}) {
+				$$max{indel}=$indel;
 			}
 			print SNP "$chr\t$start\t$end\t$snp\tfill_color=$chr_colour{$chr}\n";
 			print INDEL "$chr\t$start\t$end\t$indel\tfill_color=$chr_colour{$chr}\n";

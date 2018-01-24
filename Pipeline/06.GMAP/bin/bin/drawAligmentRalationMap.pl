@@ -49,6 +49,7 @@ my (%Map,%Marker,%Alignment,%chroLength) = ();
 open (IN,"<",$fMap) or die $!;
 $/="\n";
 my ($group,$order);
+my %spearman;
 while (<IN>) {
 	chomp;
 	s/\r//g;
@@ -69,9 +70,21 @@ while (<IN>) {
 		$Alignment{$chr}{$marker}=$pos;
 		$chroLength{$chr}=$pos if (!exists $chroLength{$chr} || $chroLength{$chr} < $pos);
 		$order++;
+		$spearman{$group}{$chr}++;
 	}
 }
 close (IN) ;
+open Out,">$dOut/$fKey.spearman.xls";
+print Out "#LGID\tMarkerNum\tMaxChr\tSpearman\n";
+foreach my $chr (sort keys %spearman) {
+	my $group=(sort{$spearman{$chr}{$b}<=>$spearman{$chr}{$a}} keys %spearman)[0];
+	my @marker1=sort{$Map{$chr}{$a}<=>$Map{$chr}{$b}}keys %{$Map{$chr}};
+	my @marker2=sort{$Alignment{$group}{$a}<=>$Alignment{$group}{$b}} keys %{$Alignment{$group}};
+	my $c = Statistics::RankCorrelation->new( \@marker2, \@marker1,   );
+	my $n=$c->spearman;
+	print Out $chr,"\t",scalar @marker1,"\t",$chr,"\t",$n,"\n";
+}
+close Out;
 
 #print Dumper %Map;die;
 

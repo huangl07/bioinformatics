@@ -67,11 +67,10 @@ qtls<-matrix()
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
 	print(paste(opt$method,"trait",phe.name[i],sep="\t"))
-	eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
 	scan<-scanone(d,pheno.col=i,model="binary");
 	scan.pm<-scanone(d,pheno.col=i,model="binary",n.perm=1000);
-	markerid<-find.marker(d,chr=eff$chr,pos=eff$pos)
-	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod,eff=eff$a);
+	markerid<-find.marker(d,chr=scan$chr,pos=scan$pos)
+	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)

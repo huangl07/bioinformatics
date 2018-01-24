@@ -27,7 +27,7 @@ mkdir "$out/pri-pwd" if (!-d "$out/pri-pwd");
 mkdir "$out/pwd" if (!-d "$out/pwd");
 
 $cycle||=1;
-open SH,">$dsh/step05-$cycle.markerOrder.sh";
+open SH,">$dsh/step06-$cycle.markerOrder.sh";
 open List,">$out/marker.list";
 open In,$fIn;
 while (<In>) {
@@ -47,7 +47,7 @@ while (<In>) {
 close SH;
 close In;
 close List;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step05-$cycle.markerOrder.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl --Resource mem=10"."G --CPU 1 $dsh/step06-$cycle.markerOrder.sh";
 print $job;
 `$job`;
 

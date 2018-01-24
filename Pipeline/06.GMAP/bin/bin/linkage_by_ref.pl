@@ -36,10 +36,10 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
 	my ($id,undef,undef)=split;
-	if ($id =~ /chr(\d+)/) {
-		my $chr="chr$1";
-		$chrID{$chr}=1;
-		$LG{$chr}{$id}=1;
+	$id=(split(/\_/,$id))[0];
+	if ($id =~ /chr/) {
+		$chrID{$id}=scalar keys %chrID;
+		$LG{$chrID{$id}}{$id}=1;
 		$pos{$id}=$1;
 	}
 	if ($id =~ /sca(\d+)/) {
