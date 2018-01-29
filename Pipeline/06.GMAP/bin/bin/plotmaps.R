@@ -13,11 +13,12 @@ read.mp <- function(mapfile,idlist)
   }
   if (!missing(mapfile))
   {
-    mapin <- read.table(mapfile, header=TRUE)
-    if (ncol(mapin)!=3) stop("Map file is incorrectly formatted")
+    mapin <- read.table(mapfile, header=TRUE,sep=",");
+	colnames(mapin)[1:3]=c("id","lg","cm")
+    #if (ncol(mapin)!=3) stop("Map file is incorrectly formatted")
     mc<-list()
     map <- list()
-    col<-list()
+    col<-list();
     for (i in names(table(mapin$lg)))
     {
       # col[[i]] <- mapin[which(mapin[,1]==i), 4]
@@ -157,7 +158,7 @@ plotlink <-
 
 #'map-plot.r
 opt = getopt(matrix(c(
-'map','m',1,'character',
+'mark','m',1,'character',
 'out','o',2,'character',
 'help','h',0,'logical'
 ),byrow=TRUE, ncol=4));
@@ -165,7 +166,7 @@ usage<-function(){
 cat("This script is used to plot genetic map
 Usage	Rscript map-plot.R for fig 3-9[options]
 Options:
-	-m, --map	map file, forced 
+	-m, --mark	map file, forced 
 	-o, --out 	out file, forced
 	-h, --help	print display this help and exit
 ")
@@ -173,8 +174,7 @@ q(status=1);
 }
 if (!is.null(opt$help) ) { usage() }
 if (is.null(opt$out) ) { usage() }
-if (is.null(opt$dir) ) { usage() }
-m<-read.mp(opt$map)
+m<-read.mp(opt$mark)
 w<-length(m$map)
 outpdf=paste(opt$out,".pdf",sep="")
 pdf(outpdf,width=w)

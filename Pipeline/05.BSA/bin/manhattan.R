@@ -31,6 +31,7 @@ collist <- unlist(strsplit(opt$col, split=","))
 if(length(collist) ==4){
 	chr<-data[[as.numeric(collist[1])]]
 	pos<-data[[as.numeric(collist[2])]]
+	pos<-as.numeric(pos)/1000;
 	index<-data[[as.numeric(collist[3])]]
 	thres<-data[[as.numeric(collist[4])]]
 	chrlab=unique(chr);
@@ -47,12 +48,12 @@ if(length(collist) ==4){
 	for (i in 1:length(chrlab)){
 		pdf(paste(opt$output,chrlab[i],"pdf",sep="."),height=9,width=16)
 		newdf<-subset(df,df$chr == i);
-		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
+		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",xlab="Chromesome Wide Distribution(kb)",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
 		box()
 		dev.off()
 		png(paste(opt$output,chrlab[i],"png",sep="."),height=900,width=1600)
 		newdf<-subset(df,df$chr == i);
-		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
+		manhattan(newdf,chr="chr",bp="pos",p="index",col="red",type="l",ylab="SNP-index",xlab="Chromesome Wide Distribution(kb)",ylim=c(0,1),logp=FALSE,suggestiveline=unique(as.numeric(thres)),main=paste(chrlab[i],"SNP INDEX DISTRIBUTION",sep=" "))
 		box()
 		dev.off()
 	}
@@ -60,6 +61,7 @@ if(length(collist) ==4){
 }else{
 	chr<-data[[as.numeric(collist[1])]]
 	pos<-data[[as.numeric(collist[2])]]
+	pos<-as.numeric(pos)/1000;
 	index1<-data[[as.numeric(collist[3])]]
 	index2<-data[[as.numeric(collist[4])]]
 	delta<-data[[as.numeric(collist[5])]]

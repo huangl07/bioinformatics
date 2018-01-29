@@ -31,11 +31,10 @@ if ($pop ne "CP") {
 	$pop=lc($pop);
 	print SH1 "perl $Bin/bin/MapMergeNOCP.pl -dmap $dmap -o $out -adjust && ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.map -o $out/total.mapstat \n ";
-	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.mapstat --output $out/fig/total \n";
-	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.map -input $out/total.marker --pop $pop -out $out/total.marker.info &&";
+	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.map -input $out/total.marker --pop $pop -out $out/total.marker.info && ";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.marker.info --output $out/fig/total \n";;
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop $pop \n";
-	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.map.draw  --out $out/fig/total.map \n";
-
+	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.csv  --out $out/fig/total.map \n";
 	print SH2 "Rscript $Bin/bin/drawbinNOCP.R --mark $out/total.csv  --out $out/fig/total.bin \n";
 	if ($ref) {
 		print SH2 "perl $Bin/bin/drawAligmentRalationMap.pl -m $out/total.map -o $out/fig/ -k total.phy\n";
@@ -45,16 +44,16 @@ if ($pop ne "CP") {
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.sexAver.map -o $out/sexAver.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.male.map -o $out/male.mapstat \n ";
 	print SH2 "perl $Bin/bin/mapEstimate.pl -i $out/total.female.map -o $out/female.mapstat \n ";
-	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.sexAver.map -input $out/total.loc --pop $pop -out $out/total.sexAver.info \n";
-	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.male.map -input $out/total.loc --pop $pop -out $out/total.male.info \n";
-	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.female.map -input $out/total.loc --pop $pop -out $out/total.female.info \n";
-	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.sexAver.mapstat --output $out/fig/total.sexAver \n";
-	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.male.mapstat --output $out/fig/total.male \n ";
-	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.female.mapstat --output $out/fig/total.female \n ";
+	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.sexAver.map -input $out/total.loc --pop $pop -out $out/total.sexAver.info && ";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.sexAver.info --output $out/fig/total.sexAver \n";
+	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.male.map -input $out/total.loc --pop $pop -out $out/total.male.info && ";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.male.info --output $out/fig/total.male \n ";
+	print SH2 "perl $Bin/bin/markerinfo.pl -map $out/total.female.map -input $out/total.loc --pop $pop -out $out/total.female.info && ";
+	print SH2 "Rscript $Bin/bin/markerinfo.R --input $out/total.female.info --output $out/fig/total.female \n ";
 	print SH2 "Rscript $Bin/bin/drawmap.R --mark $out/total  --out $out/fig --pop cp \n";
-	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.sexAver.map.draw  --out $out/fig/total.sexAver.map \n";
-	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.male.map.draw  --out $out/fig/total.male.map \n";
-	print SH2 "Rscript $Bin/bin/plotmap.R --mark $out/total.female.map.draw  --out $out/fig/total.female.map \n";
+	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.map \n";
+	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.male.phase  --out $out/fig/total.male.map \n";
+	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.female.phase  --out $out/fig/total.female.map \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin \n";
 	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/fig/total.female.bin \n";

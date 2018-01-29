@@ -51,21 +51,17 @@ while (<In>) {
 			}
 			$geno{$gt}++ if($gt ne "./.");
 			$sum+=$dp if($gt ne "./.");
-			if (length($ref)*2 < length($Ale[$g1])+length($Ale[$g2])) {
+			$vcfstat{$indi[$i]}{total}++;
+			$vcfstat{$indi[$i]}{dp}+=$dp;
+			$vcfstat{$indi[$i]}{homo}++ if($g1 eq $g2);
+			$vcfstat{$indi[$i]}{lenth}+=length($ref)*2-(length($Ale[$g1])+length($Ale[$g2]));
+			$sumlen=length($ref)*2-(length($Ale[$g1])+length($Ale[$g2]));
+			print Flen $indi[$i],"\t",(length($Ale[$g1])+length($Ale[$g2]))-length($ref)*2,"\n" if (length($ref)*2-(length($Ale[$g1])+length($Ale[$g2])) !=0);
+			if (length($ref)*2 -length($Ale[$g1])-length($Ale[$g2]) < 0) {
 				$vcfstat{$indi[$i]}{delete}++;
 			}else{
 				$vcfstat{$indi[$i]}{insert}++;
 			}
-			$vcfstat{$indi[$i]}{total}++;
-			$vcfstat{$indi[$i]}{dp}+=$dp;
-			$vcfstat{$indi[$i]}{homo}++ if($g1 eq $g2);
-			$vcfstat{$indi[$i]}{lenth}+=(length($Ale[$g1])+length($Ale[$g2]))/2;
-			my $len=length($Ale[0]);
-			my $len1=length($Ale[$g1])-length($Ale[0]);#-length($Ale[0]);
-			my $len2=length($Ale[$g2])-length($Ale[0]);
-			$sumlen=$len*2-$len1-$len2;
-			print Flen $indi[$i],"\t",$len1-$len,"\n" if ($len1 != $len);
-			print Flen $indi[$i],"\t",$len1-$len,"\n" if ($len2 != $len);
 		}
 		$vcfstat{pop}{dp}+=$sum if(scalar keys %geno != 1);
 		$vcfstat{pop}{len}+=$sumlen if(scalar keys %geno != 1);
@@ -108,6 +104,8 @@ open Out,">$fOut";
 print Out "Sample ID\tInsert Number\tDelete Number\tHeterozygosity Number\tHomozygosity Number\tAverage Length\tAverage Depth\tMiss Number\tRef Number\n";
 foreach my $sample (sort keys %vcfstat) {
 	$vcfstat{$sample}{lenth}||=0;
+	$vcfstat{$sample}{insert}||=0;
+	$vcfstat{$sample}{delete}|=0;
 	next if($sample eq "pop");
 	print Out join("\t",$sample,$vcfstat{$sample}{insert},$vcfstat{$sample}{delete},$vcfstat{$sample}{homo},$vcfstat{$sample}{total}-$vcfstat{$sample}{homo},sprintf("%.2f",$vcfstat{$sample}{lenth}/$vcfstat{$sample}{total}),sprintf("%.2f",$vcfstat{$sample}{dp}/$vcfstat{$sample}{total}),$vcfstat{$sample}{miss},$vcfstat{$sample}{ref}),"\n";
 }

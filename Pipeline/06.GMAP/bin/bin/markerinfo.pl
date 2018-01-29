@@ -41,12 +41,15 @@ open In,$fIn;
 open Out,">$fOut";
 print Out "#MarkerID\tGroupID\tDis\ttype\tNind\tNmiss\tGeno\tNGeno\tpvalue\tSegretion\n";
 my %stat;
+	my $t=0;
+	my $n=1;
+
+my %region;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/ ||/=/||/^#/ || /MarkerID/ );
 	last if(/^;/ || /individual names/);
 	my ($id,$type,$phase,@info);
-
 	if ($popt eq "CP") {
 		 ($id,$type,$phase,@info) =split(/\t/,$_);
 		 $type=~s/\>//g;
@@ -111,9 +114,36 @@ while (<In>) {
 	my $order;
 	my($p)=&SegregationX2($type,\@info,\$flag,\$order);
 	print Out "$id\t",$group{$id},"\t",$mapped{$id},"\t$type\t",scalar @info,"\t",$miss,"\t",$order,"\t",$flag,"\n";
+	if ($p < 0.05) {
+		my $LG=$group{$id};
+		if (!exists $region{$LG}) {
+			$n++;
+			push @{$region{$LG}{$n}},$id;
+			$t=0;
+		}else{
+			if ($t == 0) {
+				push @{$region{$LG}{$n}},$id;
+			}else{
+				$n++;
+				push @{$region{$LG}{$n}},$id;
+				$t=0;
+			}
+		}
+	}else{
+		$t=1;
+	}
 }
 close Out;
 close In;
+open Region,">$fOut.seg.region";
+print Region "#LG\tPos1\tPos2\tMarkerNum\n";
+foreach my $LG (sort keys %region) {
+	foreach my $n (sort {$a<=>$b} keys %{$region{$LG}}) {
+		my @m=@{$region{$LG}{$n}};
+		print Region join("\t",$LG,$mapped{$m[0]},$mapped{$m[-1]},scalar @m),"\n";
+	}
+}
+close Region;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

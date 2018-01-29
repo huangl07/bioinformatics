@@ -29,8 +29,9 @@ $Bdep||=10;
 $PID||="";
 $popt||="F2";
 my %Indi;
+my ($P1,$P2);
 if ($PID ne "") {
-	my ($P1,$P2)=split(/\,/,$PID);
+	($P1,$P2)=split(/\,/,$PID);
 	$P2||=$P1;
 	$Indi{$P1}="P1";
 	$Indi{$P2}="P2";
@@ -43,8 +44,9 @@ if ($fIn =~ /gz$/) {
 }else{
 	open In,$fIn;
 }
-open Out,">$fOut";
-print Out join("\t","#chr","pos","ref","alt","anno","P1GT","P1AD","P2GT","P2AD","B1GT","B1AD","B2GT","B2AD","INDEX1","INDEX2","DELTA"),"\n";
+open Out,">$fOut.index";
+#print Out join("\t","#chr","pos","ref","alt","anno","GT","AD","GT","AD","B1GT","B1AD","B2GT","B2AD","INDEX1","INDEX2","DELTA"),"\n";
+open Variant,">$fOut.variant";
 my @indi;
 my %stat;
 while (<In>) {
@@ -53,19 +55,32 @@ while (<In>) {
 	my ($chr,$pos,$ids,$ref,$alt,$qual,$filter,$info,$format,@geno)=split(/\s+/,$_);
 	if (/^#/) {
 		push @indi,@geno;
+		my @out;
+		foreach my $indi (@geno) {
+			next if (!exists $Indi{$indi});
+			push @out,$indi."-GT";
+			push @out,$indi."-AD";
+		}
+		print Out join("\t","#chr","pos","type","ref",@out,"index1","index2","delta","ANNOTATION"),"\n";
+		print Variant join("\t","#chr","pos","type","ref",@out,"ANNOTATION"),"\n";
+
 	}else{
 		my %info;
-		my @format=split(/:/,$format);
-		my $ann=$ids;
-		if($info=~/ANN=([^\;]*)/){
-			$ann=$1;
-			my @ann=split(/\|/,$ann);
-			$ann[4]="-" if($ann[2] eq "MODIFIER");
-			$ann[3]="-" if($ann[2] eq "MODIFIER");
-			$ann=join("|",$ann[1],$ann[2],$ann[3],$ann[4])
+		my @alle=split(",",join(",",$ref,$alt));
+		my %len;
+		for (my $i=0;$i<@alle;$i++) {
+			$len{$alle[$i]}=1;
 		}
+		my $type="SNP";
+		if (scalar keys %len > 1) {
+			$type="INDEL";
+		}
+		my @format=split(/:/,$format);
+		my %ginfo;
+		my @outvariant;
 		for (my $i=0;$i<@indi;$i++) {
 			next if (!exists $Indi{$indi[$i]});
+			my @gt=split(/\//,$geno[$i]);
 			my $id=$Indi{$indi[$i]};
 			my @info=split(/:/,$geno[$i]);
 			for (my $j=0;$j<@info;$j++) {
@@ -73,7 +88,39 @@ while (<In>) {
 				$info{$id}{ad}=$info[$j] if ($format[$j] eq "AD");
 				$info{$id}{dp}=$info[$j] if ($format[$j] eq "DP");
 			}
+			if ($info{$id}{gt} eq "./.") {
+				$ginfo{$indi[$i]}{gt}="--";
+				$ginfo{$indi[$i]}{ad}="0";
+			}else{
+				my ($g1,$g2)=split(/\//,$info{$id}{gt});
+				my @ad=split(/\,/,$info{$id}{ad});
+				$ginfo{$indi[$i]}{gt}=join("/",$alle[$g1],$alle[$g2]);
+				if ($g1 eq $g2) {
+					$ginfo{$indi[$i]}{ad}=$ad[$g1];
+				}else{
+					$ginfo{$indi[$i]}{ad}=join(",",$ad[$g1],$ad[$g2]);
+				}
+			}
+			push @outvariant,$ginfo{$indi[$i]}{gt};
+			push @outvariant,$ginfo{$indi[$i]}{ad};
 		}
+		my @out;
+		if($info=~/ANN=([^\;]*)/g){
+			my @ann=split(/\,/,$1);
+			my %ann;
+			for (my $i=0;$i<@ann;$i++) {
+				my @str=split(/\|/,$ann[$i]);
+				my $ann=join("|",$str[1],$str[2],$str[3],$str[4]);
+				$ann{$str[2]}++
+				push @out,$ann;
+			}
+		}
+		if (scalar @out ==0) {
+			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,"--"),"\n";
+		}else{
+			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,join(";",@out)),"\n";
+		}
+
 		next if ($info{B1}{gt}  eq "./." || $info{B2}{gt} eq "./." ||$info{B1}{dp} < $Bdep || $info{B2}{dp} < $Bdep);
 		my @b1=split(/\/|\|/,$info{B1}{gt});
 		my @b2=split(/\/|\|/,$info{B2}{gt});
@@ -156,7 +203,11 @@ while (<In>) {
 			$lchr = "scaffords";
 		}
 		$stat{$lchr}{$type}++;
-		print Out join("\t",$chr,$pos,$ref,$alt,$ann,$info{P1}{gt},$info{P1}{ad},$info{P2}{gt},$info{P2}{ad},$info{B1}{gt},$info{B1}{ad},$info{B2}{gt},$info{B2}{ad},$index1,$index2,$delta),"\n";
+		if (scalar @out ==0) {
+			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$index1,$index2,$delta,"--",),"\n";
+		}else{
+			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$index1,$index2,$delta,join(";",@out)),"\n";
+		}
 	}
 }
 close In;

@@ -33,18 +33,18 @@ if ( is.null(opt$win)){opt$win=2000000;}
 if ( is.null(opt$step)){opt$step=opt$win/40}
 if ( is.null(opt$method)){opt$method="bp"}
 
-data<-read.table(opt$infile,head=FALSE);
-collist <- unlist(strsplit(opt$col, split=","))
-if(length(collist) ==3){
-	chr<-data[[as.numeric(collist[1])]]
-	pos<-data[[as.numeric(collist[2])]]
-	index<-data[[as.numeric(collist[3])]]
+data<-read.table(opt$infile,head=TRUE,comment.char = "^");
+
+if(opt$col ==3){
+	chr<-data$X.chr
+	pos<-data$pos
+	index<-data$index
 }else{
-	chr<-data[[as.numeric(collist[1])]]
-	pos<-data[[as.numeric(collist[2])]]
-	index1<-data[[as.numeric(collist[3])]]
-	index2<-data[[as.numeric(collist[4])]]
-	delta<-data[[as.numeric(collist[5])]]
+	chr<-data$X.chr
+	pos<-data$pos
+	index1<-data$index1
+	index2<-data$index2
+	delta<-data$delta
 	index=delta
 }
 ewin<-function(pos,index,p1,p2){
@@ -67,7 +67,7 @@ for (i in 1:(length(chrname))){
 	chrpos=pos[which(chr==chrname[i])]
 	backpos=chrpos;
 	if (opt$method=="num"){chrpos=c(1:length(chrpos))}
-	if(length(collist) ==3){
+	if(opt$col ==3){
 		chrindex=index[which(chr==chrname[i])]
 	}else{
 		chrindex1=index1[which(chr==chrname[i])]
@@ -89,7 +89,7 @@ for (i in 1:(length(chrname))){
 		pos2[pos2 > chrlen]=chrlen;
 	}
 	x=data.frame(pos1,pos2);
-	if(length(collist) ==3){
+	if(opt$col ==3){
 		wmean=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex,x[1],x[2]));
 		total=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
 		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index=wmean,twin=total))
@@ -102,7 +102,7 @@ for (i in 1:(length(chrname))){
 }
 total<-length(chr);
 N=total
-if(length(collist) ==3){
+if(opt$col ==3){
 # 	thres<-quantile(index,probs=0.999,na.rm=TRUE)
 	thres<-quantile(slid$index[slid$twin > 10],probs=0.999,na.rm=TRUE)
 	M=length(slid$index[slid$index > thres & slid$twin > 10])
@@ -141,7 +141,7 @@ fdr=p.adjust(info$Pvalue,method="bonferroni")
 print("test")
 print(length(unique(info$chr)));
 
-if(length(collist) ==3){
+if(opt$col ==3){
 	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index=slid$index,threhold=rep(thres,length(info$pos1)),total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
 }else{
 	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index1=slid$index1,index2=slid$index2,delta=slid$delta,threhold=rep(thres,length(info$pos1)),total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
@@ -149,7 +149,7 @@ if(length(collist) ==3){
 df<-na.omit(df)
 write.table(file=paste(opt$outfile,".result",sep=""),df,row.name=FALSE)
 
-if(length(collist) == 3){
+if(opt$col) == 3){
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$index > df$threhold),row.names=FALSE)
 	write.table(file=paste(opt$outfile,".fdr.select",sep=""),subset(df,df$fdr < 0.01/N),row.names=FALSE)
 }else{

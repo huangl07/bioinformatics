@@ -62,11 +62,9 @@ for (i in 1:length(phe.name)){
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
-qtls<-matrix()
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	print(paste(opt$method,"trait",phe.name[i],sep="\t"))
-	#eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
 	scan<-scanone(d,pheno.col=phe.name[i]);
 	scan.pm<-scanone(d,pheno.col=phe.name[i],n.perm=opt$num);
 	markerid<-find.marker(d,chr=scan$chr,pos=scan$pos)
@@ -76,11 +74,18 @@ for(i in 1:length(phe.name)){
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
 	if(min(scan.result$pval) >0.1){
 		scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1)
+		if(length(rownames(scan.result$lod)) < 1){
+			scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1)
+		}
 		pm.result<-c(3,2.5)
 		legend=pm.result
 	}else{	
-		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
 		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		if(length(rownames(scan.result$lod)) < 1){
+			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
+		}
+
+		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
 		legend=paste(rownames(pm.result),round(pm.result,2))
 	}
 	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
@@ -93,10 +98,10 @@ for(i in 1:length(phe.name)){
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
 	dev.off()
-	if(length(scan.result$lod$chr) < 1){
+	if(length(rownames(scan.result$lod)) < 1){
 		next;
 	}
-	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
+	qtlname=paste(phe.name[i],c(1:length(rownames(scan.result$lod))))
 	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
@@ -109,21 +114,20 @@ for(i in 1:length(phe.name)){
 		data$end[j]=max(insert$pos);
 		data$mark1[j]=find.marker(d,chr=qtl$chr[j],data$start[j])
 		data$mark2[j]=find.marker(d,chr=qtl$chr[j],data$end[j])
+		pdf(paste(phe.name[i],".",qtl$name[j],".PXG.pdf",sep=""))
+		plotPXG(d,data$marker[j],pheno.col=phe.name[i])
+		dev.off()
+		png(paste(phe.name[i],".",qtl$name[i],".PXG.png",sep=""))
+		plotPXG(d,data$marker[j],pheno.col=phe.name[i])
+		dev.off()
 	}
 	write.table(file=paste(phe.name[i],".qtl.csv",sep=""),sep="\t",data,row.names=FALSE)
 	pdf(paste(phe.name[i],".qtl.pdf",sep=""))
 	plot(qtl)
 	dev.off()
-	pdf(paste(phe.name[i],".PXG.pdf",sep=""))
-	plotPXG(d,data$marker,pheno.col=phe.name[i])
-	dev.off()
 	png(paste(phe.name[i],".qtl.png",sep=""))
 	plot(qtl)
 	dev.off()
-	png(paste(phe.name[i],".PXG.png",sep=""))
-	plotPXG(d,data$marker,pheno.col=phe.name[i])
-	dev.off()
-
 }
 escaptime=Sys.time()-times;
 print("Done!")

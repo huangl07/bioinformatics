@@ -24,7 +24,7 @@ $vcf=ABSOLUTE_DIR($vcf);
 my $id="pop";
 open SH,">$dsh/step04.tree-generic1.sh";
 print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id &&";
-print SH "model-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test "
+print SH "model-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test";
 open SH,">$dsh/step04.tree-generic2.sh";
 my $sh=`grep raxml $out/pop.model.test|uniq`;
 $sh=~s/>//g;chomp $sh;
