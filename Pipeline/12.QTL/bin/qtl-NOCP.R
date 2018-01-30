@@ -111,9 +111,19 @@ for(i in 1:length(phe.name)){
 	n=0;
 	for (j in chr){
 		subd=which(outd$chr==j & outd$lod > theshold[1])
-		if(length(subd) < 1){next;}
+		if(is.null(subd)){next;}
 		start=1000;
 		end=-1;
+		if(length(subd) == 1){
+			start=subd[1]
+			end=subd[1]
+			if (!is.null(qdata)){
+				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
+			}else{
+				qdata<-data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end])
+			}
+			next;
+		}
 		for(k in c(2:length(subd))){
 			if(subd[k]-subd[k-1] < 2){
 				if(subd[k-1] < start){start=subd[k-1]}

@@ -83,10 +83,10 @@ for(i in 1:length(phe.name)){
 		pm.result<-c(3,2.5)
 		legend=pm.result
 	}else{	
-		theshold=summary(scan.pm,alpha=0.01);
-		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		theshold=summary(scan.pm,alpha=0.01)[1];
+		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.01,drop=1)
 		if(length(rownames(scan.result$lod)) < 1){
-			theshold=summary(scan.pm,alpha=0.05);
+			theshold=summary(scan.pm,alpha=0.05)[1];
 			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
 		}
 		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
@@ -110,8 +110,8 @@ for(i in 1:length(phe.name)){
 	for (j in chr){
 		subd=which(outd$chr==j & outd$lod > theshold[1])
 		if(length(subd) < 1){next;}
-		start=1000;
-		end=-1;
+		start=subd[1];
+		end=subd[1];
 		for(k in c(2:length(subd))){
 			if(subd[k]-subd[k-1] < 2){
 				if(subd[k-1] < start){start=subd[k-1]}

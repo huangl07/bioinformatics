@@ -1,0 +1,1 @@
+/mnt/ilustre/users/dna/.env/bin/psmc_plot.pl -p -M pop1,pop3 /mnt/ilustre/users/nanshan.yang/script/psmc/bin/pop-all /mnt/ilustre/users/nanshan.yang/script/psmc/demo/step03.psmc/pop1.psmc /mnt/ilustre/users/nanshan.yang/script/psmc/demo/step03.psmc/pop3.psmc

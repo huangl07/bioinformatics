@@ -6,6 +6,8 @@ spec = matrix(c(
 	'out','o',1,'character',
 	'num','n',1,'character',
 	'pop','p',1,'character',
+	'bc','b',1,'character',
+	'f','f',1,'character',
 	'help','h',0,'logical'
 	), byrow=TRUE, ncol=4)
 opt = getopt(spec)
@@ -22,6 +24,8 @@ Usage:
 	--pop	pop type
 	--out	out dir
 	--num	pm number
+	--bc	bc gen for bcsft
+	--f		f gen for bcsft
 	--help		usage
 \n")
 	q(status=1);
@@ -34,10 +38,9 @@ if ( is.null(opt$trt) ) { print_usage(spec) }
 if ( is.null(opt$pop) ) { print_usage(spec) }
 if ( is.null(opt$num) ) { opt$num=1000; }else{opt$num=as.numeric(opt$num)}
 if ( is.null(opt$out) ) { opt$out="./";}
-
-if(opt$pop =="bcsft" & is.null(opt$bc) & is.null(opt$f){print_usage(spec)}
-if(opt$pop =="bcsft" {	
-	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN",BC.gen=2,F.gen=2)
+if(opt$pop =="bcsft" & is.null(opt$bc) & is.null(opt$f)){print_usage(spec)}
+if(opt$pop =="bcsft") {	
+	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN",BC.gen=opt$bc,F.gen=opt$f)
 }else{
 	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
 }
@@ -63,7 +66,6 @@ for (i in 1:length(phe.name)){
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
-qtls<-matrix()
 print(length(phe.name))
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
@@ -75,13 +77,24 @@ for(i in 1:length(phe.name)){
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
+	pm.the<-1;
+	theshold=3;
 	if(min(scan.result$pval) >0.1){
 		scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1)
+		if(length(rownames(scan.result$lod)) < 1){
+			theshold=2.5;
+			scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1)
+		}
 		pm.result<-c(3,2.5)
 		legend=pm.result
 	}else{	
-		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
+		theshold=summary(scan.pm,alpha=0.01);
 		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		if(length(rownames(scan.result$lod)) < 1){
+			theshold=summary(scan.pm,alpha=0.05);
+			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
+		}
+		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
 		legend=paste(rownames(pm.result),round(pm.result,2))
 	}
 	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
@@ -94,38 +107,65 @@ for(i in 1:length(phe.name)){
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)
 	dev.off()
-	if(length(scan.result$lod$chr) < 1){
-		next;
+	qdata<-NULL
+	n=0;
+	for (j in chr){
+		subd=which(outd$chr==j & outd$lod > theshold[1])
+		if(length(subd) < 1){next;}
+		start=1000;
+		end=-1;
+		for(k in c(2:length(subd))){
+			if(subd[k]-subd[k-1] < 2){
+				if(subd[k-1] < start){start=subd[k-1]}
+				if(subd[k] > end){end=subd[k]}
+			}else{	
+				if (!is.null(qdata)){
+					qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
+				}else{
+					qdata<-data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end])
+				}
+				n=n+1
+				start=subd[k]
+				end=subd[k]
+			}
+		}
+		if(start != 1000){
+			n=n+1;
+			if (!is.null(qdata)){
+				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
+			}else{
+				qdata<-data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end])
+			}
+		}
 	}
-
-	qtlname=paste(phe.name[i],c(1:length(scan.result$lod$chr)))
-	qtl<-makeqtl(d,chr=scan.result$lod$chr,pos=scan.result$lod$pos,qtl.name=qtlname)
-	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
+	qtlname=paste(phe.name[i],c(1:length(qdata$n)))
+	qtl<-makeqtl(d,chr=qdata$chr,pos=qdata$pos,qtl.name=qtlname)
+	if(opt$pop =="bcsft") {	
+		fitqtl<-fitqtl(cross=d,qtl=qtl,pheno.col=i)
+	}else{
+		fitqtl<-fitqtl(cross=d,qtl=qtl,pheno.col=i,get.est=TRUE)
+	}
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
 	var<-fitqtl$result.drop[,"%var"]
 	if (length(qtl$name) == 1){var<-fitqtl$result.full["Model","%var"]}
-	data<-data.frame(marker=markerid,chr=scan.result$lod$chr,pos=scan.result$lod$pos,lod=scan.result$lod$lod,var=var,pm1=pm.result[1],pm2=pm.result[2])
+	data<-data.frame(marker=markerid,chr=qdata$chr,pos=qdata$pos,lod=qdata$lod,var=var,pm1=pm.result[1],pm2=pm.result[2],start=outd$pos[start],end=outd$pos[end])
 	for(j in 1:length(qtlname)){
-		insert<-bayesint(scan,chr=qtl$chr[j],expandtomarkers=FALSE,prob=0.99)
-		data$start[j]=min(insert$pos);
-		data$end[j]=max(insert$pos);
 		data$mark1[j]=find.marker(d,chr=qtl$chr[j],data$start[j])
 		data$mark2[j]=find.marker(d,chr=qtl$chr[j],data$end[j])
+		pdf(paste(phe.name[i],".",qtl$name[j],".PXG.pdf",sep=""))
+		plotPXG(d,data$marker[j],pheno.col=i)
+		dev.off()
+		png(paste(phe.name[i],".",qtl$name[i],".PXG.png",sep=""))
+		plotPXG(d,data$marker[j],pheno.col=i)
+		dev.off()
 	}
 	write.table(file=paste(phe.name[i],".qtl.csv",sep=""),sep="\t",data,row.names=FALSE)
 	pdf(paste(phe.name[i],".qtl.pdf",sep=""))
 	plot(qtl)
 	dev.off()
-	pdf(paste(phe.name[i],".PXG.pdf",sep=""))
-	plotPXG(d,data$marker,pheno.col=phe.name[i])
-	dev.off()
 	png(paste(phe.name[i],".qtl.png",sep=""))
 	plot(qtl)
 	dev.off()
-	png(paste(phe.name[i],".PXG.png",sep=""))
-	plotPXG(d,data$marker,pheno.col=phe.name[i])
-	dev.off()
-
 }
 escaptime=Sys.time()-times;
 print("Done!")
