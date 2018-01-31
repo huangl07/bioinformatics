@@ -111,7 +111,7 @@ while (<In>) {
 			for (my $i=0;$i<@ann;$i++) {
 				my @str=split(/\|/,$ann[$i]);
 				my $ann=join("|",$str[1],$str[2],$str[3],$str[4]);
-				$ann{$str[2]}++
+				$ann{$str[2]}++;
 				push @out,$ann;
 			}
 		}
@@ -194,10 +194,6 @@ while (<In>) {
 		$info{P1}{ad}||="--";
 		$info{P2}{gt}||="--";
 		$info{P2}{ad}||="--";
-		my $type="SNP";
-		if (length($ref) != length($alt)) {
-			$type = "InDel";
-		}
 		my $lchr=$chr;
 		if ($lchr !~ /chr/) {
 			$lchr = "scaffords";

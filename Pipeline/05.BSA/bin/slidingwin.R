@@ -96,10 +96,13 @@ for (i in 1:(length(chrname))){
 	}else{
 		wmean1=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex1,x[1],x[2]));
 		wmean2=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex2,x[1],x[2]));
+		indexs=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,delta,x[1],x[2]));
 		total=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
-		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=wmean1-wmean2,twin=total))
+		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=indexs,twin=total))
 	}
 }
+write.table(file=paste(opt$outfile,".slid.result",sep=""),slid,row.name=FALSE)
+
 total<-length(chr);
 N=total
 if(opt$col ==3){
@@ -149,7 +152,7 @@ if(opt$col ==3){
 df<-na.omit(df)
 write.table(file=paste(opt$outfile,".result",sep=""),df,row.name=FALSE)
 
-if(opt$col) == 3){
+if(opt$col == 3){
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$index > df$threhold),row.names=FALSE)
 	write.table(file=paste(opt$outfile,".fdr.select",sep=""),subset(df,df$fdr < 0.01/N),row.names=FALSE)
 }else{

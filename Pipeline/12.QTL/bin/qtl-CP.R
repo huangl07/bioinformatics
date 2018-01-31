@@ -111,11 +111,9 @@ for(i in 1:length(phe.name)){
 		subd=which(outd$chr==j & outd$lod > theshold[1])
 		print(paste(j,length(subd),sep="\t"))
 		if(length(subd)==0){next;}
-		start=1000000;
-		end=-1;
+		start=subd[1]
+		end=subd[1]
 		if(length(subd) == 1){
-			start=subd[1]
-			end=subd[1]
 			if (!is.null(qdata)){
 				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
 			}else{
@@ -128,6 +126,7 @@ for(i in 1:length(phe.name)){
 				if(subd[k-1] < start){start=subd[k-1]}
 				if(subd[k] > end){end=subd[k]}
 			}else{	
+				print(paste(start,end))
 				if (!is.null(qdata)){
 					qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
 				}else{
@@ -138,7 +137,7 @@ for(i in 1:length(phe.name)){
 				end=subd[k]
 			}
 		}
-		if(start != 1000000){
+		if(start != subd[1] & outd$pos[start] !=qdata$start[length(qdata$start)]){
 			n=n+1;
 			if (!is.null(qdata)){
 				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
