@@ -109,9 +109,20 @@ for(i in 1:length(phe.name)){
 	n=0;
 	for (j in chr){
 		subd=which(outd$chr==j & outd$lod > theshold[1])
-		if(length(subd) < 1){next;}
-		start=subd[1];
-		end=subd[1];
+		print(paste(j,length(subd),sep="\t"))
+		if(length(subd)==0){next;}
+		start=1000000;
+		end=-1;
+		if(length(subd) == 1){
+			start=subd[1]
+			end=subd[1]
+			if (!is.null(qdata)){
+				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
+			}else{
+				qdata<-data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end])
+			}
+			next;
+		}
 		for(k in c(2:length(subd))){
 			if(subd[k]-subd[k-1] < 2){
 				if(subd[k-1] < start){start=subd[k-1]}
@@ -127,7 +138,7 @@ for(i in 1:length(phe.name)){
 				end=subd[k]
 			}
 		}
-		if(start != 1000){
+		if(start != 1000000){
 			n=n+1;
 			if (!is.null(qdata)){
 				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
@@ -136,13 +147,13 @@ for(i in 1:length(phe.name)){
 			}
 		}
 	}
-	qtlname=paste(phe.name[i],c(1:length(qdata$n)))
+	qtlname=paste(phe.name[i],c(1:length(qdata$n)),sep="-")
 	qtl<-makeqtl(d,chr=qdata$chr,pos=qdata$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
 	var<-fitqtl$result.drop[,"%var"]
 	if (length(qtl$name) == 1){var<-fitqtl$result.full["Model","%var"]}
-	data<-data.frame(marker=markerid,chr=qdata$chr,pos=qdata$pos,lod=qdata$lod,var=var,pm1=pm.result[1],pm2=pm.result[2],start=outd$pos[start],end=outd$pos[end])
+	data<-data.frame(marker=markerid,chr=qdata$chr,pos=qdata$pos,lod=qdata$lod,var=var,pm1=pm.result[1],pm2=pm.result[2],start=qdata$start,end=qdata$end)
 	for(j in 1:length(qtlname)){
 		data$mark1[j]=find.marker(d,chr=qtl$chr[j],data$start[j])
 		data$mark2[j]=find.marker(d,chr=qtl$chr[j],data$end[j])
