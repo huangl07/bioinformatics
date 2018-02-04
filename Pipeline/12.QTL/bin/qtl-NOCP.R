@@ -94,7 +94,7 @@ for(i in 1:length(phe.name)){
 		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.01,drop=1)
 		if(length(rownames(scan.result$lod)) < 1){
 			theshold=summary(scan.pm,alpha=0.05)[1];
-			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
+			scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.05,drop=1)
 		}
 		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
 		legend=paste(rownames(pm.result),round(pm.result,2))
@@ -141,7 +141,7 @@ for(i in 1:length(phe.name)){
 				end=subd[k]
 			}
 		}
-		if(start != subd[1] & outd$pos[start] !=qdata$start[length(qdata$start)]){
+		if(end != subd[1]){
 			n=n+1;
 			if (!is.null(qdata)){
 				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))

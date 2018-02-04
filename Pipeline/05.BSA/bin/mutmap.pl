@@ -57,8 +57,8 @@ while (<In>) {
 			push @out,$indi."-GT";
 			push @out,$indi."-AD";
 		}
-		print Out join("\t","#chr","pos","type","ref",@out,"index","ANNOTATION","HIGH","MODERATE","LOW","MODIFIER"),"\n";
-		print Variant join("\t","#chr","type","pos","ref",@out,"ANNOTATION"),"\n";
+		print Out join("\t","#chr","pos","type","ref",@out,"index","ANNOTATION"),"\n";
+		print Variant join("\t","#chr","type","pos","ref",@out,"ANNOTATION","HIGH","MODERATE","LOW","MODIFIER"),"\n";
 
 	}else{
 		my %info;
@@ -163,9 +163,9 @@ while (<In>) {
 		$stat{$lchr}{$type}++;
 		
 		if (scalar @out ==0) {
-			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$snpindex,"--",$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
+			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$snpindex,"--"),"\n";
 		}else{
-			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$snpindex,join(";",@out),$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
+			print Out join("\t",$chr,$pos,$type,"$ref/"."$ref",@outvariant,$snpindex,join(";",@out)),"\n";
 		}
 	}
 }

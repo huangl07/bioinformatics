@@ -27,7 +27,7 @@ while (<In>) {
 	foreach my $region (sort keys %{$region{$chr}}) {
 		my ($pos3,$pos4)=split(/\s+/,$region);
 		#print $pos1,"\t",$pos2,"\t",$pos3,"\t",$pos4,"\n";
-		if ($pos1 > $pos3 && $pos1 < $pos4) {
+		if ($pos1 >= $pos3 && $pos1 <= $pos4) {
 			my ($p1,$p2,$p3,$p4)=sort {$a<=>$b} ($pos1,$pos2,$pos3,$pos4);
 			my $newregion=join("\t",$p1,$p4);
 			delete $region{$chr}{$region};

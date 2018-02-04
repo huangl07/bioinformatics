@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$step,$chr);
+my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$step,$chr,$bayes);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -16,6 +16,7 @@ GetOptions(
 	"maf:s"=>\$maf,
 	"mis:s"=>\$mis,
 	"dep:s"=>\$dep,
+	"bayes:s"=>\$bayes,
 	"step:s"=>\$step,
 			) or &USAGE;
 &USAGE unless ($vcf and $out);
@@ -87,6 +88,7 @@ if ($step ==4) {
 	}
 	my $job="perl $Bin/bin/step04.tree-generic.pl -vcf $vcf -out $out/step04.tree-generic -dsh $out/work_sh ";
 	$job.="-gro $gro\n" if ($gro);
+	$job.="-bayes " if ($bayes);
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -151,6 +153,7 @@ Usage:
 	-maf	<num>	maf default 0.05
 	-mis	<num>	mis default 0.3
 	-dep	<num>	default 2 
+	-bayes		do bayes tree,default not
 	-step		pipiline control
 	-h			Help
 

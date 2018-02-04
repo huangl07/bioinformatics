@@ -61,8 +61,8 @@ while (<In>) {
 			push @out,$indi."-GT";
 			push @out,$indi."-AD";
 		}
-		print Out join("\t","#chr","pos","type","ref",@out,"index1","index2","delta","ANNOTATION"),"\n";
-		print Variant join("\t","#chr","pos","type","ref",@out,"ANNOTATION"),"\n";
+		print Out join("\t","#chr","pos","type","ref",@out,"index","ANNOTATION"),"\n";
+		print Variant join("\t","#chr","type","pos","ref",@out,"ANNOTATION","HIGH","MODERATE","LOW","MODIFIER"),"\n";
 
 	}else{
 		my %info;
@@ -115,10 +115,15 @@ while (<In>) {
 				push @out,$ann;
 			}
 		}
+		$ann{HIGH}||=0;
+		$ann{MODERATE}||=0;
+		$ann{LOW}||=0;
+		$ann{MODIFIER}||=0;
+
 		if (scalar @out ==0) {
-			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,"--"),"\n";
+			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,"--",$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
 		}else{
-			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,join(";",@out)),"\n";
+			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,join(";",@out),$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
 		}
 
 		next if ($info{B1}{gt}  eq "./." || $info{B2}{gt} eq "./." ||$info{B1}{dp} < $Bdep || $info{B2}{dp} < $Bdep);

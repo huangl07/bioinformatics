@@ -1,0 +1,13 @@
+#NEXUS
+
+[ID: None Available]
+begin trees;
+   [Note: This tree contains information on the topology, 
+          branch lengths (if present), and the probability
+          of the partition indicated by the branch.]
+   tree con_50_majrule = (rby1:0.001949,rby19:0.001876,(((((((((rby10:0.032039,(rby15:0.008473,rby18:0.011662)1.00:0.159559,rby2:0.005353)1.00:0.062179,rby13:0.011741)1.00:0.039777,rby8:0.021718)1.00:0.039537,((rby6:0.012579,rby9:0.010891)1.00:0.010675,rby7:0.007551)0.99:0.018313)0.65:0.011950,rby14:0.013169)0.99:0.022217,(rby12:0.006265,rby5:0.002138)1.00:0.012923)0.96:0.020716,rby3:0.002815)0.95:0.005602,rby4:0.006528)0.58:0.004961,rby17:0.006828)1.00:0.009458);
+
+   [Note: This tree contains information only on the topology
+          and branch lengths (mean of the posterior probability density).]
+   tree con_50_majrule = (rby1:0.001949,rby19:0.001876,(((((((((rby10:0.032039,(rby15:0.008473,rby18:0.011662):0.159559,rby2:0.005353):0.062179,rby13:0.011741):0.039777,rby8:0.021718):0.039537,((rby6:0.012579,rby9:0.010891):0.010675,rby7:0.007551):0.018313):0.011950,rby14:0.013169):0.022217,(rby12:0.006265,rby5:0.002138):0.012923):0.020716,rby3:0.002815):0.005602,rby4:0.006528):0.004961,rby17:0.006828):0.009458);
+end;

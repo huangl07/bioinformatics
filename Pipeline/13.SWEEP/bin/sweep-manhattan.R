@@ -24,9 +24,9 @@ if ( is.null(opt$input)){ print_usage(spec) }
 library(qqman)
 times<-Sys.time()
 data<-read.table(opt$input,sep="\t",head=TRUE,stringsAsFactors=FALSE)
-thres<-data$MuStat[order(data$MuStat,decreasing=TRUE)[100]
+thres<-quantile(data$MuStat,probs=0.999)
 write.table(file=paste(opt$out,".raisd",sep=""),row.names=FALSE,data)
-write.table(file=paste(opt$out,".raisd.select",sep=""),row.names=FALSE,sub(data,data$MuStat > thres))
+write.table(file=paste(opt$out,".raisd.select",sep=""),row.names=FALSE,subset.data.frame(data,data$MuStat >= thres))
 chrlab=unique(data$chr)
 for (i in 1:length(chrlab)){data$chr[data$chr==chrlab[i]]=i}
 data$chr<-as.numeric(data$chr)

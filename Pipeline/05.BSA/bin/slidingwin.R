@@ -34,7 +34,7 @@ if ( is.null(opt$step)){opt$step=opt$win/40}
 if ( is.null(opt$method)){opt$method="bp"}
 
 data<-read.table(opt$infile,head=TRUE,comment.char = "^");
-
+opt$col=length(unlist(strsplit(opt$col,",")))
 if(opt$col ==3){
 	chr<-data$X.chr
 	pos<-data$pos
@@ -42,9 +42,9 @@ if(opt$col ==3){
 }else{
 	chr<-data$X.chr
 	pos<-data$pos
-	index1<-data$index1
-	index2<-data$index2
-	delta<-data$delta
+	index1<-data$INDEX1
+	index2<-data$INDEX2
+	delta<-data$DELTA
 	index=delta
 }
 ewin<-function(pos,index,p1,p2){
@@ -96,7 +96,7 @@ for (i in 1:(length(chrname))){
 	}else{
 		wmean1=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex1,x[1],x[2]));
 		wmean2=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,chrindex2,x[1],x[2]));
-		indexs=apply(x,MARGIN=1,function(x,y,z,a) mwin(backpos,delta,x[1],x[2]));
+		indexs=wmean1-wmean2;
 		total=apply(x,MARGIN=1,function(x,y,z) twin(backpos,x[1],x[2]));
 		slid<-rbind(slid,data.frame(chr=chrname[i],pos1=pos1,pos2=pos2,index1=wmean1,index2=wmean2,delta=indexs,twin=total))
 	}

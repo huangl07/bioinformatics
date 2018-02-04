@@ -71,6 +71,10 @@ while (<In>) {
 		$pos{$marker[$i]}=$i;
 		if ($marker[$i] =~ /\_/) {
 			$pos{$marker[$i]}=(split(/\_/,$marker[$i]))[-1];
+			if ($pos{$marker[$i]}=~/\-/) {
+				$pos{$marker[$i]}=(split(/\-/,$pos{$marker[$i]}))[0];
+			}
+
 		}
 	}
 		print Map "group $chr\n";
