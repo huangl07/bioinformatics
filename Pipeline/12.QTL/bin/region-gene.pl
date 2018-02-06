@@ -19,17 +19,19 @@ open In,$select;
 my %region;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/ ||/#/);
+	s/\"//g;
+	next if ($_ eq ""||/^$/ ||/#/ ||/mark1/);
 	my ($marker,$chr,$pos,$lod,$var,$pm1,$pm2,$start,$end,$mark1,$mark2)=split(/\s+/,$_);
-	my ($chr1,$start1)=split(/\s+/,$mark1);
-	my ($chr2,$start2)=split(/\s+/,$mark2);
+	my ($chr1,$start1)=split(/\_/,$mark1);
+	my ($chr2,$start2)=split(/\_/,$mark2);
 	if ($chr1 ne $chr2) {
-		die "error region!";
+		die "error region!,$chr1\t$chr2\n";
 	}else{
-		$region{$chr1}=join("\t",sort{$a<=>$b}($start1,$start2));
+		$region{$chr1}{join("\t",sort{$a<=>$b}($start1,$start2))}=1;
 	}
 }
 close In;
+
 open In,$anno;
 my %kdetail;
 my %gdetail;
@@ -48,25 +50,25 @@ while (<In>) {
 	}
 	my ($Gene_name,$Gene_id,$Transcript_id,$Bio_Type,$chr,$Pos1,$Pos2,$High,$Moderate,$Low,$Modifier,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$express)=split(/\t/,$_);
 	my $regioned=0;
-	foreach my $region (sort keys %{$region{$chr}}) {
-		my ($pos3,$pos4)=split(/\t/,$region);
-		if (($Pos1 > $pos3 && $Pos1 <$pos4) ||($Pos2 > $pos3 && $Pos2 < $pos4) || ($pos3 > $Pos1 && $pos3 < $Pos2) || ($pos4 > $Pos1 && $pos4 < $Pos2)) {
-			push @{$info{$chr}{$region}},$_;
-			$stat{$chr}{$region}{total}++;
-			$stat{$chr}{$region}{totalnr}++ if($nrid ne "--");
-			$stat{$chr}{$region}{totaluni}++ if($uniid ne "--");
-			$stat{$chr}{$region}{totalkegg}++ if($koid ne "--");
-			$stat{$chr}{$region}{totalgo}++ if($goid ne "--");
-			$stat{$chr}{$region}{totaleggnog}++ if($eid ne "S");
-			$stat{$chr}{$region}{eff}++ if($High+$Moderate > 0);
-			$stat{$chr}{$region}{effnr}++ if($nrid ne "--" && $High+$Moderate > 0);
-			$stat{$chr}{$region}{effuni}++ if($uniid ne "--" && $High+$Moderate > 0 );
-			$stat{$chr}{$region}{effkegg}++ if($koid ne "--" && $High+$Moderate > 0);
-			$stat{$chr}{$region}{effgo}++ if($goid ne "--" && $High+$Moderate > 0);
-			$stat{$chr}{$region}{effeggnog}++ if($eid ne "S" && $High+$Moderate > 0);
-			$regioned=1;
+		foreach my $region (sort keys %{$region{$chr}}) {
+			my ($pos3,$pos4)=split(/\t/,$region);
+			if (($Pos1 > $pos3 && $Pos1 <$pos4) ||($Pos2 > $pos3 && $Pos2 < $pos4) || ($pos3 > $Pos1 && $pos3 < $Pos2) || ($pos4 > $Pos1 && $pos4 < $Pos2)) {
+				push @{$info{$chr}{$region}},$_;
+				$stat{$chr}{$region}{total}++;
+				$stat{$chr}{$region}{totalnr}++ if($nrid ne "--");
+				$stat{$chr}{$region}{totaluni}++ if($uniid ne "--");
+				$stat{$chr}{$region}{totalkegg}++ if($koid ne "--");
+				$stat{$chr}{$region}{totalgo}++ if($goid ne "--");
+				$stat{$chr}{$region}{totaleggnog}++ if($egid ne "S");
+				$stat{$chr}{$region}{eff}++ if($High+$Moderate > 0);
+				$stat{$chr}{$region}{effnr}++ if($nrid ne "--" && $High+$Moderate > 0);
+				$stat{$chr}{$region}{effuni}++ if($uniid ne "--" && $High+$Moderate > 0 );
+				$stat{$chr}{$region}{effkegg}++ if($koid ne "--" && $High+$Moderate > 0);
+				$stat{$chr}{$region}{effgo}++ if($goid ne "--" && $High+$Moderate > 0);
+				$stat{$chr}{$region}{effeggnog}++ if($egid ne "S" && $High+$Moderate > 0);
+				$regioned=1;
+			}
 		}
-	}
 	$astat{total}++;
 	$astat{eff}++ if($regioned == 1);
 	my @koid=split(/:/,$koid);
@@ -100,7 +102,7 @@ open Out,">$fOut.total";
 print Out "#\@chr\tpos1\tpos2\ttotal\teff\ttotalnr\ttotaluni\ttotalkegg\ttotalgo\ttotaleggnog\teffnr\teffuni\teffkegg\teffgo\teffeggnog\n";
 print Out "$head\n";
 foreach my $chr (sort keys %region) {
-	foreach my $region (sort keys %{$region{$chr}}) {
+	foreach my $region (sort keys %{$stat{$chr}}) {
 		$stat{$chr}{$region}{totalnr}||=0;
 		$stat{$chr}{$region}{totaluni}||=0;
 		$stat{$chr}{$region}{totalkegg}||=0;

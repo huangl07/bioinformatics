@@ -107,7 +107,7 @@ foreach my $sample (sort keys %vcfstat) {
 	$vcfstat{$sample}{insert}||=0;
 	$vcfstat{$sample}{delete}|=0;
 	next if($sample eq "pop");
-	print Out join("\t",$sample,$vcfstat{$sample}{insert},$vcfstat{$sample}{delete},$vcfstat{$sample}{homo},$vcfstat{$sample}{total}-$vcfstat{$sample}{homo},sprintf("%.2f",$vcfstat{$sample}{lenth}/$vcfstat{$sample}{total}),sprintf("%.2f",$vcfstat{$sample}{dp}/$vcfstat{$sample}{total}),$vcfstat{$sample}{miss},$vcfstat{$sample}{ref}),"\n";
+	print Out join("\t",$sample,$vcfstat{$sample}{insert},$vcfstat{$sample}{delete},$vcfstat{$sample}{total}-$vcfstat{$sample}{homo},$vcfstat{$sample}{homo},sprintf("%.2f",$vcfstat{$sample}{lenth}/$vcfstat{$sample}{total}),sprintf("%.2f",$vcfstat{$sample}{dp}/$vcfstat{$sample}{total}),$vcfstat{$sample}{miss},$vcfstat{$sample}{ref}),"\n";
 }
 print Out join("\t","pop",$vcfstat{pop}{insert},$vcfstat{pop}{delete},"--","--",sprintf("%.2f",$vcfstat{pop}{lenth}/$vcfstat{pop}{total}),sprintf("%.2f",$vcfstat{pop}{dp}/$vcfstat{pop}{total}),"--","--"),"\n";
 close Out;

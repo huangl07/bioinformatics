@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr);
+my ($vcf,$out,$dsh,$maf,$mis,$dep,$gro,$chr,$bayes);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -25,7 +25,7 @@ $vcf=ABSOLUTE_DIR($vcf);
 my $id="pop";
 open SH,">$dsh/step04.tree-generic1.sh";
 print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id &&";
-print SH "model-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test && ";
+print SH "modeltest-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test && ";
 print SH "perl $Bin/bin/bayes-prepair.pl -i $out/$id.fasta -m $out/pop.model.test -o $out/bayes\n";
 open SH,">$dsh/step04.tree-generic2.sh";
 my $sh=`grep raxml $out/pop.model.test|uniq`;
@@ -97,7 +97,8 @@ Usage:
   -vcf	<file>	input vcf files
   -out	<dir>	output dir
   -dsh	<dir>	output work shell
-
+  -gro	<file>	pop file
+  -bayes
   -h         Help
 
 USAGE

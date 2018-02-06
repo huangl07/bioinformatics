@@ -26,7 +26,7 @@ while (<In>) {
 	if ($chr1 ne $chr2) {
 		die "error region!";
 	}else{
-		$region{$chr1}=join("\t",sort{$a<=>$b}($start1,$start2));
+		$region{$chr1}{join("\t",sort{$a<=>$b}($start1,$start2))}=1;;
 	}
 }
 close In;
