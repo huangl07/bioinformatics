@@ -61,30 +61,30 @@ if(opt$pop == "cp"){
 	plotMap(d2,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
 	chrname<-chrnames(d);
-	for(i in chrname){
-		pdf(paste(i,".heatMap.sexAver.pdf",sep=""))
-		heatMap(d,chr=i,lmax=50,"both")
+	for(i in c(1:length(chrname))){
+		pdf(paste(chrname[i],".heatMap.sexAver.pdf",sep=""))
+		plot.rf(d,chr=i,lmax=50,"both")
 		dev.off()
-		png(paste(i,".heatMap.sexAver.png",sep=""))
-		heatMap(d,chr=i,lmax=50,"both")
+		png(paste(chrname[i],".heatMap.sexAver.png",sep=""))
+		plot.rf(d,chr=i,lmax=50,"both")
 		dev.off()
 	}
 	chrname<-chrnames(d1);
-	for(i in chrname){
-		pdf(paste(i,".heatMap.male.pdf",sep=""))
-		heatMap(d1,chr=i,lmax=50,"both")
+	for(i in c(1:length(chrname))){
+		pdf(paste(chrname[i],".heatMap.male.pdf",sep=""))
+		plot.rf(d1,chr=i,lmax=50,"both")
 		dev.off()
-		png(paste(i,".heatMap.male.png",sep=""))
-		heatMap(d1,chr=i,lmax=50,"both")
+		png(paste(chrname[i],".heatMap.male.png",sep=""))
+		plot.rf(d1,chr=i,lmax=50,"both")
 		dev.off()
 	}
 	chrname<-chrnames(d2);
-	for(i in chrname){
-		pdf(paste(i,".heatMap.female.pdf",sep=""))
-		heatMap(d2,chr=i,lmax=50,"both")
+	for(i in c(1:length(chrname))){
+		pdf(paste(chrname[i],".heatMap.female.pdf",sep=""))
+		plot.rf(d2,chr=i,lmax=50,"both")
 		dev.off()
-		png(paste(i,".heatMap.female.png",sep=""))
-		heatMap(d2,chr=i,lmax=50,"both")
+		png(paste(chrname[i],".heatMap.female.png",sep=""))
+		plot.rf(d2,chr=i,lmax=50,"both")
 		dev.off()
 	}
 }else{
@@ -99,7 +99,7 @@ if(opt$pop == "cp"){
 	plotMap(d,shift=TRUE,alternate.chrid=TRUE)
 	dev.off()
 	chrname<-chrnames(d);
-	for(i in chrname){
+	for(i in c(1:length(chrname))){
 		pdf(paste(i,".heatMap.pdf",sep=""))
 		plotRF(d,chr=i,what='both')
 		dev.off()

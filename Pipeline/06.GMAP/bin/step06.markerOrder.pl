@@ -35,9 +35,15 @@ while (<In>) {
 	next if ($_ eq ""||/^$/);
 	my ($lg,$file)=split(/\s+/,$_);
 	if ($popt eq "CP") {
-		print SH "crosslink_group --inp=$file --outbase=$out/$lg. --mapbase=$out/$lg. --min_lod=-1 --randomise_order=1 && ";
-		print SH "perl $Bin/bin/map-gather.pl -i $out/$lg.000.map -o $out/$lg && ";
-		print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $out/$lg.000.loc -k $lg -d $out\n";
+		if ($ref) {
+			print SH "crosslink_pos --inp=$file --out=$out/$lg.000.map && ";
+			print SH "perl $Bin/bin/map-gather.pl -i $out/$lg.000.map -o $out/$lg && ";
+			print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $file -k $lg -d $out\n";
+		}else{
+			print SH "crosslink_group --inp=$file --outbase=$out/$lg. --mapbase=$out/$lg. --min_lod=-1 --randomise_order=1 && ";
+			print SH "perl $Bin/bin/map-gather.pl -i $out/$lg.000.map -o $out/$lg && ";
+			print SH "perl $Bin/bin/smooth-CP.pl -m $out/$lg.sexAver.map -l $out/$lg.000.loc -k $lg -d $out\n";
+		}
 	}else{
 		print SH "MSTmap $file $out/$lg.out &&";
 		print SH "perl $Bin/bin/smooth-NOCP.pl -i $file -m $out/$lg.out -o $out/$lg.correct.marker \n ";
@@ -93,6 +99,7 @@ Usage:
   -gen	<file>	input marker list file
   -out	<dir>	output dir
   -dsh	<dir>	worksh dir
+  -ref	mapping by ref
   -popt	<srt>	population type
   -h         Help
 

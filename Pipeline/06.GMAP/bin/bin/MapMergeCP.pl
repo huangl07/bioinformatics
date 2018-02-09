@@ -138,12 +138,12 @@ my $nloc=0;
 my $nind=0;
 my @out;
 foreach my $marker (@marker) {
-	next if ($marker  !~ /pri/);
+	next if ($marker  =~ /pri/);
 	open In,$marker;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/);
-		my @info=split;
+		my @info=split(/\s+/,$_);
 		next if (scalar @info < 3);
 		if (/=/) {
 			next;
@@ -159,7 +159,7 @@ foreach my $marker (@marker) {
 	}
 	close In;
 }
-open Out,">$dOut/total.loc";
+open Out,">$dOut/total.sexAver.loc";
 print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
 #print Out "individual names\n",join("\n",@Indi);
 close Out;

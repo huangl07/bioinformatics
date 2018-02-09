@@ -28,7 +28,7 @@ print SH "perl $Bin/bin/vcf2tree.pl -i $vcf -o $out/$id &&";
 print SH "modeltest-ng  -p 4 -d nt -i $out/$id.phylip  -o $out/pop.model.test && ";
 print SH "perl $Bin/bin/bayes-prepair.pl -i $out/$id.fasta -m $out/pop.model.test -o $out/bayes\n";
 open SH,">$dsh/step04.tree-generic2.sh";
-my $sh=`grep raxml $out/pop.model.test|uniq`;
+my $sh=`grep raxml-ng $out/pop.model.test.log|uniq`;
 $sh=~s/>//g;chomp $sh;
 $sh .=" --threads 16 --bootstrap 1000 ";
 print SH "$sh && ";

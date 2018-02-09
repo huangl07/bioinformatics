@@ -98,9 +98,6 @@ if ($step == 4) {
 	print Log "variant-merge Done and elapsed time : ",time()-$time,"s\n";
 	print Log "########################################\n";
 	$step++ ;
-	if ($popt ne "CP") {
-		$step++;
-	}
 	if (!$ref) {
 		$step++;
 	}
@@ -116,7 +113,7 @@ if ($step == 5 ) {
 	}else{
 		$marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
 	}
-	my $job="perl $Bin/bin/step05.split-files.pl -lg $lg -gen $marker -out $out/05.map-cycle1 -dsh $dsh ";
+	my $job="perl $Bin/bin/step05.split-files.pl -lg $lg -gen $marker -out $out/05.split-files -dsh $dsh -popt $popt";
 	$job.= " -ref" if($ref);
 	print Log "$job\n";
 	`$job`;
@@ -130,8 +127,11 @@ if ($step == 6 and $ref) {
 	print Log "########################################\n";
 	print Log "modify for ref \n",my $time=time();
 	print Log "########################################\n";
-	my $gen=ABSOLUTE_DIR("$out/05.map-cycle1/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/06.map-cycle2 -dsh $dsh -cycle 2\n";
+	my $gen=ABSOLUTE_DIR("$out/05.split-files/pri.marker.list");
+	if ($ref) {
+		$gen=ABSOLUTE_DIR("$out/05.split-files/ref.marker.list");
+	}
+	my $job="perl $Bin/bin/step06.markerOrder.pl -gen $gen -popt $popt -out $out/06.map-cycle1 -dsh $dsh -cycle 1\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -145,7 +145,7 @@ if ($step == 7) {
 	print Log "map cycle1 \n",my $time=time();
 	print Log "########################################\n";
 	my $gen=ABSOLUTE_DIR("$out/06.map-cycle2/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle3 -dsh $dsh -cycle 3\n";
+	my $job="perl $Bin/bin/step06.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle2 -dsh $dsh -cycle 2\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -159,7 +159,7 @@ if ($step == 8) {
 	print Log "map cycle2 \n",my $time=time();
 	print Log "########################################\n";
 	my $gen=ABSOLUTE_DIR("$out/06.map-cycle2/marker.list");
-	my $job="perl $Bin/bin/step05.markerOrder.pl -gen $gen -popt $popt -out $out/07.map-cycle3 -dsh $dsh -cycle 3\n";
+	my $job="perl $Bin/bin/step06.markerOrder.pl -gen $gen -popt $popt -out $out/08.map-cycle3 -dsh $dsh -cycle 3\n";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -174,8 +174,8 @@ if ($step == 9) {
 	print Log "evalutaion\n",my $time=time();
 	print Log "########################################\n";
 	my $marker=ABSOLUTE_DIR("$out/01.vcf-convert/pop.filtered.marker");
-	my $dmap=ABSOLUTE_DIR("$out/09.map-cycle5");
-	my $job="perl $Bin/bin/step06.mapEvaluation.pl -dmap $dmap -popt $popt -out $out/10.mapEvalue --mark $marker -dsh $dsh ";
+	my $dmap=ABSOLUTE_DIR("$out/08.map-cycle3");
+	my $job="perl $Bin/bin/step07.mapEvaluation.pl -dmap $dmap -popt $popt -out $out/10.mapEvalue --mark $marker -dsh $dsh ";
 	if ($ref) {
 		$job.="-ref \n";
 	}

@@ -42,7 +42,7 @@ if ( is.null(opt$varfile) )	{ print_usage(spec) }
 
 
 pca.file<-read.table(opt$infile,header=FALSE)
-colnames(pca.file)=c("FID","IID","PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9","PC10","PC11","PC12","PC13","PC14","PC15","PC16","PC17","PC18","PC19","PC20")
+colnames(pca.file)=c("FID","IID",paste("PC",rep(1:(length(pca.file[1,])-2)),sep=""))
 if (!is.null(opt$group)){
 	pop.list<-read.table(opt$group,header=FALSE)
 	names(pop.list)=c("id","popid")
