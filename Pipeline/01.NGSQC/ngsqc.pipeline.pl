@@ -55,26 +55,12 @@ if ($step == 1) {
 	$step++ unless($step == $stop);
 }
 my %enzyme;
-if ($step == 2) {
-	print Log "########################################\n";
-	print Log "NGSQC!"; my $time=time();
-	print Log "########################################\n";
-	$fqlist=ABSOLUTE_DIR("$dOut/01.RawData/fastq.list");
-	my $job="perl $Bin/bin/step02.rawdata-qc.pl -fqlist $fqlist -out $dOut/02.RawDataQC/ -dsh $dOut/work_sh";
-	print Log "$job\n";
-	`$job`;
-	print Log "$job\tdone!\n";
-	print Log "########################################\n";
-	print Log "NGSQC Done and elapsed time : ",time()-$time,"s\n";
-	print Log "########################################\n";
-	$step++ ;
-}
-if($step==3){
+if($step==2){
 	print Log "########################################\n";
 	print Log " check RawData duplication!"; my $time=time();
 	print Log "########################################\n";
 	$fqlist=ABSOLUTE_DIR("$dOut/01.RawData/fastq.list");
-	my $job="perl $Bin/bin/step03.rawdata-dup.pl -fqlist $fqlist -out $dOut/03.RawDataDup/ -dsh $dOut/work_sh";
+	my $job="perl $Bin/bin/step02.rawdata-dup.pl -fqlist $fqlist -out $dOut/03.RawDataDup/ -dsh $dOut/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -83,12 +69,12 @@ if($step==3){
 	print Log "########################################\n";
 	$step++ ;
 }
-if($step==4){
+if($step==3){
 	print Log "########################################\n";
 	print Log "fastq trim  !"; my $time=time();
 	print Log "########################################\n";
 	$fqlist=ABSOLUTE_DIR("$dOut/01.RawData/fastq.list");
-	my $job="perl $Bin/bin/step04.fastp-qc.pl -fqlist $fqlist -out $dOut/04.CleanData/ -dsh $dOut/work_sh";
+	my $job="perl $Bin/bin/step03.fastp-qc.pl -fqlist $fqlist -out $dOut/04.CleanData/ -dsh $dOut/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -97,26 +83,12 @@ if($step==4){
 	print Log "########################################\n";
 	$step++ ;
 }
-if($step==5){
-	print Log "########################################\n";
-	print Log "NGSQC!"; my $time=time();
-	print Log "########################################\n";
-	$fqlist=ABSOLUTE_DIR("$dOut/04.CleanData/fastq.list");
-	my $job="perl $Bin/bin/step05.clean-qc.pl -fqlist $fqlist -out $dOut/05.CleanDataQC/ -dsh $dOut/work_sh";
-	print Log "$job\n";
-	`$job`;
-	print Log "$job\tdone!\n";
-	print Log "########################################\n";
-	print Log " NGSQC Done and elapsed time : ",time()-$time,"s\n";
-	print Log "########################################\n";
-	$step++ ;
-}
-if($step==6){
+if($step==4){
 	print Log "########################################\n";
 	print Log " check CleanData duplication!"; my $time=time();
 	print Log "########################################\n";
 	$fqlist=ABSOLUTE_DIR("$dOut/04.CleanData/fastq.list");
-	my $job="perl $Bin/bin/step06.clean-dup.pl -fqlist $fqlist -out $dOut/06.CleanDataDup/ -dsh $dOut/work_sh";
+	my $job="perl $Bin/bin/step04.clean-dup.pl -fqlist $fqlist -out $dOut/06.CleanDataDup/ -dsh $dOut/work_sh";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";
@@ -125,7 +97,7 @@ if($step==6){
 	print Log "########################################\n";
 	$step++ ;
 }
-if($step==7){
+if($step==5){
 	#check pollution;
 	print Log "########################################\n";
 	print Log "check pollution!"; my $time=time();
@@ -140,7 +112,7 @@ if($step==7){
 	print Log "########################################\n";
 	$step++ ;
 }
-if ($step == 8) {
+if ($step == 6) {
 	print Log "########################################\n";
 	print Log "merge result!"; my $time=time();
 	print Log "########################################\n";
@@ -151,7 +123,7 @@ if ($step == 8) {
 	my $cleandup=ABSOLUTE_DIR("$dOut/06.CleanDataDup/dup.list");
 	my $pollution=ABSOLUTE_DIR("$dOut/07.Pollution/pollution.summary.xls");
 	
-	my $job="perl $Bin/bin/step08.merge_report.pl -rawlist $rawlist -rawdup $rawdup -cleandup $cleandup  -cleanlist $cleanlist -cleanfig $cleanfig  -pollution $pollution -o $dOut/08.QCreport/";
+	my $job="perl $Bin/bin/step06.merge_report.pl -rawlist $rawlist -rawdup $rawdup -cleandup $cleandup  -cleanlist $cleanlist -cleanfig $cleanfig  -pollution $pollution -o $dOut/08.QCreport/";
 	print Log "$job\n";
 	`$job`;
 	print Log "$job\tdone!\n";

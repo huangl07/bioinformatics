@@ -16,14 +16,18 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut );
 mkdir $dOut if (!-d $dOut);
-my @map=glob("$dmap/*.map");
+my @map=glob("$dmap/*.out");
 open Out,">$dOut/total.map";
 my %Marker;
 my %lg;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lg{$lgID}=1;
-	$lgID=scalar keys %lg;
+	if ($lgID =~ /(\d+)/) {
+		$lgID=$1;
+	}else{
+		$lgID=scalar keys %lg;
+	}
 	print Out "group\t",$lgID,"\n";
 	open In,$map;
 	my $max=0;
@@ -40,20 +44,18 @@ foreach my $map (@map) {
 	}
 	close In;
 	my $newdis=$max;
-	my $pos0=0;
 	if ($adjust) {
-		$newdis=rand(40)+120;
-		$pos0=(split(/\,/,$Marker{$order[0]}))[1];
+		$newdis=rand(60)+120;
 	}
 	foreach my $id (@order) {
 		my ($lgid,$pos)=split(/\,/,$Marker{$id});
-		$pos=$newdis/$max*($pos-$pos0);
+		$pos=$newdis/$max*$pos;
 		$Marker{$id}=join(",",$lgid,$pos);
 		print Out $id,"\t",$pos,"\n";
 	}	
 }
 close Out;
-my @marker=glob("$dmap/*.correct.loc");
+my @marker=glob("$dmap/*.correct.marker");
 open Out,">$dOut/total.marker";
 open CSV,">$dOut/total.csv";
 my $head;

@@ -37,7 +37,7 @@ pvalue<-phyper(data$k,data$M,data$N-data$M,data$n,lower.tail=FALSE);
 qvalue<-p.adjust(pvalue,method="fdr")
 outd<-data.frame(id=data$id,des=data$description,eff=data$k,total=data$n,pvalue=1-pvalue,qvalue=1-qvalue)
 outd<-outd[order(outd$eff,decreasing=T),]
-write.table(file=paste(opt$output,"detail",sep="."),outd,row.name=FALSE);
+write.table(file=paste(opt$output,"detail",sep="."),outd,row.name=FALSE,sep="\t");
 draw<-data.frame(id=outd$id,des=outd$des,eff=outd$eff)
 if(!is.null(opt$top)){
 	draw<-data.frame(id=outd$id[1:20],des=outd$des[1:20],eff=outd$eff[1:20])

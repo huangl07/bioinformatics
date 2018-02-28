@@ -68,7 +68,7 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.NT\": \"16\"\n";
 		print Out "}\n";
 		close Out;
-		print SH "cd $dOut/ && java -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
+		print SH "cd $dOut/ && java -Xmx150G -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
 	}
 	$id =~ s/SN://g;
 	print {$hand{$hand}} $id,"\n";
@@ -76,7 +76,7 @@ while (<In>) {
 close In;
 close SH;
 close List;
-my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=120G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
+my $job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=150G --CPU 16 --maxjob $proc $dShell/08-1.gvcf-typing.sh";
 `$job`;
 open SH,">$dShell/08-2.mergeVCF.sh";
 my $mem=`du -s $dOut/*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;

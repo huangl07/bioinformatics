@@ -43,22 +43,23 @@ d<-jittermap(d)
 d<-sim.geno(d)
 d<-calc.genoprob(d)
 phe.name<-colnames(d$pheno)
+nphe=length(phe.name[phe.name!= "Genotype" & phe.name !="sampleID"]);
 nrow=4;
-ncol=ceiling(length(phe.name)/4)
-if(ncol==1){nrow=length(phe.name)}
-ncol=ceiling(sqrt(length(phe.name)));
+ncol=ceiling(nphe/4)
+if(ncol==1){nrow=nphe}
+ncol=ceiling(sqrt(nphe));
 nrow=ncol;
 pdf("pheno.pdf",width=30*ncol,height=40*nrow)
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
-	if(phe.name[i] == "Genotype"){next;}
+	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
 png("pheno.png")
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
-	if(phe.name[i] == "Genotype"){next;}
+	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()

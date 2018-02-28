@@ -105,9 +105,10 @@ while (<In>) {
 			push @outvariant,$ginfo{$indi[$i]}{ad};
 		}
 		my @out;
+					my %ann;
+
 		if($info=~/ANN=([^\;]*)/g){
 			my @ann=split(/\,/,$1);
-			my %ann;
 			for (my $i=0;$i<@ann;$i++) {
 				my @str=split(/\|/,$ann[$i]);
 				my $ann=join("|",$str[1],$str[2],$str[3],$str[4]);
