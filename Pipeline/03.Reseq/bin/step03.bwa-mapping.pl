@@ -30,10 +30,12 @@ open Out,">$dOut/bam.list";
 my %bam;
 my %bamfile;
 my %sample;
+my %type;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,$fq1,$fq2)=split(/\s+/,$_);
+	my ($sampleID,$fq1,$fq2,$type)=split(/\s+/,$_);
+	$type{$sampleID}=$type;
 	$fq1=ABSOLUTE_DIR($fq1);
 	$fq2=ABSOLUTE_DIR($fq2);
 	if (!-f $fq1 || !-f $fq2) {
@@ -48,7 +50,7 @@ while (<In>) {
 close In;
 close SH;
 foreach my $sampleID (keys %bamfile) {
-	print Out $sampleID,"\t",join("\t",@{$bamfile{$sampleID}}),"\n";
+	print Out $sampleID,"\t",$type{$sampleID},"\t",join("\t",@{$bamfile{$sampleID}}),"\n";
 }
 close Out;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=5G --CPU 8 --maxjob $proc $dShell/03.bwa-mapping.sh";

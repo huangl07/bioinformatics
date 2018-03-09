@@ -43,22 +43,23 @@ d<-jittermap(d)
 d<-sim.geno(d)
 d<-calc.genoprob(d)
 phe.name<-colnames(d$pheno)
+nphe=length(phe.name[phe.name!= "Genotype" & phe.name !="sampleID"]);
 nrow=4;
-ncol=ceiling(length(phe.name)/4)
-if(ncol==1){nrow=length(phe.name)}
-ncol=ceiling(sqrt(length(phe.name)));
+ncol=ceiling(nphe/4)
+if(ncol==1){nrow=nphe}
+ncol=ceiling(sqrt(nphe));
 nrow=ncol;
 pdf("pheno.pdf",width=30*ncol,height=40*nrow)
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
-	if(phe.name[i] == "Genotype"){next;}
+	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
 png("pheno.png")
 par(mfrow=c(ncol,nrow))
 for (i in 1:length(phe.name)){
-	if(phe.name[i] == "Genotype"){next;}
+	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	plotPheno(d,pheno.col=phe.name[i])
 }
 dev.off()
@@ -74,7 +75,8 @@ for(i in 1:length(phe.name)){
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
 	theshold=3;
-	if(min(scan.result$pval) >0.1){
+	print(scan.result);
+	if(min(scan.result$pval) >0.05){
 		scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1)
 		if(length(rownames(scan.result$lod)) < 1){
 			theshold=2.5;
@@ -83,11 +85,11 @@ for(i in 1:length(phe.name)){
 		pm.result<-c(3,2.5)
 		legend=pm.result
 	}else{	
-		theshold=summary(scan.pm,alpha=0.01);
-		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
+		theshold=summary(scan.pm,alpha=0.01)[1];
+		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.01,drop=1)
 		if(length(rownames(scan.result$lod)) < 1){
-			theshold=summary(scan.pm,alpha=0.05);
-			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
+			theshold=summary(scan.pm,alpha=0.05)[1];
+			scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.05,drop=1)
 		}
 		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
 		legend=paste(rownames(pm.result),round(pm.result,2))
@@ -109,14 +111,24 @@ for(i in 1:length(phe.name)){
 	n=0;
 	for (j in chr){
 		subd=which(outd$chr==j & outd$lod > theshold[1])
-		if(length(subd) < 1){next;}
-		start=1000;
-		end=-1;
+		print(paste(j,length(subd),sep="\t"))
+		if(length(subd)==0){next;}
+		start=subd[1]
+		end=subd[1]
+		if(length(subd) == 1){
+			if (!is.null(qdata)){
+				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
+			}else{
+				qdata<-data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end])
+			}
+			next;
+		}
 		for(k in c(2:length(subd))){
 			if(subd[k]-subd[k-1] < 2){
 				if(subd[k-1] < start){start=subd[k-1]}
 				if(subd[k] > end){end=subd[k]}
 			}else{	
+				print(paste(start,end))
 				if (!is.null(qdata)){
 					qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
 				}else{
@@ -127,7 +139,7 @@ for(i in 1:length(phe.name)){
 				end=subd[k]
 			}
 		}
-		if(start != 1000){
+		if(end != subd[1]){
 			n=n+1;
 			if (!is.null(qdata)){
 				qdata<-rbind(qdata,data.frame(chr=j,n=n,pos=outd$pos[start:end][which.max(outd$lod[start:end])],lod=max(outd$lod[start:end]),start=outd$pos[start],end=outd$pos[end]))
@@ -136,13 +148,13 @@ for(i in 1:length(phe.name)){
 			}
 		}
 	}
-	qtlname=paste(phe.name[i],c(1:length(qdata$n)))
+	qtlname=paste(phe.name[i],c(1:length(qdata$n)),sep="-")
 	qtl<-makeqtl(d,chr=qdata$chr,pos=qdata$pos,qtl.name=qtlname)
 	fitqtl<-fitqtl(cross=d,qtl=qtl,get.est=TRUE,pheno.col=i)
 	markerid<-find.marker(d,chr=qtl$chr,pos=qtl$pos)
 	var<-fitqtl$result.drop[,"%var"]
 	if (length(qtl$name) == 1){var<-fitqtl$result.full["Model","%var"]}
-	data<-data.frame(marker=markerid,chr=qdata$chr,pos=qdata$pos,lod=qdata$lod,var=var,pm1=pm.result[1],pm2=pm.result[2],start=outd$pos[start],end=outd$pos[end])
+	data<-data.frame(marker=markerid,chr=qdata$chr,pos=qdata$pos,lod=qdata$lod,var=var,pm1=pm.result[1],pm2=pm.result[2],start=qdata$start,end=qdata$end)
 	for(j in 1:length(qtlname)){
 		data$mark1[j]=find.marker(d,chr=qtl$chr[j],data$start[j])
 		data$mark2[j]=find.marker(d,chr=qtl$chr[j],data$end[j])

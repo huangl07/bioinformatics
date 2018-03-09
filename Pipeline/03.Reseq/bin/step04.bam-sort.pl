@@ -29,14 +29,14 @@ my %bam;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,@bam)=split(/\s+/,$_);
+	my ($sampleID,$type,@bam)=split(/\s+/,$_);
 	foreach my $bam (@bam) {
 		if (!-f $bam) {
 			die "check $bam!";
 		}
 	}
 	my $bam=join(" ",@bam);
-	print Out $sampleID,"\t$outdir/$sampleID.sort.bam\n";
+	print Out $sampleID,"\t$type\t$outdir/$sampleID.sort.bam\n";
 	print SH "samtools merge -f -p -@ 8 --output-fmt BAM $outdir/$sampleID.merged.bam $bam && ";
 	print SH "samtools sort -o $outdir/$sampleID.sort.bam --output-fmt BAM -@ 8 $outdir/$sampleID.merged.bam &&";
 	print SH "samtools index $outdir/$sampleID.sort.bam \n";

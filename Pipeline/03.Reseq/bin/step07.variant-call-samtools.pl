@@ -40,7 +40,7 @@ close Out;
 open In,$dict;
 my %filehand;
 my $n=0;
-open SH,">$dShell/step05.call-variant1.sh";
+open SH,">$dShell/step07-1.call-variant.sh";
 open List,">$dOut/vcf.list";
 my $vcfs;
 while (<In>) {
@@ -69,7 +69,7 @@ while (<In>) {
 close In;
 close SH;
 close List;
-open SH,">$dShell/08-2.mergeVCF.sh";
+open SH,">$dShell/step07-2.mergeVCF.sh";
 my $mem=`du -s ./*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
 $mem=$mem/1000000;
 $mem=(int($mem/100)+1)*100;
@@ -78,10 +78,10 @@ print SH "bcftools concat $vcfs -o $dOut/pop.noid.vcf -O v && ";
 print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
 print SH "bcftools sort -m $mem\G -T $dOut/temp/ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
 close SH;
-my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step05.call-variant1.sh";
+my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step07.call-variant.sh";
 print $job;
 `$job`;
-$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step05.call-variant2.sh";
+$job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step07-2.mergeVCF.sh";
 print $job;
 `$job`;
 #######################################################################################

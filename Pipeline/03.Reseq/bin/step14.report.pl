@@ -143,7 +143,7 @@ close Out;
 open Out,">$dOut/Table/Total.mapped.detail";
 print Out "#sampleID\tMapped Ratio(%)\tProper Ratio(%)\tDuplicate Ratio(%)\tInsert Size\tAverage Depth\tReal Depth\tgenome coverage(1X)\tgenome coverage(5X)\n";
 foreach my $sample (sort keys %stat) {
-	print Out join("\t",$sample,sprintf("%.2f",$stat{$sample}{"mapped ratio(%)"}),sprintf("%.2f",$stat{$sample}{"proper ratio(%)"}).sprintf("%.2f",$stat{$sample}{"duplicate ratio(%)"}),$stat{$sample}{"average insert size"},$stat{$sample}{"average depth"},$stat{$sample}{"real depth"},$stat{$sample}{"genome coverage(1X)"},$stat{$sample}{"genome coverage(5X)"}),"\n";
+	print Out join("\t",$sample,sprintf("%.2f",$stat{$sample}{"mapped ratio(%)"}),sprintf("%.2f",$stat{$sample}{"proper ratio(%)"}),sprintf("%.2f",$stat{$sample}{"duplicate ratio(%)"}),$stat{$sample}{"average insert size"},$stat{$sample}{"average depth"},$stat{$sample}{"real depth"},$stat{$sample}{"genome coverage(1X)"},$stat{$sample}{"genome coverage(5X)"}),"\n";
 }
 close Out;
 

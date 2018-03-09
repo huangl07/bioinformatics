@@ -11,13 +11,15 @@ task gvcftyping {
   File Internal
   String Filename
   String NT
+  String Xmx
   command {
-    java -XX:+UseSerialGC -Xmx120G -Djava.io.tmpdir=${workdir}/tmp/ -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
+    java -XX:+UseSerialGC -Xmx${Xmx} -Djava.io.tmpdir=${workdir}/tmp/ -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar \
         -T  GenotypeGVCFs\
         -R ${RefFasta} \
         -V ${inputVCFs} \
         -o ${workdir}/${Filename}.noid.vcf \
         --never_trim_vcf_format_field \
+	--max_alternate_alleles 3 \
 	-L ${Internal} \
 	-jdk_inflater \
 	-jdk_deflater \

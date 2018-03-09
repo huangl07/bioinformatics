@@ -28,10 +28,12 @@ mkdir $dShell if (!-d $dShell);
 $dShell=ABSOLUTE_DIR($dShell);
 open In,$gvcflist;
 open Out,">$dOut/gvcf.list";
+my $nvcf=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($id,$vcf)=split(/\s+/,$_);
+	$nvcf++;
 	if (!-f $vcf ||!-f "$vcf.idx") {
 		die "check $vcf!";
 	}else{
@@ -42,6 +44,14 @@ close In;
 close Out;
 open SH,">$dShell/08-1.gvcf-typing.sh";
 open List,">$dOut/sub.vcf.list";
+my $memory=$nvcf*2;
+if ($memory < 60) {
+	$memory=60;
+}elsif ($memory < 120) {
+	$memory=120;
+}else{
+	$memory=300;
+}
 open In,$dict;
 my %hand;
 my $nchr=0;
@@ -65,10 +75,11 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.intervals\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\",\n";
-		print Out "\"Gvcftyping.gvcftyping.NT\": \"16\"\n";
+		print Out "\"Gvcftyping.gvcftyping.NT\": \"16\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Xmx\": \"".$memory."G\n";
 		print Out "}\n";
 		close Out;
-		print SH "cd $dOut/ && java -Xmx150G -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
+		print SH "cd $dOut/ && java -Xmx".$memory."G -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
 	}
 	$id =~ s/SN://g;
 	print {$hand{$hand}} $id,"\n";

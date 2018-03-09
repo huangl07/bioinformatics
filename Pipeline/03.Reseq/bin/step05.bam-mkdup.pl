@@ -31,13 +31,17 @@ my $number=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" || /^$/);
-	my ($sampleID,$bam)=split(/\s+/,$_);
-	if (!-f $bam) {
-		die "check $bam!";
-	}
+	my ($sampleID,$type,$bam)=split(/\s+/,$_);
 	print Out "$sampleID\t$dOut/$sampleID.mkdup.bam\n";
 	print Metric "$sampleID\t$dOut/$sampleID.metric\n";
-	print SH "java -Xmx30G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MarkDuplicates TMP_DIR=$dOut/MKDUP/ MAX_FILE_HANDLES=100 VALIDATION_STRINGENCY=SILENT ASSUME_SORTED=true REMOVE_DUPLICATES=true I=$bam O=$dOut/$sampleID.mkdup.bam  M=$dOut/$sampleID.metric CREATE_INDEX=TRUE \n";
+	if ($type ne "WGS") {
+		print SH "ln -s $bam $dOut/$sampleID.mkdup.bam\n";
+	}else{
+		if (!-f $bam) {
+			die "check $bam!";
+		}
+		print SH "java -Xmx30G -jar /mnt/ilustre/users/dna/.env/bin/picard.jar MarkDuplicates TMP_DIR=$dOut/MKDUP/ MAX_FILE_HANDLES=100 VALIDATION_STRINGENCY=SILENT ASSUME_SORTED=true REMOVE_DUPLICATES=true I=$bam O=$dOut/$sampleID.mkdup.bam  M=$dOut/$sampleID.metric CREATE_INDEX=TRUE \n";
+	}
 }
 close In;
 close SH;

@@ -74,7 +74,7 @@ if ($metric ne "NULL") {
 	}
 	close In;
 }else{
-	$mapstat{dup}="-";
+	$mapstat{dup}="--";
 }
 my $reflen=0;
 open In,$dictfile;
@@ -90,9 +90,12 @@ open Out,">$fOut";
 print Out "#type\t$Key\n";
 print Out "mapped ratio(%)\t",sprintf("%.2f",$mapstat{mapped}/$mapstat{total}*100),"\n";
 print Out "proper ratio(%)\t",sprintf("%.2f",$mapstat{properly}/$mapstat{total}*100),"\n";
-print Out "duplicate ratio(%)\t",sprintf("%.2f",$mapstat{dup}*100),"\n";
+if ($mapstat{dup}=="--") {
+	print Out "duplicate ratio(%)\t","--","\n";
+}else{
+	print Out "duplicate ratio(%)\t",sprintf("%.2f",$mapstat{dup}*100),"\n";
+}
 print Out "average insert size\t",$mapstat{insert},"\n";
-#print Out "genome coverage\t",sprintf("%.2f",$mapstat{mapbase}/$reflen),"\n";
 print Out "average depth\t",sprintf("%.2f",$mapstat{coverage}/$reflen),"\n";
 print Out "real depth\t",sprintf("%.2f",$mapstat{coverage}/$cov{1}),"\n";
 print Out "cover base\t",$cov{1},"\n";
