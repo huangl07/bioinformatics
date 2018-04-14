@@ -23,7 +23,7 @@ while (<In>) {
 	my ($chr,$soft,$type,$pos1,$pos2,undef,undef,undef,$info)=split(/\s+/,$_);
 	next if ($type ne "gene" && $type ne "mRNA");
 	my $id;
-	if ( $info =~ /Name=(\S+);/ || $info =~ /ID=(\S+);/ ) {
+	if ( $info =~ /Name=([^;]*);/ || $info =~ /ID=([^;]*);/ ) {
 		$id=$1;	
 	}
 	$gene{$chr}{$pos1}{$pos2}=$id;

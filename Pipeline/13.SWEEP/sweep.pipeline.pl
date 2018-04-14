@@ -80,8 +80,8 @@ if ($noref) {
 			close SPID; 
 			print SH "cat $out/$groid[$i].pophand $out/$groid[$j].pophand > $out/$groid[$i]-$groid[$j].pophand && ";
 			print SH "java -jar /mnt/ilustre/users/dna/.env//bin//PGDSpider2-cli.jar -inputformat vcf -outputformat GESTE_BAYE_SCAN -spid $out/$groid[$i]-$groid[$j].pid -inputfile $out/pop.recode.vcf -outputfile $out/$groid[$i]-$groid[$j].bayscan &&  ";
-			print SH "bayescan_2.1 $out/$groid[$i]-$groid[$j].bayscan -snp -od $out -o pop  -threads 8  -pr_odds 10 -out_pilot  -out_freq && ";
-			print SH "Rscript $Bin/bin/bayes.R --input $out/pop_fst.txt --outfile $out/pop.bayes\n";
+			print SH "bayescan_2.1 $out/$groid[$i]-$groid[$j].bayscan -snp -od $out -o $groid[$i]-$groid[$j]  -threads 8  -pr_odds 10 -out_pilot  -out_freq && ";
+			print SH "Rscript $Bin/bin/bayes.R --input $out/$groid[$i]-$groid[$j]_fst.txt --outfile $out/$groid[$i]-$groid[$j].bayes\n";
 			print SH "vcftools --vcf $out/pop.recode.vcf --weir-fst-pop $out/$groid[$i].list --weir-fst-pop $out/$groid[$j].list --out $out/$groid[$i]-$groid[$j] --fst-window-size 2000000 --fst-window-step 10000 \n";
 			print SH2 "Rscript $Bin/bin/fst-pi.R --fst $out/$groid[$i]-$groid[$j].windowed.weir.fst --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$j].windowed.pi --out $out/$groid[$i]-$groid[$j] \n";
 			print SH2 "Rscript $Bin/bin/manhattan.R --fst $out/$groid[$i]-$groid[$j].windowed.weir.fst --pi1 $out/$groid[$i].windowed.pi --pi2 $out/$groid[$j].windowed.pi --out $out/$groid[$i]-$groid[$j] --tajima1 $out/$groid[$i].Tajima.D --tajima2 $out/$groid[$j].Tajima.D \n";

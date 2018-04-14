@@ -67,8 +67,17 @@ while (<In>) {
 	}else{
 		my ($id,$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre)=split(/\t/,$_);
 		my @ids=split(/:/,$id);
+		if (!defined $ids[2] || !defined $ids[3] || !defined $ids[4]) {
+			next;
+		}
 		my $pos=join("\t",$ids[2],$ids[3],$ids[4]);
-		$info{$ids[0]}||=join("\t",$ids[1],$ids[0],"--","--");
+		my $gname=(split(/\|/,$ids[1]))[0];
+		$info{$ids[0]}||=join("\t",$gname,$ids[0],$ids[1],"--");
+		my @info=split("\t",$info{$ids[0]});
+		if (!defined $info[3]) {
+			$info[3] = "--";
+		}
+		my $infos=join("\t",$gname,$ids[0],$ids[1],$info[3]);
 		my $info=$info{$ids[0]};
 		$stat{$info}{high}||=0;
 		$stat{$info}{low}||=0;
@@ -84,7 +93,7 @@ while (<In>) {
 		$fun{eff}{go}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $goid ne "--");
 		$fun{total}{eggnog}++ if($egid ne "--");
 		$fun{eff}{eggnog}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $egid ne "--");
-		print Out join("\t",$info,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre),"\n";
+		print Out join("\t",$infos,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre),"\n";
 		my @koid=split(/:/,$koid);
 		my @kdetail=split(/:/,$koanno);
 		for (my $i=0;$i<@koid;$i++) {
@@ -102,8 +111,11 @@ while (<In>) {
 			$gdetail{$goid[$i]}=$gdetail[$i];
 		}
 		my ($eid,$eanno)=split(/:/,$egid);
+		if ($egid eq "--") {
+			next;
+		}
 		my @eid=split(/,/,$eid);
-		my @edetail=split(/;/,$expre);
+		my @edetail=split(/;/,$eanno);
 		for (my $i=0;$i<@eid;$i++) {
 			next if ($eid[$i] eq "--");
 			$enrich{$eid[$i]}{total}++;

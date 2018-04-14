@@ -69,14 +69,15 @@ while (<In>) {
 close In;
 close SH;
 close List;
+mkdir "$dOut/temp" if (!-d "$dOut/temp/");
 open SH,">$dShell/08-2.mergeVCF.sh";
 my $mem=`du -s ./*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
 $mem=$mem/1000000;
 $mem=(int($mem/100)+1)*100;
 print SH "cd $dOut/ && ";
 print SH "bcftools concat $vcfs -o $dOut/pop.noid.vcf -O v && ";
-print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
-print SH "bcftools sort -m $mem\G -T $dOut/temp/ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
+print SH "bcftools annotate --set-id +\'%CHROM\\_%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && cd $dOut/temp/ && ";
+print SH "bcftools sort -m $mem"."G -T ./ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
 close SH;
 my $job="perl /mnt/ilustre/users/dna/.env/bin/qsub-sge.pl  --Resource mem=30G --CPU 1 --maxjob $proc $dShell/step05.call-variant1.sh";
 print $job;

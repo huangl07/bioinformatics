@@ -1,0 +1,19 @@
+命令行数据传输
+
+
+从服务器上传数据到云平台目录：
+
+1. 直接生成list文件并上传文件。
+
+python ~/biocluster/scripts/dataexchange/v2/upload.py -i ~/sg-users/wangzhaoyue/test -l test.list -c '上传验证码' -m tsg/tsanger/sanger
+
+
+
+
+2. 先生成list文件（可编辑list中文件是否加锁），再上传文件。
+
+python ~/biocluster/scripts/dataexchange/v2/get_file_list.py -i ~/sg-users/liuwentian/tot/tot2 -l test.list
+python ~/biocluster/scripts/dataexchange/v2/upload.py -i ~/sg-users/wangzhaoyue/test -l test.list -c '上传验证码' -m tsg/tsanger/sanger
+
+
+note: -i为所要上传文件所在路径（只能是文件夹），-l为生成list文件，-c为上传验证码（一定要加引号），-m为选择平台 

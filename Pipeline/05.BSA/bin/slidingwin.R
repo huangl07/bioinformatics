@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 times<-Sys.time()
 library('getopt');
 options(bitmapType='cairo')
@@ -34,7 +35,6 @@ if ( is.null(opt$step)){opt$step=opt$win/40}
 if ( is.null(opt$method)){opt$method="bp"}
 
 data<-read.table(opt$infile,head=TRUE,comment.char = "^");
-opt$col=length(unlist(strsplit(opt$col,",")))
 if(opt$col ==3){
 	chr<-data$X.chr
 	pos<-data$pos
@@ -80,7 +80,7 @@ for (i in 1:(length(chrname))){
 	pos1=ss*as.numeric(opt$step)-as.numeric(opt$win)/2;
 	pos2=ss*as.numeric(opt$step)+as.numeric(opt$win)/2;
 	if (opt$method=="num"){
-		pos1[pos1 <= 0]=1;
+		pos1[pos1 <= 1]=1;
 		pos2[pos2 >= chrlen]=chrlen;
 		pos1=backpos[pos1];
 		pos2=backpos[pos2];
@@ -107,17 +107,21 @@ total<-length(chr);
 N=total
 if(opt$col ==3){
 # 	thres<-quantile(index,probs=0.999,na.rm=TRUE)
-	thres<-quantile(slid$index[slid$twin > 10],probs=0.999,na.rm=TRUE)
+	slid$index[slid$twin < 10]=mean(slid$index[slid$twin >= 10])
+	thres<-quantile(slid$index[slid$twin >= 10],probs=0.999,na.rm=TRUE)
 	M=length(slid$index[slid$index > thres & slid$twin > 10])
 }else{
+	slid$index1[slid$twin < 10]=mean(slid$index1[slid$twin >= 10])
+	slid$index2[slid$twin < 10]=mean(slid$index2[slid$twin >= 10])
+	slid$delta[slid$twin < 10]=mean(slid$delta[slid$twin >= 10])
 	thres<-quantile(slid$delta[slid$twin > 10],probs=0.999,na.rm=TRUE)
 	M=length(slid$delta[slid$delta > thres & slid$twin > 10 ])
 }
 info<-NULL
 for (i in 1:(length(chrname))){
 	chrpos=pos[which(chr==chrname[i])]
-	backpos=chrpos;
 	if (opt$method=="num"){chrpos=c(1:length(chrpos))}
+	backpos=chrpos;
 	chrindex=index[which(chr==chrname[i])]
 	chrlen=max(chrpos);
 	win=ceiling(chrlen/as.numeric(opt$step));
@@ -125,7 +129,7 @@ for (i in 1:(length(chrname))){
 	pos1=ss*as.numeric(opt$step)-as.numeric(opt$win)/2;
 	pos2=ss*as.numeric(opt$step)+as.numeric(opt$win)/2;
 	if (opt$method=="num"){
-		pos1[pos1 <=0]=1;
+		pos1[pos1 <=1]=1;
 		pos2[pos2 > chrlen]=chrlen;
 		pos1=backpos[pos1]
 		pos2=backpos[pos2]
@@ -141,7 +145,6 @@ for (i in 1:(length(chrname))){
 }
 fdr=p.adjust(info$Pvalue,method="bonferroni")
 
-print("test")
 print(length(unique(info$chr)));
 
 if(opt$col ==3){
@@ -150,12 +153,17 @@ if(opt$col ==3){
 	df=data.frame(chr=info$chr,pos1=info$pos1,pos2=info$pos2,index1=slid$index1,index2=slid$index2,delta=slid$delta,threhold=rep(thres,length(info$pos1)),total=slid$twin,peak=info$k,pvalue=info$Pvalue,fdr=fdr,stringsAsFactors=FALSE);
 }
 df<-na.omit(df)
-write.table(file=paste(opt$outfile,".result",sep=""),df,row.name=FALSE)
 
 if(opt$col == 3){
+	df$index[df$total < 10]=mean(df$index[df$total >= 10])
+	write.table(file=paste(opt$outfile,".result",sep=""),df,row.name=FALSE)
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$index > df$threhold),row.names=FALSE)
 	write.table(file=paste(opt$outfile,".fdr.select",sep=""),subset(df,df$fdr < 0.01/N),row.names=FALSE)
 }else{
+	df$index1[df$total < 10]=mean(df$index1[df$total >= 10])
+	df$index2[df$total < 10]=mean(df$index2[df$total >= 10])
+	df$delta[df$total < 10]=mean(df$delta[df$total >= 10])
+	write.table(file=paste(opt$outfile,".result",sep=""),df,row.name=FALSE)
 	write.table(file=paste(opt$outfile,".threshold.select",sep=""),subset(df,df$delta > df$threhold),row.names=FALSE)
 	write.table(file=paste(opt$outfile,".fdr.select",sep=""),subset(df,df$delta < 0.01/N),row.names=FALSE)
 }

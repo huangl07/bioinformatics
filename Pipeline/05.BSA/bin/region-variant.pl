@@ -51,7 +51,8 @@ while (<In>) {
 	if (/^#/) {
 		$head=$_;
 	}else{
-		my ($chr,$pos,$ref,$alt,$ann,undef)=split(/\s+/,$_);
+		my ($chr,$pos,$type,$ref,@info)=split(/\s+/,$_);
+		my $ann=$info[-1];
 		foreach my $region (sort keys %{$region{$chr}}) {
 			my ($pos1,$pos2)=split(/\s+/,$region);
 			if ($pos >= $pos1 && $pos <= $pos2) {
@@ -59,14 +60,7 @@ while (<In>) {
 				my ($fun,$impact,$genename,$geneid)=split(/\|/,$ann);
 				push @{$einfo{$chr}{$region}},$_ if($impact eq "HIGH" || $impact eq "MODERATE");
 				$impact||="unknown";
-				my @alt=split(/\,/,$alt);
-				my $len=0;
-				for (my $i=0;$i<@alt;$i++) {
-					if ($len < length($alt[$i])){
-						$len=length($alt[$i]);
-					}
-				}
-				if ($len ne length($ref)) {
+				if ($type eq "INDEL") {
 					$stat{$chr}{$region}{indel}++;
 					$stat{$chr}{$region}{effindel}++ if($impact eq "HIGH" || $impact eq "MODERATE");
 				}else{

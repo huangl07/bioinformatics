@@ -77,27 +77,37 @@ for(i in 1:length(phe.name)){
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
 	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
-	pm.the<-1;
-	theshold=3;
-	if(min(scan.result$pval) >0.1){
-		scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1)
-		if(length(rownames(scan.result$lod)) < 1){
-			theshold=2.5;
-			scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1)
+	pm.result<-summary(scan.pm,alpha=c(0.01,0.05,0.1))
+	legend=paste(rownames(pm.result),round(pm.result,2))
+	threshold=pm.result[1,1]
+	scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
+	if(length(scan.result$lod$chr) < 1){
+		scan.result<-summary(scan,format="tabByCol",threshold=pm.result[2,1],drop=1)
+		threshold=pm.result[2,1]
+		if(length(scan.result$lod$chr) <1){
+			scan.result<-summary(scan,format="tabByCol",threshold=pm.result[3,1],drop=1)
+			threshold=pm.result[3,1]
+			if(length(scan.result$lod$chr) <1){
+				pm.result<-c(3,2.5)
+				scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1);
+				threshold=3
+				if(length(scan.result$lod$chr) <1){
+					threshold=2.5
+					scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1);
+				}
+				legend=pm.result
+			}else{
+				pm.result<-summary(scan.pm,alpha=c(0.05,0.1))
+				legend=paste(rownames(pm.result),round(pm.result,2))
+			}
+		}else{
+			pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
+			legend=paste(rownames(pm.result),round(pm.result,2))
 		}
-		pm.result<-c(3,2.5)
-		legend=pm.result
-	}else{	
-		theshold=summary(scan.pm,alpha=0.01);
-		scan.result<-summary(scan,format="tabByCol",perms=scan.pm,alpha=0.1,drop=1)
-		if(length(rownames(scan.result$lod)) < 1){
-			theshold=summary(scan.pm,alpha=0.05);
-			scan.result<-summary(scan,format="tabByCol",alpha=0.05,drop=1)
-		}
-		pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
+	}else{
+		pm.result<-summary(scan.pm,alpha=c(0.01,0.05));
 		legend=paste(rownames(pm.result),round(pm.result,2))
-	}
-	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
+	}	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
 	plot(scan)
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)

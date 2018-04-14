@@ -35,7 +35,7 @@ highlight_rows=which(is.element(as.numeric(row.names(res)),highlight))
 non_highlight_rows=setdiff(1:nrow(res),highlight_rows)
 outliers=as.integer(row.names(res[res[,colq]<=FDR,]))
 if(length(outliers == 0)){
-	outliers=as.integer(row.names(res[res[,colq]<=quantile(1-res[,colq],0.05)),]))
+	outliers=as.integer(row.names(res[res[,colq]<=quantile(1-res[,colq],0.05),]))
 }
 ok_outliers=TRUE
 if (sum(res[,colq]<=FDR)==0)
@@ -75,8 +75,9 @@ if (name_highlighted) {
 }
 lines(c(log10(FDR),log10(FDR)),c(-1,1),lwd=2)
 dev.off()
-
-write.table(file=paste(opt$outfile,"outliers",sep="."),list("outliers"=outliers,"nb_outliers"=length(outliers)))
+if(ok_outliers){
+	write.table(file=paste(opt$outfile,"outliers",sep="."),list("outliers"=outliers,"nb_outliers"=length(outliers)))
+}
 
 
 

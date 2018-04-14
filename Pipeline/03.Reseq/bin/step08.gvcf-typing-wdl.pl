@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($proc,$gvcflist,$dOut,$dShell,$ref,$dict);
+my ($proc,$gvcflist,$dOut,$dShell,$ref,$dict,$chr);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,7 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"gvcf:s"=>\$gvcflist,
 	"ref:s"=>\$ref,
+	"chr"=>\$chr,
 	"dict:s"=>\$dict,
 	"out:s"=>\$dOut,
 	"proc:s"=>\$proc,
@@ -75,13 +76,16 @@ while (<In>) {
 		print Out "\"Gvcftyping.gvcftyping.RefFasta\": \"$ref\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Internal\": \"$dOut/$hand.intervals\",\n";
 		print Out "\"Gvcftyping.gvcftyping.Filename\": \"$hand\",\n";
-		print Out "\"Gvcftyping.gvcftyping.NT\": \"16\",\n";
-		print Out "\"Gvcftyping.gvcftyping.Xmx\": \"".$memory."G\n";
+		print Out "\"Gvcftyping.gvcftyping.NT\": \"1\",\n";
+		print Out "\"Gvcftyping.gvcftyping.Xmx\": \"".$memory."G\"\n";
 		print Out "}\n";
 		close Out;
 		print SH "cd $dOut/ && java -Xmx".$memory."G -jar /mnt/ilustre/users/dna/.env//bin//cromwell-30.jar run $Bin/bin/GVCFtyping.wdl -i $dOut/$hand.gtyping.json \n";
 	}
 	$id =~ s/SN://g;
+	if ($chr && $id !~ /chr/) {
+		next;
+	}
 	print {$hand{$hand}} $id,"\n";
 }
 close In;
@@ -93,12 +97,13 @@ open SH,">$dShell/08-2.mergeVCF.sh";
 my $mem=`du -s $dOut/*.vcf|awk \'\{a+=\$1\}END\{print a\}\'`;
 $mem=$mem/1000000;
 $mem=(int($mem/100)+1)*100;
+mkdir "$dOut/temp" if (!-d "$dOut/temp");
 print SH "cd $dOut/ && ";
 print SH "bcftools concat $vcfs -o $dOut/pop.noid.vcf -O v && ";
-print SH "bcftools annotate --set-id +\'\%CHROM\\_\%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && ";
-print SH "bcftools sort -m $mem\G -T $dOut/temp/ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
+print SH "bcftools annotate --set-id +\'%CHROM\\_%POS\' $dOut/pop.noid.vcf -o $dOut/pop.nosort.vcf && cd $dOut/temp/ && ";
+print SH "bcftools sort -m $mem"."G -T ./ -o $dOut/pop.variant.vcf $dOut/pop.nosort.vcf \n";
 close SH;
-$job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=$mem\G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
+$job="perl /mnt/ilustre/users/dna/.env//bin/qsub-sge.pl  --Resource mem=$mem"."G --CPU 1 --maxjob $proc $dShell/08-2.mergeVCF.sh";
 `$job`;
 
 #######################################################################################
@@ -139,6 +144,7 @@ Usage:
   -dict	<file>	input reference dict
   -out	<dir>	output dir
   -proc <num>	number of process for qsub,default
+  -chr			only do chromosome analysis
   -dsh	<dir>	output shell dir
   -h         Help
 

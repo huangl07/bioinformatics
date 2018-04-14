@@ -22,6 +22,9 @@ $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
 $type||="nuc";
+if (!-f "~/.kobasrc") {
+	`ln -s /mnt/ilustre/users/dna/.kobasrc ~/.kobasrc`;
+}
 my $blast="diamond";
 my $dKEGG="/mnt/ilustre/users/dna/Environment/biotools/kobas-3.0/seq_pep/ko.pep.fasta ";
 if ($type eq "pro") {

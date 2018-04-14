@@ -34,6 +34,9 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/);
 	my ($id,$fq1,$fq2,$type)=split(/\s+/,$_);
+	if (!defined $type) {
+		die "error fqlist file! add library type";
+	}
 	if (!-f $fq1 || !-f $fq2) {
 		die "!exists $fq1 | $fq2";
 	}

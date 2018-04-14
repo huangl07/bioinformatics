@@ -80,7 +80,7 @@ while (<In>) {
 	$astat{total}++;
 	$astat{eff}++ if($regioned == 1);
 
-	my @koid=split(/:/,$koid);
+	my @koid=split(/,|:/,$koid);
 	my @kdetail=split(/:/,$koanno);
 	for (my $i=0;$i<@koid;$i++) {
 		next if ($koid[$i] eq "--");

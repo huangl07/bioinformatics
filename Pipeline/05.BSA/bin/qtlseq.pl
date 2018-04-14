@@ -33,8 +33,8 @@ my ($P1,$P2);
 if ($PID ne "") {
 	($P1,$P2)=split(/\,/,$PID);
 	$P2||=$P1;
-	$Indi{$P1}="P1";
 	$Indi{$P2}="P2";
+	$Indi{$P1}="P1";
 }
 my ($B1,$B2)=split(/\,/,$BID);
 $Indi{$B1}="B1";
@@ -52,7 +52,7 @@ my %stat;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/ ||/^##/);
-	my ($chr,$pos,$ids,$ref,$alt,$qual,$filter,$info,$format,@geno)=split(/\s+/,$_);
+	my ($chr,$pos,$ids,$ref,$alt,$qual,$filter,$info,$format,@geno)=split(/\t/,$_);
 	if (/^#/) {
 		push @indi,@geno;
 		my @out;
@@ -61,7 +61,7 @@ while (<In>) {
 			push @out,$indi."-GT";
 			push @out,$indi."-AD";
 		}
-		print Out join("\t","#chr","pos","type","ref",@out,"index","ANNOTATION"),"\n";
+		print Out join("\t","#chr","pos","type","ref",@out,"INDEX1","INDEX2","DELTA","ANNOTATION"),"\n";
 		print Variant join("\t","#chr","type","pos","ref",@out,"ANNOTATION","HIGH","MODERATE","LOW","MODIFIER"),"\n";
 
 	}else{
@@ -69,7 +69,7 @@ while (<In>) {
 		my @alle=split(",",join(",",$ref,$alt));
 		my %len;
 		for (my $i=0;$i<@alle;$i++) {
-			$len{$alle[$i]}=1;
+			$len{length($alle[$i])}=1;
 		}
 		my $type="SNP";
 		if (scalar keys %len > 1) {
@@ -105,13 +105,17 @@ while (<In>) {
 			push @outvariant,$ginfo{$indi[$i]}{ad};
 		}
 		my @out;
-					my %ann;
-
+		my %ann;
 		if($info=~/ANN=([^\;]*)/g){
 			my @ann=split(/\,/,$1);
 			for (my $i=0;$i<@ann;$i++) {
 				my @str=split(/\|/,$ann[$i]);
-				my $ann=join("|",$str[1],$str[2],$str[3],$str[4]);
+				$str[0]||="--";
+				$str[1]||="--";
+				$str[2]||="--";
+				$str[3]||="--";
+				$str[4]||="--";
+				my $ann=join("|",$str[0],$str[1],$str[2],$str[3],$str[4]);
 				$ann{$str[2]}++;
 				push @out,$ann;
 			}
@@ -120,13 +124,11 @@ while (<In>) {
 		$ann{MODERATE}||=0;
 		$ann{LOW}||=0;
 		$ann{MODIFIER}||=0;
-
 		if (scalar @out ==0) {
 			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,"--",$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
 		}else{
 			print Variant join("\t",$chr,$pos,$type,"$ref"."$ref",@outvariant,join(";",@out),$ann{HIGH},$ann{MODERATE},$ann{LOW},$ann{MODIFIER}),"\n";
 		}
-
 		next if ($info{B1}{gt}  eq "./." || $info{B2}{gt} eq "./." ||$info{B1}{dp} < $Bdep || $info{B2}{dp} < $Bdep);
 		my @b1=split(/\/|\|/,$info{B1}{gt});
 		my @b2=split(/\/|\|/,$info{B2}{gt});
@@ -146,24 +148,35 @@ while (<In>) {
 		my $index1;
 		my $index2;
 		my $delta;
-		if ($popt eq "F2") {
+		if ($popt ne "F1") {
 			next if (scalar @geno!=2);
 			if ($PID eq "") {
 				$index1=$ad1[$geno[0]]/$sum1;
 				$index2=$ad2[$geno[0]]/$sum2;
 				$delta=abs($index1-$index2);
 			}else{
-				my ($p1,$p2)=split(/\/|\|/,$info{P1}{gt});
-				if (!exists $info{P2}) {
-					if ($p1 eq $geno[0]) {
-						$info{P2}{gt}="$geno[0]q/$geno[0]";
+				my ($p1,$p2,$p3,$p4);
+				if (!exists $info{P2} && exists $info{$P1}) {
+					($p1,$p2)=split(/\//,$info{P1}{gt});
+					if ($p1 ne $geno[0]) {
+						$info{P2}{gt}="$geno[0]/$geno[0]";
 						$info{P2}{dp}=10;
 					}else{
 						$info{P2}{gt}="$geno[1]/$geno[1]";
 						$info{P2}{dp}=10;
 					}
+				}elsif (!exists $info{$P1} && exists $info{$P2}) {
+					($p3,$p4)=split(/\//,$info{P2}{gt});
+					if ($p3 ne $geno[0]) {
+						$info{P1}{gt}="$geno[0]/$geno[0]";
+						$info{P1}{dp}=10;
+					}else{
+						$info{P1}{gt}="$geno[1]/$geno[1]";
+						$info{P1}{dp}=10;
+					}
 				}
-				my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
+				($p1,$p2)=split(/\/|\|/,$info{P1}{gt});
+				($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
 				next if ($p1 ne $p2 || $p3 ne $p4 || $p1 eq "." || $p2 eq ".");
 				next if ($info{P1}{gt} eq "./." || $info{P2}{gt} eq "./.");
 				next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
@@ -177,14 +190,14 @@ while (<In>) {
 			next if (scalar @geno!=2);
 			my ($p1,$p2)=split(/\/|\|/,$info{P1}{gt});
 			my ($p3,$p4)=split(/\/|\|/,$info{P2}{gt});
-			next if ($p1 eq $p2 || $p3 ne $p4);
-			next if ($p1 ne $p2 || $p3 eq $p4);
+			next if ($p1 eq $p2 && $p3 eq $p4);
+			next if ($info{P1}{gt} eq "./." || $info{P2}{gt} eq "./.");
 			next if	($info{P2}{dp}< $Pdep || $info{P1}{dp} < $Bdep);
 			if ($p3 eq $p1 && $p1 eq $p2) {#nnxnp
 				$index1=$ad1[$p1]/$sum1;
 				$index2=$ad2[$p1]/$sum2;
 				$delta=$index1-$index2;
-			}elsif ($p3 eq $4 && $p3 eq $p1) {#lmxll
+			}elsif ($p3 eq $p4 && $p3 eq $p1) {#lmxll
 				$index1=$ad1[$p2]/$sum1;
 				$index2=$ad2[$p2]/$sum2;
 				$delta=$index1-$index2;

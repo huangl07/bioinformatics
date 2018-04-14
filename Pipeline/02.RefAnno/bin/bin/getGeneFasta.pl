@@ -29,26 +29,92 @@ close In;
 open In,$gff;
 open Out,">$out";
 $/="\n";
-my $gname;
-my $id;
+my $flag="gene";
 my %out;
+my @line;
+my $n=0;
+my $m=0;
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/||/^#/);
-	my ($chr,$source,$type,$start,$end,undef,undef,undef,$info)=split(/\t/,$_);
-	next if ($type eq "CDS" ||$type eq "exon" || $type eq "region");
-	if ($info =~/ID=([^;]*)/) {
-		$id=$1;
+	my (undef,undef,$types,undef,undef,undef,undef,undef,undef)=split(/\t/,$_);
+	next if ($types eq "region");
+	$n++;	
+	if ($n == 1 && $types ne "gene") {
+		$flag="mRNA";
 	}
-	if ($info =~/Name=([^;]*)/) {
-		$gname=$1;
+	if ($types eq $flag) {
+		if (scalar @line == 0) {
+			push @line,$_;
+		}else{
+			$m++;
+			my $Entrez||="--";
+			my $Geneba||="--";
+			my $Chromo||="--";
+			my $START||="--";
+			my $END||="";
+			my %Protei;
+			my @Protei;
+			my $GeneNa||="--";
+			my %Transc;
+			my @Transc;
+			my @Geneba;
+			my %Geneba;
+			my $id;
+			foreach my $line (@line) {
+				my ($chr,$source,$type,$start,$end,undef,undef,undef,@info)=split(/\t/,$line);
+				my $info=join(" ",@info);
+				if ($type eq $flag) {
+					if ($info =~ /Name=([^;,]*)/) {
+						$GeneNa=$1;
+					}
+					$START=$start;
+					$END=$end;
+					$Chromo=$chr;
+					if ($info=~/GeneID:([^;,]*)/) {
+						$Entrez=$1;
+					}
+					if ($info=~/ID=([^;,]*)/) {
+						$id=$1;
+					}
+				}
+				if ($type ne "CDS" && $type ne "exon") {
+					if ($info=~/Genbank:([^;,]*)/) {
+						if (!exists $Geneba{$1}) {
+							push @Geneba,$1;
+						}
+						$Geneba{$1}=1;
+					}
+				}
+				if ($type eq "exon") {
+					if ($info=~/;transcript_id=([^;,]*)/) {
+						if (!exists $Transc{$1}) {
+							push @Transc,$1;
+						}
+						$Transc{$1}=1;
+					}
+				}
+
+				if ($type eq "CDS") {
+					if ($info=~/;protein_id=([^;,]*)/) {
+						if (!exists $Protei{$1}) {
+							push @Protei,$1;
+						}
+						$Protei{$1}=1;
+					}
+				}
+
+			}
+			my $outid=join(":",$id,join("|",$GeneNa,$Entrez,join(";",@Geneba),join(";",@Transc),join(";",@Protei)),$Chromo,$START,$END);
+			my @outid=split(/\s+/,$outid);
+			$outid=join("\_",@outid);
+			print Out ">$outid\n".substr($seq{$Chromo},$START,$END-$START+1),"\n";
+			@line=();
+			push @line,$_;
+		}
+	}else{
+		push @line,$_;
 	}
-	$gname||=$id;
-	my $pos=join("\t",$chr,$start,$end);
-	next if (exists $out{$pos});
-	print Out ">$id:$gname:$chr:$start:$end\n";
-	print Out substr($seq{$chr},$start,$end-$start+1),"\n";
-	$out{$pos}=1;
 }
 close In;
 close Out;

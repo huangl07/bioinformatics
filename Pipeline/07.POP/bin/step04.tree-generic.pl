@@ -30,7 +30,7 @@ print SH "perl $Bin/bin/bayes-prepair.pl -i $out/$id.fasta -m $out/pop.model.tes
 open SH,">$dsh/step04.tree-generic2.sh";
 my $sh=`grep raxml-ng $out/pop.model.test.log|uniq`;
 $sh=~s/>//g;chomp $sh;
-$sh .=" --threads 16 --bootstrap 1000 ";
+$sh .=" --threads 16 --bs-trees 1000 ";
 print SH "$sh && ";
 #print SH "cd $out/ && raxmlHPC -f a -x 12345 -T 16 -p 12345 -# 1000 -m GTRGAMMA -s $out/$id.phylip -n $id 2> $out/$id.raxmlHPC.log && ";
 print SH "ln -s $out/RAxML_bipartitionsBranchLabels.$id $out/$id.ml.tree --prefix $out/$id && ";

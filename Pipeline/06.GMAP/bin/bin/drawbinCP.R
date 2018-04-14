@@ -40,7 +40,7 @@ for(i in chr){
 	d$end[d$chr==i]=(d$pos[c(2:(length(pos)),length(pos))]+d$pos[c(1:length(pos))])/2
 }
 print(unique(d$chr))
-cols=c("green","blue","white","white")
+cols=c("green","blue","grey","white")
 names(cols)=c("1","2","0","-")
 chr.len <- tapply(d$end, d$chr, max)
 x.brks <- cumsum(chr.len) - chr.len/2
@@ -67,6 +67,25 @@ for (i in 5:ncol(d)) {
 abline(v = c(0, cumsum(chr.len)), col = "grey80", lwd = 0.5)
 dev.off()
 
+for (i in chr){
+	subd<-subset.data.frame(d,d$chr==i);
+	pos=seq(1,length(subd$pos),1)
+	subd$start[subd$chr==i]=(pos[c(1,1:(length(pos)-1))]+pos[c(1:length(pos))])/2
+	subd$end[subd$chr==i]=(pos[c(2:(length(pos)),length(pos))]+pos[c(1:length(pos))])/2
+	pdf(paste(opt$out,i,"pdf",sep="."),height=900,width=1600);
+	plot(5, type = "n", xlim = c(0, max(subd$end,na.rm=TRUE)), ylim = c(0,ncol(subd) - 4),main="Haplotype",xlab=paste("LG",i,sep=" "),ylab="Samples")
+	for (j in 5:ncol(subd)) {
+		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4, col = cols[as.character(subd[,j])], border = NA)
+	}
+	dev.off()
+	png(paste(opt$out,i,"png",sep="."),height=900,width=1600);
+	plot(5, type = "n", xlim = c(0, max(subd$end,na.rm=TRUE)), ylim = c(0,ncol(subd) - 4),main="Haplotype",xlab=paste("LG",i,sep=" "),ylab="Samples")
+	for (j in 5:ncol(subd)) {
+		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4, col = cols[as.character(subd[,j])], border = NA)
+	}
+	dev.off()
+
+}
 
 escaptime=Sys.time()-times;
 print("Done!")

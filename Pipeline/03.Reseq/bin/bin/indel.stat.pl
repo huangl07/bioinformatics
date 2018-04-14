@@ -17,6 +17,10 @@ GetOptions(
 			) or &USAGE;
 &USAGE unless ($fIn );
 open In,$fIn;
+if ($fIn=~/.gz$/) {
+	close In;
+	open In,"gunzip -c $fIn|";
+}
 open Flen,">$flen";
 my @indi;
 my %vcfstat;
@@ -58,9 +62,9 @@ while (<In>) {
 			$sumlen=length($ref)*2-(length($Ale[$g1])+length($Ale[$g2]));
 			print Flen $indi[$i],"\t",(length($Ale[$g1])+length($Ale[$g2]))-length($ref)*2,"\n" if (length($ref)*2-(length($Ale[$g1])+length($Ale[$g2])) !=0);
 			if (length($ref)*2 -length($Ale[$g1])-length($Ale[$g2]) < 0) {
-				$vcfstat{$indi[$i]}{delete}++;
-			}else{
 				$vcfstat{$indi[$i]}{insert}++;
+			}else{
+				$vcfstat{$indi[$i]}{delete}++;
 			}
 		}
 		$vcfstat{pop}{dp}+=$sum if(scalar keys %geno != 1);

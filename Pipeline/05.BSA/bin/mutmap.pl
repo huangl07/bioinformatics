@@ -107,7 +107,12 @@ while (<In>) {
 			my @ann=split(/\,/,$1);
 			for (my $i=0;$i<@ann;$i++) {
 				my @str=split(/\|/,$ann[$i]);
-				my $ann=join("|",$str[1],$str[2],$str[3],$str[4]);
+				$str[0]||="--";
+				$str[1]||="--";
+				$str[2]||="--";
+				$str[3]||="--";
+				$str[4]||="--";
+				my $ann=join("|",$str[0],$str[1],$str[2],$str[3],$str[4]);
 				$ann{$str[2]}++;
 				push @out,$ann;
 			}
@@ -126,9 +131,11 @@ while (<In>) {
 			$info{P1}{dp}="10";
 			$info{P1}{ad}="10,0";
 		}
+
 		next if ($info{P1}{gt} eq "./." || $info{B}{gt} eq "./.");
 		next if ($info{P1}{gt} eq $info{B}{gt});
 		next if ($info{P1}{dp} < $Pdep || $info{B}{dp} < $Bdep);
+
 		my ($p1,$p2)=split(/\/|\|/,$info{P1}{gt});
 		my ($b1,$b2)=split(/\/|\|/,$info{B}{gt});
 		next if ($p1 ne $p2);
@@ -151,6 +158,10 @@ while (<In>) {
 		}else{
 			$sum=$dp[$b1]+$dp[$b2];
 		}
+		if ($sum==0) {
+			next;
+		}
+
 		my $snpindex=$dp[$mut]/$sum;
 		$info{P1}{gt}||="--";
 		$info{P1}{ad}||="--";

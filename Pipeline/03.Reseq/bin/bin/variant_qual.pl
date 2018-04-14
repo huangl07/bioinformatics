@@ -18,7 +18,12 @@ GetOptions(
 	) or &USAGE;
 &USAGE unless ($snp_vcf);
 my @indi;
+
 open In,$snp_vcf;
+if ($snp_vcf=~/.gz$/) {
+	close In;
+	open In,"gunzip -c $snp_vcf|";
+}
 my %depth;
 my %qual;
 while (<In>) {

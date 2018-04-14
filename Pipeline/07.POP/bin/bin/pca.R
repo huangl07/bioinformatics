@@ -55,6 +55,8 @@ if (!is.null(opt$group)){
 	pop.id<-c(1);
 	color.list<-rainbow(1);
 }
+pop.list=pop.list[order(pop.list[,1]),]
+pca.file=pca.file[order(pca.file[,1]),]
 pdf(paste(opt$outfile,".pc1vspc2.pdf",sep=""))
 if (length(pop.id) >1){
 	plot(pca.file$PC1,pca.file$PC2,col=pop.list$colour,xlab="PC1",ylab="PC2",main="PC1 vs PC2")

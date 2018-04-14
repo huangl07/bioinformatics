@@ -23,7 +23,7 @@ while (<In>) {
 	my ($chr,$soft,$type,$pos1,$pos2,undef,undef,undef,$info)=split(/\t/,$_);
 	next if ($type ne "gene" && $type ne "mRNA");
 	my $id;
-	if ( $info =~ /Name=(\S+)\;/ || $info =~ /ID=(\S+)\;/ ) {
+	if ( $info =~ /Name=([^;]*)\;/ || $info =~ /ID=([^;]*)\;/ ) {
 		$id=$1;	
 	}
 	$gene{$chr}{$pos1}{$pos2}=$id;
@@ -31,14 +31,14 @@ while (<In>) {
 close In;
 open In,$fSv;
 open Out,">$fOut";
-print Out "#chr\tpos1\tchr\tpos2\tlength\ttype\tpvalue\tgene number\tgene\n";
+print Out "#chr\tpos1\tchr\tpos2\tlength\ttype\tpvalue\tdepth\tgene number\tgene\n";
 my %stat;
 my %length;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/ ||/^#/);
-	my ($chr1,$pos1,undef,$chr2,$pos2,undef,$type,$length,$pvalue,undef)=split(/\t/,$_);
-	my $info=join("\t",$chr1,$pos1,$chr2,$pos2,$length,$type,$pvalue);
+	my ($chr1,$pos1,undef,$chr2,$pos2,undef,$type,$length,$pvalue,$depth,undef)=split(/\t/,$_);
+	my $info=join("\t",$chr1,$pos1,$chr2,$pos2,$length,$type,$pvalue,$depth);
 	if ($chr1 ne $chr2) {
 		my $postmp=$pos2;
 		$pos2=$pos1+$length;

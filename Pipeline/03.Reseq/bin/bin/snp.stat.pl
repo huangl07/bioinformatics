@@ -24,6 +24,10 @@ my %TsTv=(
 	"CG"=>"Tv",
 );
 open In,$fIn;
+if ($fIn=~/.gz$/) {
+	close In;
+	open In,"gunzip -c $fIn|";
+}
 my @indi;
 my %vcfstat;
 my %diff;

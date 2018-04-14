@@ -309,7 +309,11 @@ print $snp;
 if ($snp){######plot snp
     #print $snp;
     my $file_name=(split/\//,$snp)[-1];
-    open IN,"<$snp";
+	open In,$snp;
+	if ($snp=~/.gz$/) {
+		close In;
+		open In,"gunzip -c $snp|";
+	}
     open OUT,">$outdir/draw.circos/windows.file/$file_name.win.txt";
     my $max=slide($snp,\%hash_chr_num);
     $main_conf.="
@@ -331,7 +335,11 @@ thickness = 1
 }
 if($indel){######plot indel
     my $file_name=(split/\//,$indel)[-1];
-    open IN,"<$indel";
+	open In,$indel;
+	if ($indel=~/.gz$/) {
+		close In;
+		open In,"gunzip -c $indel|";
+	}
     open OUT,">$outdir/draw.circos/windows.file/$file_name.win.txt";
     my $max=slide($indel,\%hash_chr_num);
     $main_conf.="

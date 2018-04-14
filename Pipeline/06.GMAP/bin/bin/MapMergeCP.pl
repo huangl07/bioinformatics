@@ -16,6 +16,7 @@ GetOptions(
 	"adjust"=>\$adjust,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut and $marker);
+mkdir $dOut if (!-d $dOut);
 open In,$marker;
 my @Indi;
 while (<In>) {
@@ -54,9 +55,16 @@ foreach my $map (@map) {
 	if ($adjust) {
 		$newdis=rand(80)+120;
 	}
+	my $n=0;
+	my $pos0;
 	foreach my $id (sort {$info{$a}{pos}<=>$info{$b}{pos}} keys %info) {
 		next if ($info{$id}{lgID} ne $lgID);
 		$info{$id}{pos}=$info{$id}{pos}*$newdis/$max;
+		if ($n == 0) {
+			$pos0=$info{$id}{pos};
+			$n++;
+		}
+		$info{$id}{pos}=$info{$id}{pos}-$pos0;
 		print Out $id,"\t",$info{$id}{pos},"\n";
 	}
 
@@ -64,6 +72,7 @@ foreach my $map (@map) {
 close Out;
 @map=glob("$dmap/*.male.map");
 open Out,">$dOut/total.male.map";
+my %males;
 
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
@@ -75,7 +84,6 @@ foreach my $map (@map) {
 	open In,$map;
 	my $max=0;
 	my %male;
-
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
@@ -87,18 +95,27 @@ foreach my $map (@map) {
 	close In;
 	my $newdis=$max;
 	if ($adjust) {
-		$newdis=rand(100)+120;
+		$newdis=rand(80)+120;
 	}
+	my $n=0;
+	my $pos0;
 	foreach my $id (sort {$male{$a}{pos}<=>$male{$b}{pos}} keys %male) {
+		next if ($info{$id}{lgID} ne $lgID);
 		$male{$id}{pos}=$male{$id}{pos}*$newdis/$max;
+		if ($n == 0) {
+			$pos0=$male{$id}{pos};
+			$n++;
+		}
+		$male{$id}{pos}=$male{$id}{pos}-$pos0;
+		$males{$id}{pos}=$male{$id}{pos};
 		print Out $id,"\t",$male{$id}{pos},"\n";
-
 	}
 
 }
 close Out;
 @map=glob("$dmap/*.female.map");
 open Out,">$dOut/total.female.map";
+	my %females;
 
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
@@ -108,9 +125,9 @@ foreach my $map (@map) {
 	next if ($nloc <= 2);
 	print Out "group\t$lgID\n";
 	open In,$map;
+	my $max=0;
 	my %female;
 
-	my $max=0;
 	while (<In>) {
 		chomp;
 		next if ($_ eq ""||/^$/ || /^;/ || /group/);
@@ -124,8 +141,17 @@ foreach my $map (@map) {
 	if ($adjust) {
 		$newdis=rand(100)+120;
 	}
+	my $n=0;
+	my $pos0;
 	foreach my $id (sort {$female{$a}{pos}<=>$female{$b}{pos}} keys %female) {
+		next if ($info{$id}{lgID} ne $lgID);
 		$female{$id}{pos}=$female{$id}{pos}*$newdis/$max;
+		if ($n == 0) {
+			$pos0=$female{$id}{pos};
+			$n++;
+		}
+		$female{$id}{pos}=$female{$id}{pos}-$pos0;
+		$females{$id}{pos}=$female{$id}{pos};
 		print Out $id,"\t",$female{$id}{pos},"\n";
 	}
 	
@@ -187,11 +213,19 @@ foreach my $marker (@marker) {
 		chomp;
 		next if ($_ eq ""||/^$/);
 		my ($id,$type,$phase,@info)=split(/\s+/,$_);
-		next if ($type eq "hkxhk");
+	#	next if ($type eq "hkxhk");
 		my @out1;
 		my @out2;
 		push @out1,join(",",$id,$info{$id}{lgID},$info{$id}{pos});
 		push @out2,join(",",$id,$info{$id}{lgID},$info{$id}{pos});
+		my @outm;
+		if (exists $males{$id}) {
+			push @outm,join(",",$id,$info{$id}{lgID},$males{$id}{pos})
+		}
+		my @outf;
+		if (exists $females{$id}) {
+			push @outf,join(",",$id,$info{$id}{lgID},$females{$id}{pos})
+		}
 		for (my $i=0;$i<@info;$i++) {
 			my ($p1,$p2)=split(//,$info[$i]);
 			push @out1,$p1;
@@ -199,11 +233,15 @@ foreach my $marker (@marker) {
 		}
 		print Out join(",",@out1),"\n";
 		print Out join(",",@out2),"\n";
-		if ($type ne "nnxnp") {
-			print Male join(",",@out1),"\n";
+		if (exists $males{$id}) {
+			next if ($type =~/lmxll/);
+			next if ($type =~/hkxhk/);
+			print Male join(",",@outm,@out2[3..$#out2]),"\n";
 		}
-		if ($type ne "lmxll") {
-			print Female join(",",@out1),"\n";
+		if (exists $females{$id}) {
+			next if ($type =~/nnxnp/);
+			next if ($type =~/hkxhk/);
+			print Female join(",",@outf,@out1[3..$#out1]),"\n";
 		}
 	}
 	close In;

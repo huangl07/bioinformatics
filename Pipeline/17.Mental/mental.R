@@ -38,7 +38,7 @@ d2.names<-colnames(d2)
 data<-NULL;
 for (i in 2:length(d2.names)){
 	matrix2<-as.matrix(dist(d2[[i]]));
-	mantel<-mantel.test(d1[,-1], matrix2, graph = FALSE)
+	mantel<-mantel.test(d1[,-1], matrix2, graph = TRUE)
 	vegan<-mantel(xdis = d1[-1], ydis = matrix2)
 	if (!is.null(data)){
 		data<-rbind(data,data.frame(names=d2.names[i],z.stat=mantel$z.stat,p=mantel$p,vegan<-vegan$statistic));

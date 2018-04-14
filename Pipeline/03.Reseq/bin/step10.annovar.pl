@@ -46,7 +46,7 @@ close In;
 close SH;
 close ANNOLIST;
 open SH,">$dsh/10.annovar2.sh";
-print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx50G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.final.vcf --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
+print SH "java -Djava.io.tmpdir=$out/tmp/ -Xmx50G -jar /mnt/ilustre/users/dna/.env/bin/GenomeAnalysisTK.jar -T CombineVariants -R $ref $VCF -o $out/pop.final.vcf.gz --genotypemergeoption UNSORTED -log $out/pop.merge.log && ";
 print SH "perl $Bin/bin/anno-count.pl -snp $out/snp.anno.genes.txt -indel $out/indel.anno.genes.txt -anno $anno -out $out/pop && ";
 print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.kegg.stat --output $out/pop.kegg --top 1&& ";
 print SH "Rscript $Bin/bin/eff-enrich.R --input $out/pop.go.stat --output $out/pop.go --top 1 && ";

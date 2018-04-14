@@ -57,7 +57,7 @@ foreach my $kobas (@kobas) {
 				push @koid,$info[3];
 				push @anno,$info[1];
 		}
-		$anno{$queid}=join("\t",join(":",@koid),join(":",@anno));
+		$anno{$queid}=join("\t",join(",",@koid),join(":",@anno));
 	}
 	close In;
 }

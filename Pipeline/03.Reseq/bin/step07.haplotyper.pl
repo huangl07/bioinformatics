@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($bamlist,$dOut,$proc,$dShell,$ref,$dict,$split);
+my ($bamlist,$dOut,$proc,$dShell,$ref,$dict,$split,$chr);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -101,6 +101,7 @@ Usage:
   -proc <num>	number of process for qsub,default 20
   -out	<dir>	output dir
   -dsh	<dir>	output shell dir
+
   -h         Help
 
 USAGE
