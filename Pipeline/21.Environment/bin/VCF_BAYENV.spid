@@ -1,0 +1,41 @@
+# spid-file generated: Tue Apr 17 08:45:45 CST 2018
+
+# VCF Parser questions
+PARSER_FORMAT=VCF
+
+# Only output SNPs with a phred-scaled quality of at least:
+VCF_PARSER_QUAL_QUESTION=
+# Select population definition file:
+VCF_PARSER_POP_FILE_QUESTION=Q1.list
+# What is the ploidy of the data?
+VCF_PARSER_PLOIDY_QUESTION=
+# Do you want to include a file with population definitions?
+VCF_PARSER_POP_QUESTION=TRUE
+# Output genotypes as missing if the phred-scale genotype quality is below:
+VCF_PARSER_GTQUAL_QUESTION=
+# Do you want to include non-polymorphic SNPs?
+VCF_PARSER_MONOMORPHIC_QUESTION=Faulse
+# Only output following individuals (ind1, ind2, ind4, ...):
+VCF_PARSER_IND_QUESTION=
+# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):
+VCF_PARSER_REGION_QUESTION=
+# Output genotypes as missing if the read depth of a position for the sample is below:
+VCF_PARSER_READ_QUESTION=
+# Take most likely genotype if "PL" or "GL" is given in the genotype field?
+VCF_PARSER_PL_QUESTION=
+# Do you want to exclude loci with only missing data?
+VCF_PARSER_EXC_MISSING_LOCI_QUESTION=
+
+# BAYENV Writer questions
+WRITER_FORMAT=BAYENV
+
+# Save sample file
+BAYENV_WRITER_SAMPLE_FILE_QUESTION=
+# Assign half missing genotypes (one allele missing) as complete missing?
+BAYENV_WRITER_HALF_MISSING_QUESTION=
+# Do you want to save two additional files with used sample and loci names?
+BAYENV_WRITER_WRITE_INFO_FILE_QUESTION=ture
+# Do you want to save an additional sample file with sample sizes?
+BAYENV_WRITER_WRITE_SAMPLE_FILE_QUESTION=
+# Save sample/loci names file
+BAYENV_WRITER_INFO_FILE_QUESTION=SNP

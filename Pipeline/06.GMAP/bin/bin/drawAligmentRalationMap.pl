@@ -5,6 +5,7 @@ use Getopt::Long;
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use Statistics::RankCorrelation;
 my $BEGIN_TIME=time();
 my $version="1.0.0";
 #######################################################################################
@@ -54,7 +55,7 @@ while (<IN>) {
 	chomp;
 	s/\r//g;
 	next if (/^$/ || /^;/ || /^\#/) ;
-	if (/^group\s(\d+)/) {
+	if (/^group\s+(\d+)/) {
 		$group=$1;
 		$order=0;
 	}else{
@@ -77,10 +78,15 @@ close (IN) ;
 open Out,">$dOut/$fKey.spearman.xls";
 print Out "#LGID\tMarkerNum\tMaxChr\tSpearman\n";
 foreach my $chr (sort keys %spearman) {
-	my $group=(sort{$spearman{$chr}{$b}<=>$spearman{$chr}{$a}} keys %spearman)[0];
+	my $group=(sort{$spearman{$chr}{$b}<=>$spearman{$chr}{$a}} keys %{$spearman{$chr}})[0];
 	my @marker1=sort{$Map{$chr}{$a}<=>$Map{$chr}{$b}}keys %{$Map{$chr}};
 	my @marker2=sort{$Alignment{$group}{$a}<=>$Alignment{$group}{$b}} keys %{$Alignment{$group}};
-	my $c = Statistics::RankCorrelation->new( \@marker2, \@marker1,   );
+	my (@m1,@m2);
+	for (my $i=0;$i<@marker1;$i++) {
+		push @m1,$i;
+		push @m2,grep{$marker2[$_] eq $marker1[$i]} 0..$#marker2;
+	}		
+	my $c = Statistics::RankCorrelation->new( \@m1, \@m2,   );
 	my $n=$c->spearman;
 	print Out $chr,"\t",scalar @marker1,"\t",$chr,"\t",$n,"\n";
 }
@@ -390,7 +396,7 @@ sub chroLen {#
 	return $sum;
 }
 sub max{#&max(lists or arry);
-	#ÇóÁÐ±íÖÐµÄ×î´óÖµ
+	#ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Öµ
 	my $max=shift;
 	my $temp;
 	while (@_) {

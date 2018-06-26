@@ -1,0 +1,25 @@
+INFO  19-04 11:29:10,690 (PGDSpiderConfig.java:loadConfig:64)  -load PGDSpider configuration from: /mnt/ilustre/users/dna/Environment/biotools/PGDSpider/PGDSpider_2.1.1.2/spider.conf.xml
+DEBUG 19-04 11:29:10,733 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+DEBUG 19-04 11:29:10,774 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+ERROR 19-04 11:29:10,797 (FileQuestionImpl.java:getInputStream:73)  -File: Q1.list not found!
+DEBUG 19-04 11:29:10,806 (FileQuestionImpl.java:getInputStream:74)  -java.io.FileNotFoundException: Q1.list (No such file or directory)
+java.io.FileNotFoundException: Q1.list (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at ch.unibe.iee.cmpg.pgdspider.model.question.FileQuestionImpl.getInputStream(FileQuestionImpl.java:71)
+	at ch.unibe.iee.cmpg.pgdspider.model.parser.VcfParser.parse(VcfParser.java:330)
+	at ch.unibe.iee.cmpg.pgdspider.cli.CLIController.convert(CLIController.java:242)
+	at ch.unibe.iee.cmpg.pgdspider.PGDSpiderCli.main(PGDSpiderCli.java:31)
+INFO  19-04 12:27:32,294 (PGDSpiderConfig.java:loadConfig:64)  -load PGDSpider configuration from: /mnt/ilustre/users/dna/Environment/biotools/PGDSpider/PGDSpider_2.1.1.2/spider.conf.xml
+DEBUG 19-04 12:27:32,441 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+DEBUG 19-04 12:27:32,485 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+INFO  19-04 14:04:57,352 (PGDSpiderConfig.java:loadConfig:64)  -load PGDSpider configuration from: /mnt/ilustre/users/dna/Environment/biotools/PGDSpider/PGDSpider_2.1.1.2/spider.conf.xml
+DEBUG 19-04 14:04:57,461 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+DEBUG 19-04 14:04:57,489 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+INFO  19-04 15:19:55,905 (PGDSpiderConfig.java:loadConfig:64)  -load PGDSpider configuration from: /mnt/ilustre/users/dna/Environment/biotools/PGDSpider/PGDSpider_2.1.1.2/spider.conf.xml
+DEBUG 19-04 15:19:56,034 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+DEBUG 19-04 15:19:56,078 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+INFO  19-04 15:42:56,150 (PGDSpiderConfig.java:loadConfig:64)  -load PGDSpider configuration from: /mnt/ilustre/users/dna/Environment/biotools/PGDSpider/PGDSpider_2.1.1.2/spider.conf.xml
+DEBUG 19-04 15:42:56,192 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance
+DEBUG 19-04 15:42:56,231 (ParserFactory.java:getParserInstance:177)  -New VcfParser instance

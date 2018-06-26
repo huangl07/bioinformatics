@@ -135,7 +135,7 @@ foreach my $sample (sort keys %vcfstat) {
 	next if ($sample eq "pop");
 	print Out join("\t",$sample,$vcfstat{$sample}{total},$vcfstat{$sample}{Ts},$vcfstat{$sample}{Tv},sprintf("%.2f",$vcfstat{$sample}{Ts}/$vcfstat{$sample}{Tv}),$vcfstat{$sample}{total}-$vcfstat{$sample}{homo},$vcfstat{$sample}{homo},sprintf("%.2f",$vcfstat{$sample}{dp}/$vcfstat{$sample}{total}),$vcfstat{$sample}{miss},$vcfstat{$sample}{ref}),"\n";
 }
-print Out join("\t","pop",$vcfstat{pop}{total},$vcfstat{pop}{Ts},$vcfstat{pop}{Tv},sprintf("%.2f",$vcfstat{pop}{Ts}/$vcfstat{pop}{Tv}),"--","--",sprintf("%.2f",$vcfstat{pop}{dp}/$vcfstat{pop}{total}/scalar keys @indi),"--","--"),"\n";
+print Out join("\t","pop",$vcfstat{pop}{total},$vcfstat{pop}{Ts},$vcfstat{pop}{Tv},sprintf("%.2f",$vcfstat{pop}{Ts}/$vcfstat{pop}{Tv}),"--","--",sprintf("%.2f",$vcfstat{pop}{dp}/$vcfstat{pop}{total}/scalar @indi),"--","--"),"\n";
 close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";

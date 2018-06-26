@@ -33,7 +33,7 @@ print SH "perl $Bin/bin/gffcheck.pl -i $gff -o $out/ref/genes.gff && ";
 print SH "java -jar /mnt/ilustre/users/dna/.env//bin//snpEff.jar build -gff3 -v ref -c $out/snpEff.config\n";
 print SH "cd $out && bwa index $out/ref.fa\n";
 print SH "cd $out && java -jar /mnt/ilustre/users/dna/.env/bin/picard.jar CreateSequenceDictionary REFERENCE=$out/ref.fa && ";
-print SH "java -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar -T QCRef -R $out/ref.fa -out $out/ref.qc && ";
+print SH "java -jar /mnt/ilustre/users/dna/.env//bin//GenomeAnalysisTK.jar -T QCRef -R $out/ref.fa --out $out/ref.qc && ";
 print SH "perl $Bin/bin/chr.pl -i $out/ref.dict -o $out/ref.chrlist\n";
 print SH "cd $out && samtools faidx $out/ref.fa\n";
 close SH;

@@ -1,0 +1,61 @@
+qsub -l nodes=1:ppn=1 -l mem=3G -l walltime=240:00:00  -q dnaqsub done! now check!there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 1 still running! Please wait!
+there were 0 still running! Please wait!
+1still not done! poor luck !
+/mnt/ilustre/users/nanshan.yang/newmdt/Pipline/08.environment/demo/work_sh/bayenv2.sh 
+ qsub done!
+Total elapsed time : 3432s

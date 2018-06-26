@@ -18,7 +18,7 @@ Usage example:
 	Rscript Rqtl-NOCP.r --mark  --out --num --pop
 	
 Usage:
-	--mark	map file
+	--mark	input file
 	--out	out dir
 	--help		usage
 \n")
@@ -35,58 +35,65 @@ d<-na.omit(d)
 colnames(d)[2:3]=c("chr","pos")
 chr=unique(d$chr);
 for(i in chr){
-	pos=d$pos[d$chr==i]
-	d$start[d$chr==i]=(d$pos[c(1,1:(length(pos)-1))]+d$pos[c(1:length(pos))])/2
-	d$end[d$chr==i]=(d$pos[c(2:(length(pos)),length(pos))]+d$pos[c(1:length(pos))])/2
+	pos=(1:length(d$pos[d$chr==i]))
+	d$start[d$chr==i]=pos
+	d$end[d$chr==i]=pos+1
 }
 print(unique(d$chr))
-cols=c("green","blue","grey","white")
-names(cols)=c("1","2","0","-")
+cols=c("green","blue","grey","white","white")
+names(cols)=c("1","2","0","-","5")
 chr.len <- tapply(d$end, d$chr, max)
 x.brks <- cumsum(chr.len) - chr.len/2
 chr.cum.len <- c(0, cumsum(chr.len)[-length(chr.len)])
 d$start<-d$start+chr.cum.len[d$chr]
 d$end<-d$end+chr.cum.len[d$chr]
-
 names(chr.cum.len) <- names(chr.len)
-pdf(paste(opt$out,"pdf",sep="."),height=900,width=1600);
+pdf(paste(opt$out,".pdf",sep="."),height=900,width=1600);
 plot(5, type = "n", xlim = c(0, max(d$end)), ylim = c(0,ncol(d) - 4), xaxt = "n",main="Haplotype")
 axis(side = 1, at = x.brks, labels = unique(d$chr))
-for (i in 5:ncol(d)) {
-    rect(xleft = d$start, ybottom = i - 5, xright = d$end,ytop = i - 4, col = cols[as.character(d[,i])], border = NA)
+for (i in 4:ncol(d)) {
+	if(colnames(d)[i]=="start"|| colnames(d)[i]=="end"){next}
+    rect(xleft = d$start, ybottom = i - 5, xright = d$end,ytop = i - 4.2, col = cols[as.character(d[seq(0,length(d[,i]),1),i])], border = NA)
+    rect(xleft = d$start, ybottom = i - 4.2, xright = d$end,ytop = i - 4, col = cols[as.character(rep("5",length(d[seq(0,length(d[,i]),1),i])))], border = NA)
 }
-abline(v = c(0, cumsum(chr.len)), col = "grey80", lwd = 0.5)
+abline(v = c(0, cumsum(chr.len)), col = "grey", lwd = 1)
 dev.off()
 
-png(paste(opt$out,"png",sep="."),height=900,width=1600);
+png(paste(opt$out,".png",sep="."),height=900,width=1600);
 plot(5, type = "n", xlim = c(0, max(d$end)), ylim = c(0,ncol(d) - 4), xaxt = "n",main="Haplotype")
 axis(side = 1, at = x.brks, labels = unique(d$chr))
-for (i in 5:ncol(d)) {
-    rect(xleft = d$start, ybottom = i - 5, xright = d$end,ytop = i - 4, col = cols[as.character(d[,i])], border = NA)
+for (i in 4:ncol(d)) {
+	if(colnames(d)[i]=="start"|| colnames(d)[i]=="end"){next}
+    rect(xleft = d$start, ybottom = i - 5, xright = d$end,ytop = i - 4.2, col = cols[as.character(d[seq(0,length(d[,i]),1),i])], border = NA)
+    rect(xleft = d$start, ybottom = i - 4.2, xright = d$end,ytop = i - 4, col = cols[as.character(rep("5",length(d[seq(0,length(d[,i]),1),i])))], border = NA)
 }
-abline(v = c(0, cumsum(chr.len)), col = "grey80", lwd = 0.5)
+abline(v = c(0, cumsum(chr.len)), col = "grey", lwd = 1)
 dev.off()
 
 for (i in chr){
 	subd<-subset.data.frame(d,d$chr==i);
-	pos=seq(1,length(subd$pos),1)
-	subd$start[subd$chr==i]=(pos[c(1,1:(length(pos)-1))]+pos[c(1:length(pos))])/2
-	subd$end[subd$chr==i]=(pos[c(2:(length(pos)),length(pos))]+pos[c(1:length(pos))])/2
-	pdf(paste(opt$out,i,"pdf",sep="."),height=900,width=1600);
+	pos=c(1:length(subd$pos[subd$chr==i]))
+	subd$start[subd$chr==i]=pos
+	subd$end[subd$chr==i]=pos+1
+	pdf(paste(opt$out,i,".pdf",sep="."),height=900,width=1600);
 	plot(5, type = "n", xlim = c(0, max(subd$end,na.rm=TRUE)), ylim = c(0,ncol(subd) - 4),main="Haplotype",xlab=paste("LG",i,sep=" "),ylab="Samples")
-	for (j in 5:ncol(subd)) {
-		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4, col = cols[as.character(subd[,j])], border = NA)
+	for (j in 4:ncol(subd)) {
+		if(colnames(subd)[j]=="start"|| colnames(subd)[j]=="end"){next}
+		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4.2, col = cols[as.character(subd[seq(0,length(subd[,j]),1),j])], border = NA)
+		rect(xleft = subd$start, ybottom = j - 4.2, xright = subd$end,ytop = j - 4, col = cols[as.character(rep("5",length(subd[seq(1,length(subd[,j]),2),j])))], border = NA)
 	}
 	dev.off()
-	png(paste(opt$out,i,"png",sep="."),height=900,width=1600);
-	plot(5, type = "n", xlim = c(0, max(subd$end,na.rm=TRUE)), ylim = c(0,ncol(subd) - 4),main="Haplotype",xlab=paste("LG",i,sep=" "),ylab="Samples")
-	for (j in 5:ncol(subd)) {
-		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4, col = cols[as.character(subd[,j])], border = NA)
+	png(paste(opt$out,i,".png",sep="."),height=900,width=1600);
+	plot(5, type = "n", xlim = c(0, max(subd$end,na.rm=TRUE)), ylim = c(0,ncol(subd) - 4),main="Haplotype",xlab=paste("LG",i,sep=" "),ylab="Samples",)
+	for (j in 4:ncol(subd)) {
+		if(colnames(subd)[j]=="start"|| colnames(subd)[j]=="end"){next}
+		rect(xleft = subd$start, ybottom = j - 5, xright = subd$end,ytop = j - 4.2, col = cols[as.character(subd[seq(0,length(subd[,j]),1),j])], border = NA)
+		rect(xleft = subd$start, ybottom = j - 4.2, xright = subd$end,ytop = j - 4, col = cols[as.character(rep("5",length(subd[seq(1,length(subd[,j]),2),j])))], border = NA)
 	}
 	dev.off()
-
 }
 
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
+q();

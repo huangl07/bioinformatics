@@ -54,9 +54,10 @@ if ($pop ne "CP") {
 	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.map \n";
 	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.male.phase  --out $out/fig/total.male.map \n";
 	print SH2 "Rscript $Bin/bin/plotmaps.R --mark $out/total.female.phase  --out $out/fig/total.female.map \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin \n";
-	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/fig/total.female.bin \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP-sexAver.R --mark $out/total.sexAver.phase  --out $out/fig/total.sexAver.bin  \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.male.phase  --out $out/fig/total.male.bin  \n";
+	print SH2 "Rscript $Bin/bin/drawbinCP.R --mark $out/total.female.phase  --out $out/fig/total.female.bin  \n";
+
 	if ($ref) {
 		print SH2 "Rscript $Bin/bin/drawAligmentRalationMap.pl -m $out/total.sexAver.map --out $out/fig/ -k total.phy\n";
 	}

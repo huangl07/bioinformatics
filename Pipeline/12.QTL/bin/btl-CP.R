@@ -73,10 +73,10 @@ for(i in 1:length(phe.name)){
 	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
+	pm.result<-summary(scan.pm,alpha=c(0.01,0.05,0.1))
 	legend=paste(rownames(pm.result),round(pm.result,2))
 	threshold=pm.result[1,1]
 	scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
-	pm.result<-summary(scan.pm,alpha=c(0.01,0.05,0.1))
 	if(length(scan.result$lod$chr) < 1){
 		scan.result<-summary(scan,format="tabByCol",threshold=pm.result[2,1],drop=1)
 		threshold=pm.result[2,1]
@@ -120,7 +120,7 @@ for(i in 1:length(phe.name)){
 	qdata<-NULL
 	n=0;
 	for (j in chr){
-		subd=which(outd$chr==j & outd$lod > theshold[1])
+		subd=which(outd$chr==j & outd$lod > threshold[1])
 		print(paste(j,length(subd),sep="\t"))
 		if(length(subd)==0){next;}
 		start=subd[1]

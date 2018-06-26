@@ -193,12 +193,6 @@ open Out,">$dOut/total.final.loc";
 print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
 print Out "individual names\n",join("\n",@Indi);
 close Out;
-
-open Out,">$dOut/total.qtl";
-print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
-#print Out "individual names\n",join("\n",@Indi);
-close Out;
-
  @marker=glob("$dmap/*.correct.phase");
  @out=();
 open Out,">$dOut/total.sexAver.phase";
@@ -220,34 +214,52 @@ foreach my $marker (@marker) {
 		push @out2,join(",",$id,$info{$id}{lgID},$info{$id}{pos});
 		my @outm;
 		if (exists $males{$id}) {
-			push @outm,join(",",$id,$info{$id}{lgID},$males{$id}{pos})
+			push @outm,join(",",$id,$info{$id}{lgID},$males{$id}{pos});
 		}
 		my @outf;
 		if (exists $females{$id}) {
-			push @outf,join(",",$id,$info{$id}{lgID},$females{$id}{pos})
+			push @outf,join(",",$id,$info{$id}{lgID},$females{$id}{pos});
 		}
 		for (my $i=0;$i<@info;$i++) {
 			my ($p1,$p2)=split(//,$info[$i]);
-			push @out1,$p1;
-			push @out2,$p2;
+			if ($type =~ /nnxnp/) {
+				if ($p1 eq "-") {
+					push @out1,"-";
+					push @out2,"-";
+				}else{
+					push @out1,0;
+					push @out2,$p2;
+				}
+			}elsif($type =~ /lmxll/){
+				if ($p1 eq "-") {
+					push @out1,"-";
+					push @out2,"-";
+				}else{
+					push @out1,$p1;
+					push @out2,0;
+				}
+			}else{
+				push @out1,$p1;
+				push @out2,$p2;
+			}
 		}
 		print Out join(",",@out1),"\n";
 		print Out join(",",@out2),"\n";
 		if (exists $males{$id}) {
-			next if ($type =~/lmxll/);
-			next if ($type =~/hkxhk/);
-			print Male join(",",@outm,@out2[3..$#out2]),"\n";
+			print Male join(",",@outm,@out2[1..$#out2]),"\n";
 		}
 		if (exists $females{$id}) {
-			next if ($type =~/nnxnp/);
-			next if ($type =~/hkxhk/);
-			print Female join(",",@outf,@out1[3..$#out1]),"\n";
+			print Female join(",",@outf,@out1[1..$#out1]),"\n";
 		}
 	}
 	close In;
 }
+close Out;
 close Female;
 close Male;
+open Out,">$dOut/total.qtl";
+print Out join("\n","nloc = $nloc","nind = $nind","popt = CP","name = Total",@out),"\n\n";
+#print Out "individual names\n",join("\n",@Indi);
 close Out;
 open Out,">$dOut/total.trt";
 print Out "ntrt=1\n";
@@ -279,6 +291,74 @@ sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 	}
 	chdir $cur_dir;
 	return $return;
+}
+sub determineHaploSource {#
+	my ($type,$linkPhase,$progenyGeno)=@_;
+
+	return "--" if ($progenyGeno eq "--") ;
+
+	my $haploSource='';;
+	my (%parentAllel,@gameteCombination)=();
+
+	my %haploIndex=(
+		"0"=>"11",
+		"1"=>"12",
+		"2"=>"21",
+		"3"=>"22",
+	);
+
+	my ($p1,$p2,$m1,$m2)= $type =~/(.)(.)x(.)(.)/ ;
+	@{$parentAllel{"P"}}=($p1,$p2);
+	@{$parentAllel{"M"}}=($m1,$m2);
+	my ($PLinkPhase, $MLinkPhase) = split //,$linkPhase ;
+	if ($PLinkPhase eq '1'){
+		@{$parentAllel{"P"}} = reverse @{$parentAllel{"P"}};
+	}
+	if ($MLinkPhase eq '1'){
+		@{$parentAllel{"M"}} = reverse @{$parentAllel{"M"}} ;
+	}
+
+	foreach my $pGamete (@{$parentAllel{"P"}}) {
+		foreach my $mGamete (@{$parentAllel{"M"}}) {
+			push @gameteCombination,$pGamete.$mGamete;
+		}
+	}
+
+	for (my $j=0;$j<@gameteCombination ;$j++) {
+		
+		my @haplo=split //,$gameteCombination[$j];
+		my $haplo=join("",sort {$a cmp $b} @haplo);
+
+		if ($haplo eq $progenyGeno) {
+
+			my ($allel1,$allel2) = $progenyGeno =~/(.)(.)/;
+
+			if ($p1 eq $p2) {
+
+				my ($lp) = $haploIndex{$j} =~/.(.)/;
+				$haploSource = "0".$lp;
+				last;
+				
+			}elsif ($m1 eq $m2) {
+
+				my ($lp) = $haploIndex{$j} =~/(.)./;
+				$haploSource = $lp."0";
+				last;
+
+			}elsif (join("",sort {$a cmp $b} ($p1,$p2)) eq join("",sort {$a cmp $b} ($m1,$m2)) and $allel1 ne $allel2) {
+				
+				$haploSource = "--";
+				last;
+
+			}else{
+				
+				$haploSource = $haploIndex{$j};
+			}
+		}
+		
+	}
+	return $haploSource;
+
 }
 
 sub USAGE {#

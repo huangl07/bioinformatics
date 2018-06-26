@@ -208,6 +208,7 @@ while (<In>){
 			}
 		}
 		next if($vtype eq "INDEL" && $minlen > $len2 && $maxlen < $len1);
+		next if($asum == 0);
 		$gstat{"./."}||=0;
 		my $missfilter=$gstat{"./."}/scalar keys %sample;
 		my $average=$tdp/scalar keys %sample;

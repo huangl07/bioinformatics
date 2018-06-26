@@ -94,7 +94,7 @@ while (<In>) {
 		$fun{total}{eggnog}++ if($egid ne "--");
 		$fun{eff}{eggnog}++ if($stat{$info}{high}+$stat{$info}{middle} > 0 && $egid ne "--");
 		print Out join("\t",$infos,$pos,$stat{$info}{high},$stat{$info}{middle},$stat{$info}{low},$stat{$info}{unknow},$nrid,$nranno,$uniid,$unianno,$koid,$koanno,$goid,$goanno,$egid,$expre),"\n";
-		my @koid=split(/:/,$koid);
+		my @koid=split(/,/,$koid);
 		my @kdetail=split(/:/,$koanno);
 		for (my $i=0;$i<@koid;$i++) {
 			next if ($koid[$i] eq "--");

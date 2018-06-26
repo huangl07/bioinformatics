@@ -27,7 +27,7 @@ while (<SRC>)
     $count++;
     print OUT "PRIMER_SEQUENCE_ID=$id"."_$ssr_nr\nSEQUENCE_TEMPLATE=$seq\n";
     print OUT "PRIMER_PRODUCT_SIZE_RANGE=100-280\n";
-    print OUT "TARGET=",$start-3,",",$size+6,"\n";
+    print OUT "SEQUENCE_TARGET=",$start-3,",",$size+6,"\n";
     print OUT "PRIMER_MAX_END_STABILITY=250\n=\n"
     };
   };

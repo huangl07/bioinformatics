@@ -12,19 +12,21 @@ my $version="1.0.1";
 # ------------------------------------------------------------------
 # GetOptions
 # ------------------------------------------------------------------
-my ($map,$loc,$fKey,$dOut);
+my ($map,$loc,$fKey,$dOut,$win);
 GetOptions(
 				"help|?" =>\&USAGE,
 				"m:s"=>\$map,
 				"l:s"=>\$loc,
 				"k:s"=>\$fKey,
 				"d:s"=>\$dOut,
+				"win:s"=>\$win,
 				) or &USAGE;
 &USAGE unless ($map and $loc and $fKey and $dOut);
 #------------------------------------------------------------------
 # Global parameter  
 #------------------------------------------------------------------
 $dOut||="./";
+$win||=100;
 mkdir $dOut unless (-d $dOut) ;
 open In,$loc;
 my %pri;
@@ -64,7 +66,6 @@ while (<In>) {
 close In;
 
 my @order=sort {$order{$a}<=> $order{$b}} keys %order;
-my $win=15;
 my $step=1;
 my %correct;
 for (my $i=0;$i<@order;$i++) {
@@ -92,11 +93,16 @@ for (my $i=0;$i<@order;$i++) {
 			$b1="0";
 		}elsif (scalar @b1 !=0) {
 			$b1=$b1[0];
+		}elsif (scalar @b2 == 0) {
+			$b1="0";
 		}
+
 		if (scalar @b2 > 1 && $stat{2}{$b2[0]}==$stat{2}{$b2[1]}) {
 			$b2="0";
 		}elsif (scalar @b2 !=0) {
 			$b2=$b2[0];
+		}elsif (scalar @b2 == 0) {
+			$b2="0";
 		}
 		$correct{$order[$i]}{geno}[$j]=join("",$b1,$b2);
 	}
@@ -258,7 +264,7 @@ Usage:
 
   -k		<str>	Key of output file,forced
   -d		<str>	dir of output file,default ./
-
+  -win		<num>	win size 
   -h		Help
 
 USAGE

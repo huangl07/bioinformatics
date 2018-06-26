@@ -47,9 +47,16 @@ foreach my $map (@map) {
 	if ($adjust) {
 		$newdis=rand(60)+120;
 	}
+	my $n=0;
+	my $pos0=0;
 	foreach my $id (@order) {
 		my ($lgid,$pos)=split(/\,/,$Marker{$id});
 		$pos=$newdis/$max*$pos;
+		if ($n == 0) {
+			$pos0=$pos;
+			$n++;
+		}
+		$pos=$pos-$pos0;
 		$Marker{$id}=join(",",$lgid,$pos);
 		print Out $id,"\t",$pos,"\n";
 	}	

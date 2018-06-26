@@ -30,9 +30,10 @@ foreach my $fqstat (@fqstat) {
 	open In,$fqstat;
 	while (<In>) {
 		chomp;
-		next if ($_ eq ""||/^$/ ||/!Total/ ||/#/);
+		next if ($_ eq ""||/^$/ ||/#/);
+		next if(!/Total/);
 		my(undef,$sample,$readnum,$basenum,$a,$t,$g,$c,$n,$GC,$Q30,$Q20,undef)=split(/\s+/,$_);
-		my $sampleID=(split(/\:/,$sample))[0];
+		my $sampleID=(split(/\-/,$sample))[0];
 		$fqstat{$sampleID}{readnum}+=$readnum;
 		$fqstat{$sampleID}{basenum}+=$basenum;
 		$fqstat{$sampleID}{GC}+=$GC*$basenum;

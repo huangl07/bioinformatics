@@ -33,7 +33,7 @@ $/=">";
 my $n=0;
 while (<In>) {
 	chomp;
-	next if ($_ eq ""||/^$/ ||/#/);
+	next if ($_ eq ""||/^$/ ||/^#/);
 	my ($info,@seq)=split(/\n/,$_);
 	my $id=(split(/\s+/,$info))[0];
 	if (!exists $change{$id}) {
@@ -52,7 +52,7 @@ while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/||/^#/) ;
 	my ($id,@info)=split(/\s+/,$_);
-	die "gff && ref file doesn't match\n" if (!exists $change{$id});
+	die "$id\tgff && ref file doesn't match\n" if (!exists $change{$id});
 	print Out join("\t",$change{$id},@info),"\n";
 }
 close In;

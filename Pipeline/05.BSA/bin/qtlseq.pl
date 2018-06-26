@@ -138,6 +138,17 @@ while (<In>) {
 		my $sum2=$ad2[$b2[0]];
 		$sum1+=$ad1[$b1[1]] if($b1[1] ne $b1[0]);
 		$sum2+=$ad2[$b2[1]] if($b2[1] ne $b2[0]);
+		for (my $i=0;$i<@ad1;$i++) {
+				if ($i ne $b1[0] && $i ne $b1[1]) {
+					$ad1[$i]=0;
+				}
+			}
+		
+			for (my $i=0;$i<@ad2;$i++) {
+				if ($i ne $b2[0] && $i ne $b2[1]) {
+					$ad2[$i]=0;
+				}
+			}
 		next if ($sum1 == 0 || $sum2 == 0);
 		my %stat;
 		$stat{$b1[0]}++;

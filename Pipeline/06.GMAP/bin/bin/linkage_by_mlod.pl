@@ -45,7 +45,7 @@ $minGroup||=20;    ## minimum threshold for group size
 $maxGroup||=500;   ## maximum threshold for group size
 $|=1;              ## close buffer 
 $redo //=0;##<
-$mode||=2;         ## choose grouping scheme with minimum variance or maximum marker numbers: 1: max number; 2£ºmin variance 
+$mode||=2;         ## choose grouping scheme with minimum variance or maximum marker numbers: 1: max number; 2ï¿½ï¿½min variance 
 $dumperboo//=0;     ## choose whether print tree hashes to dumper 
 
 if ($minGroup > $maxGroup) {	
@@ -230,7 +230,7 @@ out_sub_tree($Tree,"$dOut/$fKey.gTree.delFragment.mergeNode.hash.dumper");
 #                                                                   #
 #  FUNCTION :  select_sub_tree()                                    #
 #                                                                   #
-#  USAGE    :  traverse simplified tree£¬get a forest in which      #
+#  USAGE    :  traverse simplified treeï¿½ï¿½get a forest in which      #
 #            trees has appropriate root node, calculate possible    #
 #         scheme of linakge group selection for each tree in forest #
 #                                                                   #
@@ -347,6 +347,7 @@ sub out_sub_tree{
 	for(my $i=0;$i<@queue;$i++) {
 		next if ($queue[$i]->{'nloc'} < $minGroup);
 		print Out join("\n","\t" x $queue[$i]->{'lod'}.$queue[$i]->{'lod'}. "/".$queue[$i]->{'nloc'}),"\n";
+		print Out join("\n","\t" x $queue[$i]->{'lod'}.join(",",@{$queue[$i]->{'locus'}})),"\n";
 		next if (!defined $queue[$i]->{'child'});
 		if (scalar @{$queue[$i] ->{'child'}}!=0) {
 			@queue = (@queue[0..$i],@{$queue[$i]->{'child'}},@queue[$i+1..$#queue]);

@@ -19,11 +19,9 @@ GetOptions(
 				"o:s"=>\$Svg,
 				"r:s"=>\$Row,
 				"c:s"=>\$Column,
-				"png"=>\$PNG,
 				) or &USAGE;
 &USAGE unless ($Map and $Svg and $Column and $Row);
 
-my $ConvertSVGtoPNG="$Bin/svg2xxx/v1.0/svg2xxx";
 
 
 # ------------------------------------------------------------------
@@ -61,7 +59,7 @@ foreach my $file (@files) {
 		s/\r//g;
 		next if (/^$/ || /^;/ || /^\#/ || /^nloc/) ;
 		if (/^group\s+(\w+)/i) {
-			next;
+			$Chro=$1;
 		}else{
 			my ($Id,$Start)=$_=~/^(\S+)\s+(\S+)/;
 			$MARKER{$Chro}{$Id}=$_;
@@ -206,21 +204,9 @@ for ($j=1;$j<= $Row;$j++) {
 	print SVG &svg_end();
 
 close (SVG) ;
-###################draw svg to png
-print STDOUT "Drawing SVG file done.\n";
-if ($PNG) {
-	for (my $i=0;$i<@SVGFiles ;$i+=3) {
-		print STDOUT "Convert $SVGFiles[$i] to PNG format ... \n";
-		my $dirname=dirname($SVGFiles[$i]);
-		my $basename=basename($SVGFiles[$i]);
-		`mkdir $dirname` unless (-d $dirname) ;
-		my $pwd=`pwd`;chomp $pwd;
-		chdir $dirname;
-		`$ConvertSVGtoPNG $basename -w $SVGFiles[$i+1] -h $SVGFiles[$i+2] -dpi 3000 -m 100000 `;
-		chdir $pwd;
+`cairosvg $Svg.all.svg -o $Svg.all.png --dpi 300`;
+`cairosvg $Svg.all.svg -o $Svg.all.pdf `;
 
-	}
-}
 
 
 #######################################################################################
@@ -412,7 +398,6 @@ Usage:
   -o <file>  Key of output file, forced
   -r <num>	#####行数
   -c <num>	#####列数
-  -png       Convert svg to png, default off
   -h         Help
 
 USAGE
