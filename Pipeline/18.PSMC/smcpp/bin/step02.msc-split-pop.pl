@@ -37,7 +37,7 @@ foreach my $pop (keys %hash){
     for(my $i=1;$i<=$chr;$i++){
         my $chr="chr$i";
         my $outfile="$pop.$chr.smc.gz";
-        print SH "/mnt/ilustre/users/dna/smcpp/build/bin/smc++ vcf2smc $vcf $out/$outfile $chr $pop:",join("\,",@{$hash{$pop}}),"\n";
+        print SH "smc++ vcf2smc $vcf $out/$outfile $chr $pop:",join("\,",@{$hash{$pop}}),"\n";
     }
 }
 close SH;

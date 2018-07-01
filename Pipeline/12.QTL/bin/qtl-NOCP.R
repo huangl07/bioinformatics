@@ -5,6 +5,8 @@ spec = matrix(c(
 	'trt','t',1,'character',
 	'out','o',1,'character',
 	'num','n',1,'character',
+	'method','d',1,'character',
+	'pvalue','q',1,'character',
 	'pop','p',1,'character',
 	'bc','b',1,'character',
 	'f','f',1,'character',
@@ -24,6 +26,8 @@ Usage:
 	--pop	pop type
 	--out	out dir
 	--num	pm number
+	--method	method
+	--pvalue	pvalue
 	--bc	bc gen for bcsft
 	--f		f gen for bcsft
 	--help		usage
@@ -45,6 +49,7 @@ if(opt$pop =="bcsft") {
 	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN")
 }
 if(!dir.exists(opt$out)){dir.create(opt$out)}
+if (is.null(opt$method)){opt$method="cim"}
 setwd(opt$out);
 d<-jittermap(d)
 d<-sim.geno(d)
@@ -72,13 +77,18 @@ chr=chrnames(d)
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
 	eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
-	scan<-cim(d,pheno.col=phe.name[i]);
-	scan.pm<-cim(d,pheno.col=phe.name[i],n.perm=opt$num);
+	if(opt$method == "cim"){
+		scan<-cim(d,pheno.col=phe.name[i]);
+		scan.pm<-cim(d,pheno.col=phe.name[i],n.perm=opt$num);
+	}else{
+		scan<-scanone(d,pheno.col=phe.name[i]);
+		scan.pm<-scanone(d,pheno.col=phe.name[i],n.perm=opt$num);
+	}
 	markerid<-find.marker(d,chr=eff$chr,pos=eff$pos)
 	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod,eff=eff$a);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
-	pm.result<-summary(scan.pm,alpha=seq(0.001,1,0.001))
+	pm.result<-summary(scan.pm,alpha=seq(0.001,1,0.0001))
 	write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result);
 	legend=paste(rownames(pm.result),round(pm.result,2))
 	pm.result<-summary(scan.pm,alpha=c(0.001,0.01,0.05))

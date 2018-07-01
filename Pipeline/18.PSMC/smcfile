@@ -1,0 +1,11 @@
+ 1031  smc++
+ 1112  smc++ 
+ 1118  smc++ vcf2smc sca1.smc.gz sca1 Pop:JXB0201,JXB0202
+ 1119  smc++ vcf2smc sca1.smc.gz sca1 pop1:JXB0201,JXB0202
+ 1120  smc++ vcf2smc pop.recode.vcf sca1.smc.gz sca1 pop1:JXB0201,JXB0202
+ 1124  smc++ vcf2smc pop.recode.vcf sca1.smc.gz sca1 pop1:JXB0201,JXB0202
+ 1125  smc++ vcf2smc pop.recode.vcf.gz sca1.smc.gz sca1 pop1:JXB0201,JXB0202
+ 1126  smc++ estimate -o output/ .00000001 sca1.smc.gz 
+ 1127  smc++ plot plot.png output/model.final.json 
+ 1282  history|grep smc++
+ 1283  history|grep smc++ > ../../psmc/smcfile

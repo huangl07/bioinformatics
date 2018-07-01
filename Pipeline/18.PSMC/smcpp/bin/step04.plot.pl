@@ -31,8 +31,8 @@ while(<IN>){
     }
 close IN;
 my $pops=join(" ",@smc);
-print SH "/mnt/ilustre/users/dna/smcpp/build/bin/smc++ plot $out/plot.png $pops\n";
-print SH "/mnt/ilustre/users/dna/smcpp/build/bin/smc++ plot $out/plot.pdf $pops\n";
+print SH "smc++ plot $out/plot.png $pops\n";
+print SH "smc++ plot $out/plot.pdf $pops\n";
 
 my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step04.plot.sh";
 `$job`;

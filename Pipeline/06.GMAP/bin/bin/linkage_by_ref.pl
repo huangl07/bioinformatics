@@ -35,11 +35,13 @@ my %chrID;
 while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/);
-	my ($id,undef,undef)=split;
-	$id=(split(/\_/,$id))[0];
+	my ($mid,undef,undef)=split;
+	my $id=(split(/\_/,$mid))[0];
 	if ($id =~ /chr/) {
-		$chrID{$id}=scalar keys %chrID;
-		$LG{$chrID{$id}}{$id}=1;
+		if (!exists $chrID{$id}) {
+			$chrID{$id}=(scalar keys %chrID)+1;
+		}
+		$LG{$chrID{$id}}{$mid}=1;
 		$pos{$id}=$1;
 	}
 	if ($id =~ /sca(\d+)/) {

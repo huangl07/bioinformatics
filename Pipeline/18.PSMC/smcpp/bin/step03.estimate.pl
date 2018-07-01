@@ -34,7 +34,7 @@ while(<IN>){
 close IN;
 foreach my $pop (keys %hash){
     mkdir "$out/$pop" if (!-d "$out/$pop");
-    print SH "/mnt/ilustre/users/dna/smcpp/build/bin/smc++ estimate -o $out/$pop  1.25e-8 $smc/$pop.chr*.smc.gz\n";
+    print SH "smc++ estimate -o $out/$pop  1.25e-8 $smc/$pop.chr*.smc.gz\n";
     print OUT "$pop\t$out/$pop/model.final.json\n";
     }
 
