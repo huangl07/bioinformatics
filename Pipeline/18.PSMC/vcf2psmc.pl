@@ -74,7 +74,7 @@ my $head=0;
 open SH,">$fOut/work1.sh";
 my %poppsmc;
 foreach my $id (sort keys %seq) {
-	print SH "psmc -N25 -t15 -r5 -p "4+25*2+4+6" -o $fOut/$id.psmc $fOut/$id.fasta\n";
+	print SH "psmc -N25 -t15 -r5 -p \"4+25*2+4+6\" -o $fOut/$id.psmc $fOut/$id.fasta\n";
 	push @{$poppsmc{$pop{$id}}},"$fOut/$id.psmc";
 	open FA,">$fOut/$id.fasta";
 	foreach my $chr (sort keys %{$seq{$id}}) {
@@ -88,7 +88,7 @@ my @id;
 my @psmcfile;
 foreach my $popid (sort keys %poppsmc) {
 	print SH "cat ".join(" ",@{$poppsmc{$popid}}) ."> $fOut/$popid.psmc && ";
-	print SH "psmc_plot.pl -R -p $fOut/pop.id $fOut/$popid.psmc\n";
+	print SH "psmc_plot.pl -R -p $fOut/$popid $fOut/$popid.psmc\n";
 	push @id,$popid;
 	push @psmcfile,"$fOut/$popid.psmc";
 }
@@ -109,7 +109,8 @@ Description:
 Usage:
   Options:
   -i	<file>	input file name
-  -o	<file>	split windows sh
+  -o	<file>	output dir
+  -p	<file>	population file
   -h         Help
 
 USAGE

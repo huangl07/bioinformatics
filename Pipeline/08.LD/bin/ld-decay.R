@@ -37,10 +37,11 @@ for (i in 1:5){
 	decay05<-newLD$distance[which.min(abs(newLD$fpoints-maxld/2))]
 	decay01<-newLD$distance[which.min(abs(newLD$fpoints-0.1))]
 	newLD<-newLD[order(newLD$distance),]
+	newLD$distance<-newLD$distance/1000
 	if (i != 1){
-		lines(newLD,col=col[i],lwd=5)
+		lines(newLD,col=col[i],lwd=2)
 	}else{
-		plot(newLD,type="l",lwd=5,ylim=c(0,1),col=col[i],main="LD decay",ylab="R^2",xlab="distance")
+		plot(newLD,type="l",lwd=2,ylim=c(0,1),col=col[i],main="LD decay",ylab="R^2",xlab="distance(kb)")
 	}
 }
 legend("topright",col=col,legend=pop.id,pch=1,cex=1)
