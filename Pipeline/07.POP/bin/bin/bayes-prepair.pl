@@ -57,7 +57,8 @@ print Out "begin mrbayes;\n\tset autoclose=yes nowarn=yes;\n\texecute $file;\n";
 my %model=(
 	"GTR"=>6,
 	"HKY"=>2,
-	"F81"=>1, 
+	"F81"=>1,
+   "GTR"=>6,	
 	"mixed"=>"mixed",
 );
 my %rates=(
@@ -67,6 +68,7 @@ my %rates=(
 	1=>"propinv",
 	"GTR+I"=>"invgamma",
 );
+my %stat;
 while(<On>){
 	chomp;
 	next if (/^$/|| $_ eq "");
@@ -75,7 +77,7 @@ while(<On>){
 		if ($model=~/GTR+I/) {
 			$model="GTR+I";
 		}
-		print Out "\tlset nst=$model{$model} rates=$rates{$model} ngammacat=4;\n";
+		$stat{$model}++;
 	}
 	if(/Frequencies:\s+(.*)/){
 		my @freq=split(/\s+/,$1);
@@ -83,6 +85,8 @@ while(<On>){
 		last;
 	}
 }
+my $model=(sort{$stat{$a}<=>$stat{$b}} keys %stat)[0];
+print Out "\tlset nst=$model{$model} rates=$rates{$model} ngammacat=4;\n";
 print Out "\tmcmcp nchains=4 ngen=90000000 stoprule=yes stopval=0.01 samplefreq=1000 printfreq=1000;\n";
 print Out "\tmcmc;\n";
 print Out "\tsump;\n";

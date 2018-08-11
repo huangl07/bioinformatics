@@ -50,7 +50,7 @@ if ($gro) {
 	print SH "\n";
 }
 if ($bayes) {
-	print SH "cd $out/ && mpirun -np 16 MrBayes $out/bayes.run.nex > $out/bayes.log && ";
+	print SH "cd $out/ && mpirun -np 16 /mnt/ilustre/users/dna/.env/bin/MrBayes $out/bayes.run.nex > $out/bayes.log && ";
 	print SH "Rscript $Bin/bin/tree.R --infile $out/RAxML_bipartitionsBranchLabels.$id  --outfile $out/$id.ml.tree  ";
 
 }

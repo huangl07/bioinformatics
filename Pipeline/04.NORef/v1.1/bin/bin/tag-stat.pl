@@ -1,36 +1,38 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl -w
 use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($ref,$out,$gff,$chr,$dsh);
+my ($tags,$fOut,$sampleID);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"ref:s"=>\$ref,
-	"out:s"=>\$out,
-	"gff:s"=>\$gff,
-	"chr:s"=>\$chr,
-	"dsh:s"=>\$dsh,
-	) or &USAGE;
-&USAGE unless ($ref and $out and $dsh and $gff);
-mkdir $out if (!-d $out);
-$out=ABSOLUTE_DIR($out);
-mkdir $dsh if (!-d $dsh);
-$dsh=ABSOLUTE_DIR($dsh);
-open SH,">$dsh/step01.new-ref.sh";
-print SH "gffread -o $out/ref.packaged.gff $gff && perl $Bin/bin/GRename.pl -i $ref -g $out/ref.packaged.gff -o $out/ref  ";
-if ($chr) {
-	print SH "-f $chr ";
+	"i:s"=>\$tags,
+	"o:s"=>\$fOut,
+	"k:s"=>\$sampleID,
+			) or &USAGE;
+&USAGE unless ($tags and $fOut and $sampleID );
+open In,"zcat $tags.tags.tsv.gz|";
+my $total=0;
+my $dep=0;
+while (<In>) {
+	chomp;
+	next if ($_ eq "" || /^$/ || /^#/);
+	my (undef,undef,$type,undef,undef)=split(/\t/,$_);
+	if ($type =~ /consensus/) {
+		$total++;
+	}elsif ($type =~ /primary/ || $type =~ /secondary/) {
+		$dep++;
+	}
 }
-print SH " && perl $Bin/bin/getGeneFasta.pl -i $out/ref.fa -o $out/ref.gene.fa -g $out/ref.gff && ";
-print SH "perl $Bin/bin/pre-design.pl -i $ref -o $out/ref.predesign\n";
-close SH;
-my $job="perl /mnt/ilustre/users/dna/.env//bin//qsub-sge.pl $dsh/step01.new-ref.sh";
-`$job`;
+close In;
+open Out,">$fOut";
+print Out "#sampleID\ttotal tags\ttotal depth\taverage depth\n";
+print Out "$sampleID\t$total\t$dep\t",sprintf("%.2f",$dep/$total),"\n";
+close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
@@ -59,15 +61,14 @@ sub USAGE {#
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
 Description:
+	fq thanslate to fa format
+	eg:
+	perl $Script -i -o -k -c
 
 Usage:
   Options:
-  -ref	<file>	input genome name,fasta format,
-  -gff	<file>	input genome gff file,
-  -out	<dir>	output data prefix
-  -chr	<file>	chromosome change file
-  -dsh	<dir>	output work sh dir
-
+  -i	<file>	input file name
+  -o	<file>	output file
   -h         Help
 
 USAGE

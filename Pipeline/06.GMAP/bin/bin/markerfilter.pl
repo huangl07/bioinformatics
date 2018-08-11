@@ -93,7 +93,7 @@ while (<In>) {
 			}
 		}
 	}
-	if ($type eq "abxcc") {
+	if ($type eq "abxcc"  && $popt eq "CP") {
 		$type = "lmxll";
 		for (my $i=0;$i<@info;$i++) {
 			if ($info[$i] eq "ac") {
@@ -104,7 +104,7 @@ while (<In>) {
 				$info[$i]="--"
 			}
 		}
-	}elsif ($type eq "ccxab") {
+	}elsif ($type eq "ccxab"  && $popt eq "CP") {
 		$type = "nnxnp";
 		for (my $i=0;$i<@info;$i++) {
 			if ($info[$i] eq "ac") {

@@ -28,12 +28,15 @@ if(is.null(opt$outfile)){print_usage(spec)}
 tbl<-read.table(opt$infile,header=FALSE);
 id<-tbl$V1;
 col<-length(colnames(tbl))
+coldata<-rainbow(20)
 data<-tbl[,2:col]
-pdf(paste(opt$outfile,".pdf",sep=""),height=900,width=1600)
-barplot(t(as.matrix(data)),names.arg=id, col=rainbow(col),xlab="Individual #", ylab="Ancestry", border=NA,las=2)
+pdf(paste(opt$outfile,".pdf",sep=""),width=16, height=9)
+par(mar=c(max(nchar(as.character(id)))*0.7,5,2,0))
+barplot(t(as.matrix(data)),names.arg=id, col=coldata[1:col-1],main="Individual #", ylab="Ancestry", border=NA,las=2)
 dev.off()
-png(paste(opt$outfile,".png",sep=""),height=900,width=1600)
-barplot(t(as.matrix(data)),names.arg=id,col=rainbow(col),xlab="Individual #", ylab="Ancestry", border=NA,las=2)
+png(paste(opt$outfile,".png",sep=""),width=1600, height=900)
+par(mar=c(max(nchar(as.character(id)))*0.7,5,2,0))
+barplot(t(as.matrix(data)),names.arg=id,col=coldata[1:col-1],main="Individual #", ylab="Ancestry", border=NA,las=2)
 dev.off()
 escaptime=Sys.time()-times;
 print("Done!")

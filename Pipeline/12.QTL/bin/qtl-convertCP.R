@@ -39,7 +39,7 @@ if(!dir.exists(opt$out)){dir.create(opt$out)}
 
 d<-read.cross(mapfile=opt$map,genfile=opt$loc,phefile=opt$trt,format="mapqtl",crosstype="4way")
 setwd(opt$out);
-write.cross(hyper,file="pop.out",format=opt$format)
+write.cross(d,file="pop.out",format=opt$format)
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)

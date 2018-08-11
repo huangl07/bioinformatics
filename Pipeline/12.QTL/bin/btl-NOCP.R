@@ -8,6 +8,9 @@ spec = matrix(c(
 	'pop','p',1,'character',
 	'bc','b',1,'character',
 	'f','f',1,'character',
+	'method','d',1,'character',
+	'pvalue','q',1,'character',
+	'lod','l',1,'character',
 	'help','h',0,'logical'
 	), byrow=TRUE, ncol=4)
 opt = getopt(spec)
@@ -26,6 +29,9 @@ Usage:
 	--num	pm number
 	--bc	bc gen for bcsft
 	--f		f gen for bcsft
+	--method        method
+	--pvalue        pvalue
+	--lod   lod
 	--help		usage
 \n")
 	q(status=1);
@@ -38,6 +44,7 @@ if ( is.null(opt$trt) ) { print_usage(spec) }
 if ( is.null(opt$pop) ) { print_usage(spec) }
 if ( is.null(opt$num) ) { opt$num=1000; }else{opt$num=as.numeric(opt$num)}
 if ( is.null(opt$out) ) { opt$out="./";}
+if (is.null(opt$method)){opt$method="cim"}
 if(opt$pop =="bcsft" & is.null(opt$bc) & is.null(opt$f)){print_usage(spec)}
 if(opt$pop =="bcsft") {	
 	d<-read.cross(file=opt$mark,phefile=opt$trt,format="csvsr",crosstype=opt$pop,na.string="NaN",BC.gen=opt$bc,F.gen=opt$f)
@@ -67,47 +74,43 @@ for (i in 1:length(phe.name)){
 }
 dev.off()
 print(length(phe.name))
+opt$num=as.numeric(opt$num)
+opt$pvalue=as.numeric(opt$pvalue)
+
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype"){next;}
 	eff<-effectscan(d,pheno.col=phe.name[i],draw=FALSE);
+	if(opt$method == "cim"){
+		scan<-cim(d,pheno.col=phe.name[i])
+		scan.pm<-cim(d,pheno.col=phe.name[i],n.perm=opt$num)
+	}else{
+		scan<-scanone(d,pheno.col=phe.name[i])
+		scan.pm<-scanone(d,pheno.col=phe.name[i],n.perm=opt$num)
+	}
 	scan<-scanone(d,pheno.col=i,model="binary");
 	scan.pm<-scanone(d,pheno.col=i,model="binary",n.perm=1000);
 	markerid<-find.marker(d,chr=eff$chr,pos=eff$pos)
 	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod,eff=eff$a);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
-	scan.result<-summary(scan, perms=scan.pm, pvalues=TRUE)
-	pm.result<-summary(scan.pm,alpha=c(0.01,0.05,0.1))
-	legend=paste(rownames(pm.result),round(pm.result,2))
-	threshold=pm.result[1,1]
-	scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
-	if(length(scan.result$lod$chr) < 1){
-		scan.result<-summary(scan,format="tabByCol",threshold=pm.result[2,1],drop=1)
-		threshold=pm.result[2,1]
-		if(length(scan.result$lod$chr) <1){
-			scan.result<-summary(scan,format="tabByCol",threshold=pm.result[3,1],drop=1)
-			threshold=pm.result[3,1]
-			if(length(scan.result$lod$chr) <1){
-				pm.result<-c(3,2.5)
-				scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1);
-				threshold=3
-				if(length(scan.result$lod$chr) <1){
-					threshold=2.5
-					scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1);
-				}
-				legend=pm.result
-			}else{
-				pm.result<-summary(scan.pm,alpha=c(0.05,0.1))
-				legend=paste(rownames(pm.result),round(pm.result,2))
-			}
-		}else{
-			pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
-			legend=paste(rownames(pm.result),round(pm.result,2))
-		}
+	if(!is.null(opt$pvalue)){
+		pm.result<-summary(scan.pm,alpha=opt$pvalue)
+		write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+		scan.result<-summary(scan,format="tabByCol",threshold=pm.result,drop=1)
+		threshold=pm.result
 	}else{
-		pm.result<-summary(scan.pm,alpha=c(0.01,0.05));
-		legend=paste(rownames(pm.result),round(pm.result,2))
-	}	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
+		if(!is.null(opt$lod)){
+			write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+			scan.result<-summary(scan,format="tabByCol",threshold=(opt$lod),drop=1)
+			threshold=opt$lod
+		}else{
+			pm.result<-summary(scan.pm,alpha=0.05)
+			write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+			scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
+			threshold=pm.result
+		}
+	}
+	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
 	plot(scan)
 	abline(h=pm.result,col=rainbow(length(pm.result)))
 	legend("topright",legend=legend,col=rainbow(length(pm.result)),pch=1)

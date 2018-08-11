@@ -3,59 +3,53 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+my ($input,$output);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$fIn,
-	"o:s"=>\$fOut,
+	"input:s"=>\$input,
+	"output:s"=>\$output,
 			) or &USAGE;
-&USAGE unless ($fIn );
-open In,$fIn;
-my %stat;
-my %length;
-my %Alen;
+&USAGE unless ($input and $output);
+open In,$input;
+my %genewise_outs;
+my $target_seq;
+$/ = "genewise output";
 while (<In>) {
 	chomp;
-	next if ($_ eq "" ||/^$/ ||/^#/);
-	my ($chr1,$pos1,$chr2,$pos2,$length,$type,$pvalue,$depth,$genenum,$geneinfo)=split(/\t/,$_);
-	$stat{$type}{total}++;
-	$stat{$type}{gene}++ if ($genenum !=0);
-	$length{$length}{$type}++;
-	$Alen{$type}+=$length;
+	next if ($_ eq ""||/^$/);
+	if ( /Score\s+(\d+\.\d+)\s+bits/ ) {
+        $genewise_outs{$_} = $1;
+    }
+    elsif ( /Target\s+Sequence\s+(.*?)\n/msg ) {
+        $target_seq = $1;
+    }
+
 }
 close In;
-open Out,">$fOut.sv.stat";
-print Out "#type\ttotal\tgene\talen\n";
-foreach my $type (sort keys %stat) {
-	my @out;
-	push @out,$type;
-	$stat{$type}{total}||=0;
-	$stat{$type}{gene}||=0;
-	push @out,$stat{$type}{total};
-	push @out,$stat{$type}{gene};
-	push @out,$Alen{$type}/$stat{$type}{total};
-	print Out join("\t",@out),"\n";
+my $best=(sort {$genewise_outs{$b}<=>$genewise_outs{$a}} keys %genewise_outs)[0];
+my @blocks = split( "//", $best );
+my $frameshift = "NO";
+my $stopsite   = "NO";
+my $translation;
+if ( $blocks[0] =~ /\!/ ) {
+    $frameshift = "YES";
 }
-close Out;
-open Out,">$fOut.sv.lenth";
-print Out "#length\t",join("\t",sort keys %stat),"\n";
-foreach my $len (sort {$a<=>$b} keys %length) {
-	my @out;
-	push @out,$len;
-	foreach my $type (sort keys %stat) {
-		$length{$len}{$type}||=0;
-		push @out,$length{$len}{$type};
-	}
-	print Out join("\t",@out),"\n";
+
+if ( $blocks[0] =~ /\*/ ) {
+    $stopsite = "YES";
 }
+open Out,">$output";
+print Out "$frameshift\t$stopsite\n";
 close Out;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+
+
 sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 {
 	my $cur_dir=`pwd`;chomp($cur_dir);
@@ -80,15 +74,13 @@ sub USAGE {#
         my $usage=<<"USAGE";
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
+	
 Description:
-	fq thanslate to fa format
-	eg:
-	perl $Script -i -o -k -c
-
+	
 Usage:
   Options:
-  -i	<file>	input file name
-  -o	<file>	split windows sh
+  -input	<file>	input dir
+  -output	<file>	output file name
   -h         Help
 
 USAGE

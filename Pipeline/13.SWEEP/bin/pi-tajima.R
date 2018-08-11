@@ -55,7 +55,7 @@ hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima >= quantile(pi$taji
 hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima <= quantile(pi$tajima,probs=0.05)]),colour='blue',fill='blue',binwidth=0.01)
 hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima >= quantile(pi$tajima,probs=0.05) & pi$tajima <= quantile(pi$tajima,probs=0.95) ]),colour='gray',fill='gray',binwidth=0.01)
 hist_right=hist_right+theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Tajima'D Count")
-hist_right=hist_right+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")+ylab("Tajima'D Distribution")
+hist_right=hist_right+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")+ylab("Marker Distribution")
 hist_right=hist_right+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.05)),linetype=5,col="black")
 scatter<-ggplot()+theme_bw()
 scatter<-scatter+geom_point(aes(pi$pi,pi$tajima),colour='gray',fill='gray')

@@ -21,7 +21,7 @@ while (<In>) {
 	chomp;
 	next if ($_ eq "" ||/^$/ ||/^#/ );
 	my ($chr,$soft,$type,$pos1,$pos2,undef,undef,undef,$info)=split(/\t/,$_);
-	next if ($type ne "gene" && $type ne "mRNA");
+	next if ($type ne "gene");
 	my $id;
 	if ( $info =~ /Name=([^;]*)\;/ || $info =~ /ID=([^;]*)\;/ ) {
 		$id=$1;	

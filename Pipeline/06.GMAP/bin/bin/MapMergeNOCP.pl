@@ -3,7 +3,7 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($dmap,$dOut,$adjust);
+my ($dmap,$dOut,$adjust,$pop);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -12,6 +12,7 @@ GetOptions(
 	"help|?" =>\&USAGE,
 	"dmap:s"=>\$dmap,
 	"out:s"=>\$dOut,
+	"pop:s"=>\$pop,
 	"adjust"=>\$adjust,
 			) or &USAGE;
 &USAGE unless ($dmap and $dOut );
@@ -20,6 +21,7 @@ my @map=glob("$dmap/*.out");
 open Out,">$dOut/total.map";
 my %Marker;
 my %lg;
+my %stat;
 foreach my $map (@map) {
 	my $lgID=(split(/\./,basename($map)))[0];
 	$lg{$lgID}=1;
@@ -28,7 +30,8 @@ foreach my $map (@map) {
 	}else{
 		$lgID=scalar keys %lg;
 	}
-	print Out "group\t",$lgID,"\n";
+	#print Out "group\t",$lgID,"\n";
+	
 	open In,$map;
 	my $max=0;
 	my @order;
@@ -47,33 +50,38 @@ foreach my $map (@map) {
 	if ($adjust) {
 		$newdis=rand(60)+120;
 	}
-	my $n=0;
-	my $pos0=0;
+	$max+=0.0000001 if($max == 0);
 	foreach my $id (@order) {
 		my ($lgid,$pos)=split(/\,/,$Marker{$id});
 		$pos=$newdis/$max*$pos;
-		if ($n == 0) {
-			$pos0=$pos;
-			$n++;
-		}
-		$pos=$pos-$pos0;
 		$Marker{$id}=join(",",$lgid,$pos);
-		print Out $id,"\t",$pos,"\n";
+		#print Out $id,"\t",$pos,"\n";
+		my $in=join("\t",$id,$pos);
+		push @{$stat{$lgID}{id}},$in;
 	}	
 }
+foreach my $lgID (sort {$a<=>$b}keys %stat){
+	print Out "group\t$lgID\n";
+	print Out join("\n",@{$stat{$lgID}{id}}),"\n";
+}
+	
 close Out;
 my @marker=glob("$dmap/*.correct.marker");
 open Out,">$dOut/total.marker";
 open CSV,">$dOut/total.csv";
 my $head;
 my $chead;
+my $nind;
+my $nloc;
+my $name;
 my @out;
 my @cout;
+my @mout;
 foreach my $marker (@marker) {
 	open In,$marker;
 	while (<In>) {
 		chomp;
-		next if ($_ eq ""||/^$/);
+		next if ($_ eq ""|| /^$/);
 		my @info=split;
 		next if (scalar @info < 3);
 		if (/MarkerID/) {
@@ -81,6 +89,7 @@ foreach my $marker (@marker) {
 			my (undef,$nhead)=split(/\s+/,$_,2);
 			$nhead=~s/\t/,/g;
 			my @head=split(/\,/,$nhead);
+			$nind=scalar @head;
 			$chead="Genotype,,,".join(",",@head);
 		}else{
 
@@ -88,20 +97,37 @@ foreach my $marker (@marker) {
 			if (!exists $Marker{$id}) {
 				next;
 			}
-			push @out,$_;
+			my $number=(split(/\,/,$Marker{$id}))[0];
+			push @{$stat{$number}{out}},$_;
 			$info=~s/\t/,/g;
 			$info=~s/X/H/g;
 			$info=~s/U/-/g;
-			push @cout,join(",",$id,$Marker{$id},$info);
+			#push @cout,join(",",$id,$Marker{$id},$info);
+			$nloc++;
+			push @{$stat{$number}{info}},join(",",$id,$Marker{$id},$info);
+			$info=~s/H/h/g;
+			$info=~s/U/-/g;
+			$info=~s/A/a/g;
+			$info=~s/B/b/g;
+			$info=~s/,/\t/g;
+			push @mout,join("\t",$id,$info),"\n";
 		}
 	}
 	close In;
 }
-print Out join("\n",$head,@out);
+print Out $head,"\n";
+print CSV $chead,"\n";
+foreach my $number(sort {$a<=>$b} keys %stat ){
+	print Out join("\n",@{$stat{$number}{out}}),"\n";
+	print CSV join("\n",@{$stat{$number}{info}}),"\n";
+}
+#print CSV join("\n",$chead,@cout);
 close Out;
-print CSV join("\n",$chead,@cout);
 close CSV;
-
+open LOC,">$dOut/total.loc";
+print LOC "nind=$nind\nnloc=$nloc\nname=pop\npopt=$pop\n";
+print LOC join("n",@mout);
+close LOC;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################

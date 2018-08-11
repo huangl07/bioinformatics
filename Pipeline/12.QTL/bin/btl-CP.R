@@ -6,6 +6,9 @@ spec = matrix(c(
 	'trt','t',1,'character',
 	'out','o',1,'character',
 	'num','n',1,'character',
+	'method','e',1,'character',
+	'pvalue','p',1,'character',
+	'lod','d',1,'character',
 	'help','h',0,'logical'
 	), byrow=TRUE, ncol=4)
 opt = getopt(spec)
@@ -21,6 +24,9 @@ Usage:
 	--loc	loc file
 	--trt	trt file
 	--out	out dir
+	--method        Locating method
+	--pvalue        select pvalue
+	--lod   threshold lod value
 	--num	pm number
 	--help		usage
 \n")
@@ -32,6 +38,7 @@ if ( !is.null(opt$help) ) { print_usage(spec) }
 if ( is.null(opt$map) ) { print_usage(spec) }
 if ( is.null(opt$loc) ) { print_usage(spec) }
 if ( is.null(opt$trt) ) { print_usage(spec) }
+if ( is.null(opt$method)){opt$method="cim"}
 if ( is.null(opt$num) ) { opt$num=1000; }
 if ( is.null(opt$out) ) { opt$out="./";}
 if(!dir.exists(opt$out)){dir.create(opt$out)}
@@ -64,46 +71,41 @@ for (i in 1:length(phe.name)){
 }
 dev.off()
 chr=chrnames(d)
+opt$num=as.numeric(opt$num)
+opt$pvalue=as.numeric(opt$pvalue)
+
 for(i in 1:length(phe.name)){
 	if(phe.name[i] == "Genotype" | phe.name[i]=="sampleID"){next;}
 	print(paste("trait",phe.name[i],sep="\t"))
-	scan<-scanone(d,pheno.col=i,model="binary");
-	scan.pm<-scanone(d,pheno.col=i,model="binary",n.perm=1000);
+	if(opt$method == "cim"){
+		scan<-cim(d,pheno.col=phe.name[i]);
+		scan.pm<-cim(d,pheno.col=phe.name[i],n.perm=opt$num);
+	}else{
+		scan<-scanone(d,pheno.col=i,model="binary");
+		scan.pm<-scanone(d,pheno.col=i,model="binary",n.perm=1000);
+	}
 	markerid<-find.marker(d,chr=scan$chr,pos=scan$pos)
 	outd<-data.frame(markerid=markerid,chr=scan$chr,pos=scan$pos,lod=scan$lod);
 	write.table(file=paste(phe.name[i],".scan.csv",sep=""),sep="\t",outd,row.names=FALSE)
 	write.table(file=paste(phe.name[i],".pm.csv",sep=""),sep="\t",scan.pm);
-	pm.result<-summary(scan.pm,alpha=c(0.01,0.05,0.1))
-	legend=paste(rownames(pm.result),round(pm.result,2))
-	threshold=pm.result[1,1]
-	scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
-	if(length(scan.result$lod$chr) < 1){
-		scan.result<-summary(scan,format="tabByCol",threshold=pm.result[2,1],drop=1)
-		threshold=pm.result[2,1]
-		if(length(scan.result$lod$chr) <1){
-			scan.result<-summary(scan,format="tabByCol",threshold=pm.result[3,1],drop=1)
-			threshold=pm.result[3,1]
-			if(length(scan.result$lod$chr) <1){
-				pm.result<-c(3,2.5)
-				scan.result<-summary(scan,format="tabByCol",threshold=3,drop=1);
-				threshold=3
-				if(length(scan.result$lod$chr) <1){
-					threshold=2.5
-					scan.result<-summary(scan,format="tabByCol",threshold=2.5,drop=1);
-				}
-				legend=pm.result
-			}else{
-				pm.result<-summary(scan.pm,alpha=c(0.05,0.1))
-				legend=paste(rownames(pm.result),round(pm.result,2))
-			}
-		}else{
-			pm.result<-summary(scan.pm,alpha=c(0.01,0.05))
-			legend=paste(rownames(pm.result),round(pm.result,2))
-		}
+	
+	if(!is.null(opt$pvalue)){
+		pm.result<-summary(scan.pm,alpha=opt$pvalue)
+		write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+		scan.result<-summary(scan,format="tabByCol",threshold=pm.result,drop=1)
+		threshold=pm.result
 	}else{
-		pm.result<-summary(scan.pm,alpha=c(0.01,0.05));
-		legend=paste(rownames(pm.result),round(pm.result,2))
-	}	
+		if(!is.null(opt$lod)){
+			write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+			scan.result<-summary(scan,format="tabByCol",threshold=(opt$lod),drop=1)
+			threshold=opt$lod
+		}else{
+			pm.result<-summary(scan.pm,alpha=0.05)
+			write.table(file=paste(phe.name[i],".pm.summary.csv",sep=""),sep="\t",pm.result)
+			scan.result<-summary(scan,format="tabByCol",threshold=pm.result[1,1],drop=1)
+			threshold=pm.result
+		}
+	}
 	pdf(file=paste(phe.name[i],".scan.pdf",sep=""))
 	plot(scan)
 	abline(h=pm.result,col=rainbow(length(pm.result)))

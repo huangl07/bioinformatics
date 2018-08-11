@@ -35,7 +35,7 @@ while (<In>) {
 			$nchr{$chr}=$nchr;
 		}
 		my $chro=$nchr{$chr};
-		my $nsnp++;
+		$nsnp++;
 		my %ale;
 		my @out;
 		for (my $i=0;$i<@geno;$i++) {

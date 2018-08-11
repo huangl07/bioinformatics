@@ -30,7 +30,7 @@ if ( is.null(opt$input)) { print_usage(spec)}
 if ( is.null(opt$output)){ print_usage(spec) }
 times<-Sys.time()
 
-data<-read.table(opt$input,sep="\t",comment.char="^",head=TRUE)
+data<-read.table(opt$input,sep="\t",comment.char="^",head=TRUE,quote="")
 names(data)<-c("id","description","k","M","n","N");
 data<-na.omit(data)
 pvalue<-phyper(data$k,data$M,data$N-data$M,data$n,lower.tail=FALSE);

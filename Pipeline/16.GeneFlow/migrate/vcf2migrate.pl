@@ -42,13 +42,15 @@ while (<In>) {
 		(undef,undef,undef,undef,undef,undef,undef,undef,undef,@indi)=split(/\t/,$_);
 	}else{
 		my ($chr,$pos,$id,$ref,$alt,$qual,$filter,$info,$format,@sample)=split(/\t/,$_);
+		next if (/\.\/\./);
 		my @alle=split(/,/,join(",",$ref,$alt));
 		next if (scalar @alle > 2 || $alt =~ /\*/);
 		my @info=split(/\:/,$format);
 		$nbase++;
-		if ($nbase % 500 == 0) {
+		if ($nbase % 50 == 0) {
 			$nloci++;
 		}					
+		last if ($nloci ==3);
 		$length[$nloci]++;
 		for (my $i=0;$i<@indi;$i++) {
 			my @ginfo=split(/\:/,$sample[$i]);
@@ -74,15 +76,18 @@ while (<In>) {
 close In;
 open Out,">$out";
 my $ngroup=scalar keys %group;
-$nloci++;
-print Out " $ngroup $nloci\n";
-print Out join("\t",@length),"\n";
+print Out "   $ngroup $nloci\n";
+my @out;
+foreach my $l (@length) {
+	push @out,"(s$l)";
+}
+print Out join(", ",@out),"\n";
 foreach my $gid (sort keys %group) {
 	my $nind=scalar @{$group{$gid}};
-	print Out $nind,"\t",$gid,"\n";
+	print Out $nind,"   ","pop",$gid,"\n";
 	for (my $i=0;$i<@length;$i++) {
 		foreach my $id (@{$group{$gid}}) {
-			print Out $id,"\t",$seq{$id}{$i},"\n";
+			print Out $id,"      ",$seq{$id}{$i},"\n";
 		}
 	}
 }

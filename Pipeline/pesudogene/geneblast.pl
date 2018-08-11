@@ -3,59 +3,62 @@ use strict;
 use warnings;
 my $BEGIN_TIME=time();
 use Getopt::Long;
-my ($fIn,$fOut);
 use Data::Dumper;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+my ($input,$output,$geneblast,$ref);
 my $version="1.0.0";
 GetOptions(
 	"help|?" =>\&USAGE,
-	"i:s"=>\$fIn,
-	"o:s"=>\$fOut,
+	"input:s"=>\$ref,
+	"geneblast:s"=>\$geneblast,
+	"output:s"=>\$output,
 			) or &USAGE;
-&USAGE unless ($fIn );
-open In,$fIn;
-my %stat;
-my %length;
-my %Alen;
+&USAGE unless ($ref and $geneblast and $output);
+open In,$ref;
+$/=">";
+my %seq;
 while (<In>) {
 	chomp;
-	next if ($_ eq "" ||/^$/ ||/^#/);
-	my ($chr1,$pos1,$chr2,$pos2,$length,$type,$pvalue,$depth,$genenum,$geneinfo)=split(/\t/,$_);
-	$stat{$type}{total}++;
-	$stat{$type}{gene}++ if ($genenum !=0);
-	$length{$length}{$type}++;
-	$Alen{$type}+=$length;
+	next if ($_ eq ""||/^$/);
+	my ($id,@line)=split(/\n/,$_);
+	$id=(split(/\s+/,$id))[0];
+	$seq{$id}=join("",@line);
 }
 close In;
-open Out,">$fOut.sv.stat";
-print Out "#type\ttotal\tgene\talen\n";
-foreach my $type (sort keys %stat) {
-	my @out;
-	push @out,$type;
-	$stat{$type}{total}||=0;
-	$stat{$type}{gene}||=0;
-	push @out,$stat{$type}{total};
-	push @out,$stat{$type}{gene};
-	push @out,$Alen{$type}/$stat{$type}{total};
-	print Out join("\t",@out),"\n";
-}
-close Out;
-open Out,">$fOut.sv.lenth";
-print Out "#length\t",join("\t",sort keys %stat),"\n";
-foreach my $len (sort {$a<=>$b} keys %length) {
-	my @out;
-	push @out,$len;
-	foreach my $type (sort keys %stat) {
-		$length{$len}{$type}||=0;
-		push @out,$length{$len}{$type};
+$/="\n";
+open In,$geneblast;
+my %filehand;
+while (<In>) {
+	chomp;
+	next if ($_ eq ""||/^$/);
+	if (/([^|]*)\|([^:]*):(\d+)\.\.(\d+)\|([^|])\|([^|]*)\|([^|]*)\|rank:1/) {
+		my $geneid=$1;
+		my $chrid=$2;
+		my $start=$3;
+		my $end=$4;
+		my $flag=$5;
+		my $coverage=$6;
+		my $score=$7;
+		my $seq=substr($seq{$chrid},$start-1,$end-$start+1);
+		if ($flag eq "-") {
+			$seq=reverse($seq);
+			$seq=~tr/atcgATCG/TAGCTAGC/;
+		}
+		if (!exists $filehand{$geneid}) {
+			open $filehand{$geneid},">$output/$geneid.dna.fa";
+		}
+		print {$filehand{$geneid}} ">$_\n$seq\n";
+	}else{
+		next;
 	}
-	print Out join("\t",@out),"\n";
 }
-close Out;
+close In;
 #######################################################################################
 print STDOUT "\nDone. Total elapsed time : ",time()-$BEGIN_TIME,"s\n";
 #######################################################################################
+
+
 sub ABSOLUTE_DIR #$pavfile=&ABSOLUTE_DIR($pavfile);
 {
 	my $cur_dir=`pwd`;chomp($cur_dir);
@@ -80,15 +83,13 @@ sub USAGE {#
         my $usage=<<"USAGE";
 Contact:        long.huang\@majorbio.com;
 Script:			$Script
+	
 Description:
-	fq thanslate to fa format
-	eg:
-	perl $Script -i -o -k -c
-
+	
 Usage:
   Options:
-  -i	<file>	input file name
-  -o	<file>	split windows sh
+  -input	<file>	input dir
+  -output	<file>	output file name
   -h         Help
 
 USAGE

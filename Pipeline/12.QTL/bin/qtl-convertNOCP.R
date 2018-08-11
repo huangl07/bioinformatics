@@ -47,7 +47,7 @@ if(opt$pop =="bcsft") {
 if(!dir.exists(opt$out)){dir.create(opt$out)}
 if (is.null(opt$method)){opt$method="cim"}
 setwd(opt$out);
-write.cross(hyper,file="pop.out",format=opt$format)
+write.cross(d,file="pop.out",format=opt$format)
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)

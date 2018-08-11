@@ -34,11 +34,16 @@ my %out;
 my @line;
 my $n=0;
 my $m=0;
+my $oldchr="";
 while (<In>) {
 	chomp;
 	next if ($_ eq ""||/^$/||/^#/);
-	my (undef,undef,$types,undef,undef,undef,undef,undef,undef)=split(/\t/,$_);
+	my ($chr,undef,$types,undef,undef,undef,undef,undef,undef)=split(/\t/,$_);
 	next if ($types eq "region");
+	if ($chr ne $oldchr) {
+		$n =0;
+		$oldchr=$chr;
+	}
 	$n++;	
 	if ($n == 1 && $types ne "gene") {
 		$flag="mRNA";
