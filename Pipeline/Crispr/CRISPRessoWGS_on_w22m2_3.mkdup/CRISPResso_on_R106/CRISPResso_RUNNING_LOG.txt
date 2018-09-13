@@ -1,0 +1,33 @@
+[Command used]:
+CRISPResso /mnt/ilustre/users/dna/.env//bin/CRISPResso -r1 CRISPRessoWGS_on_w22m2_3.mkdup/ANALYZED_REGIONS/REGION_R106.fastq.gz -a GGGCTCAATCAAATTTGTGAAG -o CRISPRessoWGS_on_w22m2_3.mkdup --name R106 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string  -gapopen=10 -gapextend=0.5  -awidth3=5000 --n_processes 8
+
+[Execution log]:
+Preparing files for the alignment...
+Done!
+Aligning sequences...
+Needleman-Wunsch global alignment of two sequences
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1307_10999_30530_3' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2364_32570_27148_7' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2343_3405_26866_10' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1603_27362_19257_12' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1337_16098_34851_17' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2216_32434_19304_22' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1148_4725_5134_25' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2212_9381_16736_35' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1451_12120_15718_38' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1136_25870_26600_53' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1439_5773_30467_60' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1249_3106_23500_62' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1459_11406_21527_67' has zero length, ignored
+Quantifying indels/substitutions...
+[CRISPResso quantification is running in parallel mode with 8 processes]
+Done!
+Calculating indel distribution based on the length of the reads...
+Done!
+Calculating alleles frequencies...
+Done!
+Making Plots...
+Done!
+Removing Intermediate files...
+Saving processed data...
+All Done!

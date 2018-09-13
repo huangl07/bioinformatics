@@ -1,0 +1,28 @@
+[Command used]:
+CRISPResso /mnt/ilustre/users/dna/.env//bin/CRISPResso -r1 CRISPRessoWGS_on_w22m2_3.mkdup/ANALYZED_REGIONS/REGION_R97.fastq.gz -a GGACTCTATCGTCTTGTTCAAG -o CRISPRessoWGS_on_w22m2_3.mkdup --name R97 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string  -gapopen=10 -gapextend=0.5  -awidth3=5000 --n_processes 8
+
+[Execution log]:
+Preparing files for the alignment...
+Done!
+Aligning sequences...
+Needleman-Wunsch global alignment of two sequences
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2230_30825_34303_1' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1251_32814_5243_8' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2247_22010_21856_17' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2362_14534_21778_28' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1624_13060_15280_33' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1343_11885_6355_44' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2254_2600_33364_53' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2407_5647_11960_58' has zero length, ignored
+Quantifying indels/substitutions...
+[CRISPResso quantification is running in parallel mode with 8 processes]
+Done!
+Calculating indel distribution based on the length of the reads...
+Done!
+Calculating alleles frequencies...
+Done!
+Making Plots...
+Done!
+Removing Intermediate files...
+Saving processed data...
+All Done!

@@ -31,6 +31,7 @@ if ( is.null(opt$out) ) { opt$out="./";}
 library(ggplot2)
 library(grid)
 library("gridExtra")
+library(egg)
 pi<-read.table(opt$pi,sep="\t",head=TRUE)
 tajima<-read.table(opt$tajima,sep="\t",head=TRUE)
 pi$win<-paste(pi$CHROM,pi$BIN_START)
@@ -43,36 +44,44 @@ pi$tajima[pi$tajima == "NaN"]=0
 #data<-pi
 #write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(data,data$pi < quantile(data$pi,prob=0.05) & (data$tajima < quantile(data$pi,prob=0.05) | data$tajima > quantile(data$pi,prob=0.95))));
 empty<-ggplot()+theme(panel.background=element_blank())
-maxpi=max(pi$pi)
-minpi=min(pi$pi)
-hist_top<-ggplot()+theme_bw()
-hist_top<-hist_top+geom_histogram(aes(pi$pi),colour='gray',fill='gray',binwidth=(maxpi-minpi)/1000)
-hist_top<-hist_top+geom_histogram(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05)]),colour='blue',fill='blue',binwidth=(maxpi-minpi)/1000)
-hist_top<-hist_top+theme(axis.title.x = element_blank(), axis.text.x = element_blank(),axis.ticks.x = element_blank())+theme(panel.background=element_blank())+ylab("Pi Count")
-hist_top<-hist_top+geom_vline(aes(xintercept=quantile(pi$pi,probs=0.05)),linetype=5,col="black")
-hist_right=ggplot()+theme_bw()
-hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima >= quantile(pi$tajima,probs=0.95)]),colour='green',fill='green',binwidth=0.01)
-hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima <= quantile(pi$tajima,probs=0.05)]),colour='blue',fill='blue',binwidth=0.01)
-hist_right=hist_right+geom_histogram(aes(pi$tajima[pi$tajima >= quantile(pi$tajima,probs=0.05) & pi$tajima <= quantile(pi$tajima,probs=0.95) ]),colour='gray',fill='gray',binwidth=0.01)
-hist_right=hist_right+theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Tajima'D Count")
-hist_right=hist_right+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")+ylab("Marker Distribution")
-hist_right=hist_right+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.05)),linetype=5,col="black")
+
+diffpi<-(max(pi$pi)-min(pi$pi))/2000
+theta1<-ceiling((quantile(pi$pi,0.05)-quantile(pi$pi,0))/diffpi)
+
+g1<-ggplot()+theme_bw()
+g1<-g1+geom_histogram(aes(pi$pi,y=..density..),col=c(rep("green",theta1),rep("grey",2001-theta1)),binwidth=diffpi)
+g1<-g1+theme(axis.title.x = element_blank(), axis.text.x = element_blank(),axis.ticks.x = element_blank())+theme(panel.background=element_blank())+ylab("Pi Frequency %")
+g1<-g1+geom_vline(aes(xintercept=quantile(pi$pi,probs=0.05)),linetype=5,col="black")
+
+difft<-(max(pi$tajima)-min(pi$tajima))/2000
+tajima1<-ceiling((quantile(pi$tajima,1)-quantile(pi$tajima,0.95))/difft)
+tajima2<-ceiling((quantile(pi$tajima,0.05)-quantile(pi$tajima,0))/difft)
+
+
+g2=ggplot()+theme_bw()
+g2=g2+geom_histogram(aes(pi$tajima,y=..density..),colour=c(rep('green',tajima2),rep('grey',2001-tajima1-tajima2),rep('blue',tajima1)),binwidth=difft)
+g2=g2+theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Tajima'D Count")
+g2=g2+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")+ylab("Tajima'D Frequency %")
+g2=g2+geom_vline(aes(xintercept=quantile(pi$tajima,probs=0.05)),linetype=5,col="black")
+
+
+
 scatter<-ggplot()+theme_bw()
 scatter<-scatter+geom_point(aes(pi$pi,pi$tajima),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)]),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima < quantile(pi$tajima,probs=0.05)]),colour='blue',fill='blue')
 scatter<-scatter+geom_point(aes(pi$pi[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima > quantile(pi$tajima,probs=0.95)],pi$tajima[pi$pi <= quantile(pi$pi,probs=0.05) & pi$tajima > quantile(pi$tajima,probs=0.95)]),colour='green',fill='green')
-scatter<-scatter+theme(panel.background=element_blank())+xlab("Pi Distribution")+ylab("Tajima'D Distribution")
+scatter<-scatter+theme(panel.background=element_blank())+xlab("Pi")+ylab("Tajima'D")
 scatter<-scatter+geom_hline(aes(yintercept=quantile(pi$tajima,probs=0.95)),linetype=5,col="black")
 scatter<-scatter+geom_hline(aes(yintercept=quantile(pi$tajima,probs=0.05)),linetype=5,col="black")
 scatter<-scatter+geom_vline(aes(xintercept=quantile(pi$pi,probs=0.05)),linetype=5,col="black")
 
 
 pdf(paste(opt$out,"pdf",sep="."));
-grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
+ggarrange(g1,empty,scatter,g2,widths=c(3,1),heights=c(1,3))
 dev.off()
 png(paste(opt$out,"png",sep="."));
-grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
+ggarrange(g1,empty,scatter,g2,widths=c(3,1),heights=c(1,3))
 dev.off()
 
 escaptime=Sys.time()-times;

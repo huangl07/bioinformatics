@@ -1,0 +1,67 @@
+#!/usr/bin/env perl
+use strict;
+my $who=shift;
+my $qstat;
+if (!defined $who){
+	my $w=`whoami`;
+	chmop($w);
+	$qstat=`qstat -fu $w|sed \'s/^\\s*//g\'`;
+}else{
+	$qstat=`qstat -fu $who|sed \'s/^\\s*//g\'`;
+}
+my @line=split("=",$qstat);
+for (my $j=0;$j<@line;$j++){
+	my @line2=split(/\n+/,$line[$j]);
+	if (scalar @line2 > 1){
+		$line[$j]=join("",@line2[0..$#line2-1])."\n".$line2[-1];
+	}
+}
+my @out;
+my @line=split("\n",join("=",@line));
+print join("\t","JobID\tUser\tMem_used\tVMem_used\tRun_time\tHost\tMem_Request\tCPU_Requect\tWalltime_Request\tShell\t"),"\n";
+for (my $i=0;$i<@line;$i++){
+	if ($line[$i] =~ /Job Id: ([^\s]*)/){
+		if(scalar @out !=0){
+			print join("\t",@out),"\n";
+			@out=();
+		}
+		push @out,$1;
+	}
+	if ($line[$i] =~/Job_Owner/){
+		my $user=(split(/\s+/,$line[$i]))[-1];
+		push @out,$user;
+	}
+	if ($line[$i] =~ /resources_used.mem/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /resources_used.vmem/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /resources_used.walltime/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /Resource_List.mem/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /Resource_List.nodes/){
+		my $mem=(split(/\=/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /Resource_List.walltime/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /submit_args =/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+	if ($line[$i] =~ /exec_host =/){
+		my $mem=(split(/\s+/,$line[$i]))[-1];
+		push @out,$mem;
+	}
+
+}

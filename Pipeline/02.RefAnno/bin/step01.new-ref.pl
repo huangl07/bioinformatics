@@ -22,7 +22,7 @@ $out=ABSOLUTE_DIR($out);
 mkdir $dsh if (!-d $dsh);
 $dsh=ABSOLUTE_DIR($dsh);
 open SH,">$dsh/step01.new-ref.sh";
-print SH "gffread -o $out/ref.packaged.gff $gff && perl $Bin/bin/GRename.pl -i $ref -g $out/ref.packaged.gff -o $out/ref  ";
+print SH "perl $Bin/bin/GRename.pl -i $ref -g $gff -o $out/ref  ";
 if ($chr) {
 	print SH "-f $chr ";
 }

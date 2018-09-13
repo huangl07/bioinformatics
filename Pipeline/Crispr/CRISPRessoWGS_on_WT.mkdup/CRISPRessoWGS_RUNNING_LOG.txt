@@ -1,0 +1,668 @@
+[Command used]:
+CRISPRessoWGS /mnt/ilustre/users/dna/.env//bin/CRISPRessoWGS -b WT.mkdup.bam -r ref.fa -f sgRNA.region
+
+[Execution log]:
+Creating index file for input .bam file...
+The index for the reference fasta file is already present! Skipping generation.
+
+Processing each regions...
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R5.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R5.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R8.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R8.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R9.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R9.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R12.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R12.fastq.gz
+
+Extracting reads in:chr3:9046516-9046537 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R15.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R15.fastq.gz
+
+Extracting reads in:chr3:9046516-9046537 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R16.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R16.fastq.gz
+
+Extracting reads in:chr3:9652344-9652365 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R17.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R17.fastq.gz
+
+Extracting reads in:chr3:21414798-21414819 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R21.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R21.fastq.gz
+
+Extracting reads in:chr3:21310486-21310507 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R22.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R22.fastq.gz
+
+Extracting reads in:chr3:21529411-21529432 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R23.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R23.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R24.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R24.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R27.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R27.fastq.gz
+
+Extracting reads in:chr3:28166334-28166355 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R28.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R28.fastq.gz
+
+Extracting reads in:chr4:8712376-8712397 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R29.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R29.fastq.gz
+
+Extracting reads in:sca1:20213309-20213330 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R30.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R30.fastq.gz
+
+Extracting reads in:sca1:12045673-12045694 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R31.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R31.fastq.gz
+
+Extracting reads in:sca1:19785352-19785373 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R32.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R32.fastq.gz
+
+Extracting reads in:sca1:21981128-21981149 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R34.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R34.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R37.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R37.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R40.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R40.fastq.gz
+
+Extracting reads in:chr6:2925589-2925610 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R43.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R43.fastq.gz
+
+Extracting reads in:chr5:11150466-11150487 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R45.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R45.fastq.gz
+
+Extracting reads in:chr6:1565629-1565650 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R46.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R46.fastq.gz
+
+Extracting reads in:chr6:2925589-2925610 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R47.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R47.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R48.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R48.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R51.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R51.fastq.gz
+
+Extracting reads in:chr6:10561829-10561850 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R52.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R52.fastq.gz
+
+Extracting reads in:chr6:12168210-12168231 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R53.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R53.fastq.gz
+
+Extracting reads in:chr6:20005699-20005720 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R54.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R54.fastq.gz
+
+Extracting reads in:sca1:88944561-88944582 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R56.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R56.fastq.gz
+
+Extracting reads in:sca1:38788627-38788647 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R57.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R57.fastq.gz
+
+Extracting reads in:sca1:88327168-88327188 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R58.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R58.fastq.gz
+
+Extracting reads in:sca1:27935797-27935817 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R60.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R60.fastq.gz
+
+Extracting reads in:chr9:18051654-18051675 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R65.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R65.fastq.gz
+
+Extracting reads in:sca1:88944561-88944582 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R66.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R66.fastq.gz
+
+Extracting reads in:sca1:38788627-38788647 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R67.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R67.fastq.gz
+
+Extracting reads in:sca1:88327168-88327188 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R68.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R68.fastq.gz
+
+Extracting reads in:sca1:27935797-27935817 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R70.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R70.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R72.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R72.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R75.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R75.fastq.gz
+
+Extracting reads in:chr9:1354713-1354734 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R76.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R76.fastq.gz
+
+Extracting reads in:chr9:18051654-18051675 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R78.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R78.fastq.gz
+
+Extracting reads in:sca1:52647572-52647593 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R79.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R79.fastq.gz
+
+Extracting reads in:chr9:9060662-9060683 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R80.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R80.fastq.gz
+
+Extracting reads in:chr9:9162417-9162438 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R81.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R81.fastq.gz
+
+Extracting reads in:chr9:9060662-9060683 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R82.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R82.fastq.gz
+
+Extracting reads in:chr9:9162417-9162438 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R83.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R83.fastq.gz
+
+Extracting reads in:chr9:17609992-17610012 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R86.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R86.fastq.gz
+
+Extracting reads in:sca1:4501440-4501461 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R87.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R87.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R88.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R88.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R91.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R91.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R92.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R92.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R95.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R95.fastq.gz
+
+Extracting reads in:sca1:13881476-13881497 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R96.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R96.fastq.gz
+
+Extracting reads in:sca1:64735082-64735103 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R97.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R97.fastq.gz
+
+Extracting reads in:sca1:13749554-13749574 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R98.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R98.fastq.gz
+
+Extracting reads in:sca1:16323011-16323032 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R100.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R100.fastq.gz
+
+Extracting reads in:sca1:50177390-50177410 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R101.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R101.fastq.gz
+
+Extracting reads in:sca1:19785352-19785373 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R103.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R103.fastq.gz
+
+Extracting reads in:sca1:20213309-20213330 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R104.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R104.fastq.gz
+
+Extracting reads in:sca1:11979513-11979534 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R105.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R105.fastq.gz
+
+Extracting reads in:sca1:20213309-20213330 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R106.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R106.fastq.gz
+
+Extracting reads in:sca1:12045673-12045694 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R107.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R107.fastq.gz
+
+Extracting reads in:sca1:19785352-19785373 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R108.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R108.fastq.gz
+
+Extracting reads in:sca1:21981128-21981149 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R110.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R110.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R112.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R112.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R115.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R115.fastq.gz
+
+Extracting reads in:sca1:52647572-52647593 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R116.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R116.fastq.gz
+
+Extracting reads in:sca1:9362868-9362889 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R117.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R117.fastq.gz
+
+Extracting reads in:sca1:8994126-8994147 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R120.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R120.fastq.gz
+
+Extracting reads in:sca1:60745006-60745026 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R122.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R122.fastq.gz
+
+Extracting reads in:sca1:61111760-61111781 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R123.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R123.fastq.gz
+
+Extracting reads in:sca1:39430565-39430586 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R125.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R125.fastq.gz
+
+Extracting reads in:sca1:70684684-70684705 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R126.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R126.fastq.gz
+
+Extracting reads in:sca1:73447480-73447501 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R127.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R127.fastq.gz
+
+Extracting reads in:sca1:73448653-73448674 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R128.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R128.fastq.gz
+
+Extracting reads in:sca1:73447480-73447501 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R129.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R129.fastq.gz
+
+Extracting reads in:sca1:73448653-73448674 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R130.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R130.fastq.gz
+
+Extracting reads in:sca1:88944561-88944582 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R132.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R132.fastq.gz
+
+Extracting reads in:sca1:38788627-38788647 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R133.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R133.fastq.gz
+
+Extracting reads in:sca1:88327168-88327188 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R134.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R134.fastq.gz
+
+Extracting reads in:sca1:27935797-27935817 and create the .bam file: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R136.bam
+Trim reads and create a fastq.gz file in: CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R136.fastq.gz
+
+Running CRISPResso on each regions...
+
+The region [R1] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R2] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R3] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R4] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R5] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R5.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R5 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R6] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R7] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R8] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R8.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R8 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R9] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R9.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R9 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R10] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R11] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R12] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R12.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R12 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R13] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R14] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R15] has not enough reads (3) mapped to it! Skipping the running of CRISPResso!
+
+The region [R16] has not enough reads (3) mapped to it! Skipping the running of CRISPResso!
+
+The region [R17] has enough reads (14) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R17.fastq.gz -a GGCATCCACGGACCTTGTTGCG -o CRISPRessoWGS_on_WT.mkdup --name R17 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R18] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R19] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R20] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R21] has enough reads (28) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R21.fastq.gz -a AGGCTCCATTAATTTTGTTAAG -o CRISPRessoWGS_on_WT.mkdup --name R21 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R22] has enough reads (24) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R22.fastq.gz -a GGCCTCCATTGCATTTATTTGG -o CRISPRessoWGS_on_WT.mkdup --name R22 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R23] has enough reads (21) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R23.fastq.gz -a GGCCTTCATCGTCTAAATTACG -o CRISPRessoWGS_on_WT.mkdup --name R23 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R24] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R24.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R24 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R25] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R26] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R27] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R27.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R27 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R28] has enough reads (33) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R28.fastq.gz -a AGCATACATGGACTTTGTTGAG -o CRISPRessoWGS_on_WT.mkdup --name R28 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R29] has enough reads (24) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R29.fastq.gz -a ATCCACCATCGAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R29 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R30] has enough reads (56) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R30.fastq.gz -a GGGCTCAATCAAATTTGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R30 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R31] has enough reads (33) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R31.fastq.gz -a GGGCTCAATCAAATTCGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R31 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R32] has enough reads (12) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R32.fastq.gz -a GGGCTCAATCAAATTTGTAAAG -o CRISPRessoWGS_on_WT.mkdup --name R32 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R33] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R34] has enough reads (21) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R34.fastq.gz -a GGGCTCAGTCAAATTCGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R34 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R35] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R36] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R37] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R37.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R37 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R38] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R39] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R40] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R40.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R40 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R41] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R42] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R43] has enough reads (16) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R43.fastq.gz -a GGCTTCTCTCGACATTGTTGTG -o CRISPRessoWGS_on_WT.mkdup --name R43 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R44] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R45] has enough reads (32) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R45.fastq.gz -a GGCCTTCATCAACATTCCCACG -o CRISPRessoWGS_on_WT.mkdup --name R45 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R46] has enough reads (27) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R46.fastq.gz -a GGCCTCCTTTGACATGGTTTCG -o CRISPRessoWGS_on_WT.mkdup --name R46 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R47] has enough reads (16) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R47.fastq.gz -a GGCTTCTCTCGACATTGTTGTG -o CRISPRessoWGS_on_WT.mkdup --name R47 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R48] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R48.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R48 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R49] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R50] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R51] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R51.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R51 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R52] has enough reads (32) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R52.fastq.gz -a GTCCTCCATCAAGATGGTTAAG -o CRISPRessoWGS_on_WT.mkdup --name R52 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R53] has enough reads (27) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R53.fastq.gz -a GGCGTCCATCGGCTTGATTCCG -o CRISPRessoWGS_on_WT.mkdup --name R53 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R54] has enough reads (15) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R54.fastq.gz -a GGCATCCAAAGATTTTGTAATG -o CRISPRessoWGS_on_WT.mkdup --name R54 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R55] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R56] has not enough reads (1) mapped to it! Skipping the running of CRISPResso!
+
+The region [R57] has enough reads (31) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R57.fastq.gz -a GACACCATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R57 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R58] has enough reads (15) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R58.fastq.gz -a GACACGATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R58 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R59] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R60] has enough reads (29) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R60.fastq.gz -a GACACAATCGACAACGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R60 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R61] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R62] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R63] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R64] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R65] has enough reads (25) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R65.fastq.gz -a GTCTTTCATCTACTTTCTTTTG -o CRISPRessoWGS_on_WT.mkdup --name R65 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R66] has not enough reads (1) mapped to it! Skipping the running of CRISPResso!
+
+The region [R67] has enough reads (31) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R67.fastq.gz -a GACACCATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R67 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R68] has enough reads (15) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R68.fastq.gz -a GACACGATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R68 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R69] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R70] has enough reads (29) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R70.fastq.gz -a GACACAATCGACAACGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R70 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R71] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R72] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R72.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R72 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R73] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R74] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R75] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R75.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R75 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R76] has enough reads (26) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R76.fastq.gz -a TGCTTAGATCAACTTTGTTATG -o CRISPRessoWGS_on_WT.mkdup --name R76 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R77] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R78] has enough reads (25) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R78.fastq.gz -a GTCTTTCATCTACTTTCTTTTG -o CRISPRessoWGS_on_WT.mkdup --name R78 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R79] has not enough reads (2) mapped to it! Skipping the running of CRISPResso!
+
+The region [R80] has enough reads (10) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R80.fastq.gz -a GGCCTACATCCACTGTGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R80 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R81] has enough reads (30) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R81.fastq.gz -a GGCCTACATCCACTGTGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R81 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R82] has enough reads (10) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R82.fastq.gz -a GGCCTACATCCACTGTGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R82 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R83] has enough reads (30) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R83.fastq.gz -a GGCCTACATCCACTGTGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R83 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R84] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R85] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R86] has enough reads (137) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R86.fastq.gz -a GGCCACCATTAAATTTTTTAC -o CRISPRessoWGS_on_WT.mkdup --name R86 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R87] has enough reads (22) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R87.fastq.gz -a GGCAATAATAGACTTTGTTAAG -o CRISPRessoWGS_on_WT.mkdup --name R87 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R88] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R88.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R88 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R89] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R90] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R91] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R91.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R91 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R92] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R92.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R92 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R93] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R94] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R95] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R95.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R95 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R96] has enough reads (64) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R96.fastq.gz -a GGACTCTATCGTCTTGGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R96 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R97] has enough reads (47) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R97.fastq.gz -a GGACTCTATCGTCTTGTTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R97 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R98] has enough reads (35) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R98.fastq.gz -a GGACTCTATCGTCTTGTTCAA -o CRISPRessoWGS_on_WT.mkdup --name R98 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R99] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R100] has enough reads (29) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R100.fastq.gz -a GGCCTACATCCACTATGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R100 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R101] has enough reads (29) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R101.fastq.gz -a GCCTACATCCACTGTGAAAAG -o CRISPRessoWGS_on_WT.mkdup --name R101 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R102] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R103] has enough reads (12) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R103.fastq.gz -a GGGCTCAATCAAATTTGTAAAG -o CRISPRessoWGS_on_WT.mkdup --name R103 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R104] has enough reads (56) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R104.fastq.gz -a GGGCTCAATCAAATTTGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R104 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R105] has not enough reads (7) mapped to it! Skipping the running of CRISPResso!
+
+The region [R106] has enough reads (56) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R106.fastq.gz -a GGGCTCAATCAAATTTGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R106 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R107] has enough reads (33) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R107.fastq.gz -a GGGCTCAATCAAATTCGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R107 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R108] has enough reads (12) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R108.fastq.gz -a GGGCTCAATCAAATTTGTAAAG -o CRISPRessoWGS_on_WT.mkdup --name R108 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R109] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R110] has enough reads (21) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R110.fastq.gz -a GGGCTCAGTCAAATTCGTGAAG -o CRISPRessoWGS_on_WT.mkdup --name R110 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R111] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R112] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R112.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R112 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R113] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R114] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R115] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R115.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R115 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R116] has not enough reads (2) mapped to it! Skipping the running of CRISPResso!
+
+The region [R117] has enough reads (280) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R117.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R117 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R118] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R119] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R120] has enough reads (79) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R120.fastq.gz -a GGCCACCATTAATTTTTTTACG -o CRISPRessoWGS_on_WT.mkdup --name R120 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R121] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R122] has enough reads (24) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R122.fastq.gz -a CACCTTGATCAACTTTGTGAA -o CRISPRessoWGS_on_WT.mkdup --name R122 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R123] has enough reads (101) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R123.fastq.gz -a GGCCACCATTAAATTTTTTATG -o CRISPRessoWGS_on_WT.mkdup --name R123 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R124] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R125] has enough reads (39) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R125.fastq.gz -a GGCCACTATTAAATTTTTTATG -o CRISPRessoWGS_on_WT.mkdup --name R125 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R126] has enough reads (16) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R126.fastq.gz -a GGTCTCCGGCGACTTTGCAATG -o CRISPRessoWGS_on_WT.mkdup --name R126 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R127] has enough reads (17) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R127.fastq.gz -a GGCAGCCATCGAGTTTGTACTG -o CRISPRessoWGS_on_WT.mkdup --name R127 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R128] has not enough reads (8) mapped to it! Skipping the running of CRISPResso!
+
+The region [R129] has enough reads (17) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R129.fastq.gz -a GGCAGCCATCGAGTTTGTACTG -o CRISPRessoWGS_on_WT.mkdup --name R129 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R130] has not enough reads (8) mapped to it! Skipping the running of CRISPResso!
+
+The region [R131] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R132] has not enough reads (1) mapped to it! Skipping the running of CRISPResso!
+
+The region [R133] has enough reads (31) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R133.fastq.gz -a GACACCATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R133 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R134] has enough reads (15) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R134.fastq.gz -a GACACGATCGACAATGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R134 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R135] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+
+The region [R136] has enough reads (29) mapped to it!
+Running CRISPResso:CRISPResso -r1 CRISPRessoWGS_on_WT.mkdup/ANALYZED_REGIONS/REGION_R136.fastq.gz -a GACACAATCGACAACGTCAAG -o CRISPRessoWGS_on_WT.mkdup --name R136 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string " -gapopen=10 -gapextend=0.5  -awidth3=5000" --n_processes 1
+
+The region [R137] has not enough reads (0) mapped to it! Skipping the running of CRISPResso!
+Skipping the folder CRISPResso_on_R1, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R2, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R3, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R4, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R6, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R7, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R10, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R11, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R13, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R14, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R15, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R16, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R18, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R19, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R20, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R25, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R26, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R33, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R35, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R36, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R38, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R39, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R41, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R42, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R44, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R49, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R50, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R55, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R56, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R59, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R61, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R62, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R63, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R64, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R66, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R69, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R71, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R73, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R74, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R77, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R79, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R84, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R85, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R89, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R90, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R93, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R94, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R99, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R102, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R105, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R109, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R111, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R113, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R114, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R116, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R118, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R119, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R121, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R124, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R128, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R130, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R131, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R132, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R135, not enough reads or empty folder.
+Skipping the folder CRISPResso_on_R137, not enough reads or empty folder.
+All Done!

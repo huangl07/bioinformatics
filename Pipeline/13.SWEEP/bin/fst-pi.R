@@ -32,7 +32,7 @@ if ( is.null(opt$out) ) { opt$out="./";}
 library(ggplot2)
 library(grid)
 library("gridExtra")
-
+library(egg)
 pi1<-read.table(opt$pi1,sep="\t",head=TRUE)
 pi2<-read.table(opt$pi2,sep="\t",head=TRUE)
 fst<-read.table(opt$fst,sep="\t",head=TRUE)
@@ -48,38 +48,43 @@ pi$fst[pi$fst < 0]=0
 #write.table(file=paste(opt$out,"detail.select",sep="."),row.names=FALSE,subset(pi,(pi$theta < quantile(pi$theta,probs=0.05) | pi$theta > quantile(pi$theta,probs=0.95)) & pi$fst > quantile(pi$fst,probs=0.95) ));
 
 empty<-ggplot()+theme(panel.background=element_blank())
-hist_top<-ggplot()+theme_bw()
-hist_top<-hist_top+geom_histogram(aes(pi$theta[pi$theta >= quantile(pi$theta,probs=0.95)]),colour='green',fill='green',binwidth=0.01)
-hist_top<-hist_top+geom_histogram(aes(pi$theta[pi$theta <= quantile(pi$theta,probs=0.05)]),colour='blue',fill='blue',binwidth=0.01)
-hist_top<-hist_top+geom_histogram(aes(pi$theta[pi$theta > quantile(pi$theta,probs=0.05) & pi$theta < quantile(pi$theta,probs=0.95)]),colour='gray',fill='gray',binwidth=0.01)
-hist_top<-hist_top+theme(axis.title.x = element_blank(), axis.text.x = element_blank(),axis.ticks.x = element_blank())+theme(panel.background=element_blank())+ylab("Pi Ratio distribution")
-hist_top<-hist_top+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.95)),linetype=5,col="black")
-hist_top<-hist_top+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.05)),linetype=5,col="black")
-hist_right<-ggplot()+theme_bw()
-hist_right<-hist_right+geom_histogram(aes(pi$fst[pi$fst >= quantile(pi$fst,probs=0.95)]),colour='orange',fill='orange',binwidth=0.01)
-hist_right<-hist_right+geom_histogram(aes(pi$fst[pi$fst <= quantile(pi$fst,probs=0.95)]),colour='gray',fill='gray',binwidth=0.01)
-hist_right<-hist_right+theme(axis.title.y=element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Fst distribution")
-hist_right<-hist_right+geom_vline(aes(xintercept=quantile(pi$fst,probs=0.95)),linetype=5,col="black")+ylab("Fst Count")
+diff<-(max(pi$theta)-min(pi$theta))/2000
+theta1<-ceiling((quantile(pi$theta,0.05)-quantile(pi$theta,0))/diff)
+theta2<-ceiling((quantile(pi$theta,1)-quantile(pi$theta,0.95))/diff)
+g1<-ggplot()+theme_bw()
+g1<-g1+geom_histogram(aes(pi$theta,y=..density..),col=c(rep('blue',theta1),rep('grey',2001-theta1-theta2),rep('green',theta2)),binwidth=diff)
+g1<-g1+theme(axis.title.x = element_blank(), axis.text.x = element_blank(),axis.ticks.x = element_blank())+theme(panel.background=element_blank())+ylab("Pi Ratio Frequency %")
+g1<-g1+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.95)),linetype=5,col="black")
+g1<-g1+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.05)),linetype=5,col="black")
 scatter<-ggplot()+theme_bw()
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta > quantile(pi$theta,probs=0.05) & pi$theta < quantile(pi$theta,probs=0.95)],pi$fst[pi$theta > quantile(pi$theta,probs=0.05) & pi$theta < quantile(pi$theta,probs=0.95)]),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta < quantile(pi$theta,probs=0.05) & pi$fst < quantile(pi$fst,probs=0.95)],pi$fst[pi$theta < quantile(pi$theta,probs=0.05) & pi$fst < quantile(pi$fst,probs=0.95)]),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta < quantile(pi$theta,probs=0.05) & pi$fst > quantile(pi$fst,probs=0.95)],pi$fst[pi$theta < quantile(pi$theta,probs=0.05) & pi$fst > quantile(pi$fst,probs=0.95)]),colour='blue',fill='blue')
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta > quantile(pi$theta,probs=0.95) & pi$fst < quantile(pi$fst,probs=0.95)],pi$fst[pi$theta > quantile(pi$theta,probs=0.95) & pi$fst < quantile(pi$fst,probs=0.95)]),colour='gray',fill='gray')
 scatter<-scatter+geom_point(aes(pi$theta[pi$theta > quantile(pi$theta,probs=0.95) & pi$fst > quantile(pi$fst,probs=0.95)],pi$fst[pi$theta > quantile(pi$theta,probs=0.95) & pi$fst > quantile(pi$fst,probs=0.95)]),colour='green',fill='green')
-scatter<-scatter+theme(panel.background=element_blank())+xlab("Pi Ratio Distribution")+ylab("Fst Distribution")
+scatter<-scatter+theme(panel.background=element_blank())+xlab("Pi Ratio")+ylab("Fst")
 scatter<-scatter+geom_hline(aes(yintercept=quantile(pi$fst,probs=0.95)),linetype=5,col="black")
 scatter<-scatter+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.95)),linetype=5,col="black")
 scatter<-scatter+geom_vline(aes(xintercept=quantile(pi$theta,probs=0.05)),linetype=5,col="black")
-
-
+difffst<-(max(pi$fst)-min(pi$fst))/2000
+fst1<-ceiling((quantile(pi$fst,1)-quantile(pi$fst,0.95))/difffst)
+g3<-ggplot()+theme_bw()
+g3<-g3+geom_histogram(aes(pi$fst,y=..density..),colour=c(rep('grey',2001-fst1),rep('orange',fst1)),binwidth=difffst)
+g3<-g3+theme(axis.title.y=element_blank(),axis.text.y = element_blank(),axis.ticks.y = element_blank())+theme(panel.background=element_blank())+coord_flip()+xlab("Fst distribution")
+g3<-g3+geom_vline(aes(xintercept=quantile(pi$fst,probs=0.95)),linetype=5,col="black")+ylab("Fst Frequency %")
 
 pdf(paste(opt$out,"pdf",sep="."));
-grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
+ggarrange(g1,empty,scatter,g3,widths=c(3,1),heights=c(1,3))
 dev.off()
 png(paste(opt$out,"png",sep="."));
-grid.arrange(hist_top, empty, scatter, hist_right, ncol=2, nrow=2, widths=c(4,1), heights=c(1,4))
+ggarrange(g1,empty,scatter,g3,widths=c(3,1),heights=c(1,3))
 dev.off()
+
+
+
 
 escaptime=Sys.time()-times;
 print("Done!")
 print(escaptime)
+
+

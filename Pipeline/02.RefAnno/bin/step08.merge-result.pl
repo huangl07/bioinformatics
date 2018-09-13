@@ -18,12 +18,14 @@ GetOptions(
 	"ref:s"=>\$refdir,
 	"out:s"=>\$out,
 	) or &USAGE;
-&USAGE unless ($nr and $kegg and $go and $eggnog and $uniprot and $refdir and $out);
+&USAGE unless ($nr and $kegg and $go and $eggnog and $uniprot and $out);
 mkdir $out if (!-d $out);
 $out=ABSOLUTE_DIR($out);
-`ln -s $refdir/ref.fa $out/ref.fa`;
-`ln -s $refdir/ref.gff $out/ref.gff`;
-`ln -s $refdir/ref.predesign $out/ref.pre-design`;
+if (defined $refdir) {
+	`ln -s $refdir/ref.fa $out/ref.fa`;
+	`ln -s $refdir/ref.gff $out/ref.gff`;
+	`ln -s $refdir/ref.predesign $out/ref.pre-design`;
+}
 `paste $nr $uniprot $kegg $go $eggnog|cut -f 1,2,3,5,6,8,9,11,12,14,15 > $out/anno.summary`;
 
 #######################################################################################

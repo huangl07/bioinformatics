@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 library('getopt');
 options(bitmapType='cairo')
+options(scipen=200)
 spec = matrix(c(
 	'infile','i',0,'character',
 	'outdir','o',0,'character',
@@ -17,7 +18,7 @@ if ( is.null(opt$infile)) { print_usage(spec)}
 if ( is.null(opt$outdir)){ print_usage(spec) }
 if(is.null(opt$year)){opt$year=1}
 setwd(opt$outdir);
-psmc.result<-function(file,i.iteration=25,mu=3.7e-8,s=100,g=opt$year)
+psmc.result<-function(file,i.iteration=25,mu=3.7e-8,s=100,g=as.numeric(opt$year))
 {
 	X<-scan(file=file,what="",sep="\n",quiet=TRUE)
 	
@@ -110,36 +111,45 @@ ldfile<-read.table(opt$infile,head=TRUE)
 files=ldfile$file
 popid=ldfile$popid
 col<-rainbow(length(popid))
-pop.id<-paste("pop",c(1:length(popid)))
+pop.id<-popid
 psmcdata<-data.frame()
 for (i in 1:length(popid)){
 	data<-psmc.result(file=as.character(files[i]))
-	data$Ne<-log(data$Ne,10)
-	data$YearsAgo<-data$YearsAgo
+	data$Ne<-log10(data$Ne)
+	data$YearsAgo<-log10(data$YearsAgo)
+	data[sapply(data,is.infinite)]<-NA;
+	data<-na.omit(data)
+	print(c(ceiling(min(data$YearsAgo,na.rm=T)),round(max(data$YearsAgo,na.rm=T))))
 	pdf(paste(popid[i],"psmc.pdf",sep="."))
-	plot(1,1,ylim=c(0,round(max(data$Ne)/0.9)), xlim=c(1,round(max(data$YearsAgo)/0.9)),log="x",type="n",ylab="Ne(log 10)",xlab="Generations ago")
+	plot(1,1,ylim=c(0,round(max(data$Ne)/0.6)), xlim=c(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo))),type="n",ylab="Ne(log 10)",xlab=paste("Generations ago(g=",opt$year,")",sep=""),xaxt="n")
 	lines(x=data$YearsAgo,y=data$Ne,type="l",col=col[i],lwd=2)
+	axis(1,at=seq(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo)),1),label=paste("10","^",seq(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo)),1)))
 	dev.off()
 	png(paste(popid[i],"psmc.png",sep="."))
-	plot(1,1,ylim=c(0,round(max(data$Ne)/0.9)), xlim=c(1,round(max(data$YearsAgo)/0.9)),log="x",type="n",ylab="Ne(log 10)",xlab="Generations ago")
+	plot(1,1,ylim=c(0,round(max(data$Ne)/0.6)), xlim=c(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo))),type="n",ylab="Ne(log 10)",xlab=paste("Generations ago(g=",opt$year,")",sep=""),xaxt="n")
 	lines(x=data$YearsAgo,y=data$Ne,type="l",col=col[i],lwd=2)
+	axis(1,at=seq(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo)),1),label=paste("10","^",seq(ceiling(min(data$YearsAgo)),round(max(data$YearsAgo)),1)))
 	dev.off()
 	psmcdata<-rbind(psmcdata,data.frame(year=data$YearsAgo,ne=data$Ne,popid=popid[i]))
+	data$YearsAgo=10^data$YearsAgo
 	colnames(data)<-c(paste("Generation","x",opt$year,sep=" "),"Ne(log 10)")
-	write.table(file=paste(popid[i],"psmc.result",sep="."),data,col.names=FALSE)
+	write.table(file=paste(popid[i],"psmc.result",sep="."),data,row.names=F,sep="\t")
 }
 pdf(paste("pop-all","psmc.pdf",sep="."))
-plot(1,1,ylim=c(0,round(max(psmcdata$ne)/0.9)), xlim=c(200,round(max(psmcdata$year)/0.9)),,log="x",type="n",ylab="Ne(log 10)",xlab="Generations ago")
+print("haha");
+plot(1,1,ylim=c(0,round(max(psmcdata$ne)/0.6)), xlim=c(ceiling(min(psmcdata$year)),round(max(psmcdata$year))),type="n",ylab="Ne(log 10)",xlab=paste("Generations ago(g=",opt$year,")",sep=""),xaxt="n")
 for (i in 1:length(popid)){
 	lines(y=psmcdata$ne[psmcdata$popid==popid[i]],x=psmcdata$year[psmcdata$popid==popid[i]],type="l",col=col[i],lwd=2)
 }
+axis(1,at=seq(ceiling(min(psmcdata$year)),round(max(psmcdata$year)),1),label=paste("10","^",seq(ceiling(min(psmcdata$year)),round(max(psmcdata$year)),1)))
 legend("topright",col=col,legend=pop.id,pch=1,cex=1)
 dev.off()
 png(paste("pop-all","psmc.png",sep="."))
-plot(1,1,ylim=c(0,round(max(psmcdata$ne)/0.9)), xlim=c(200,round(max(psmcdata$year)/0.9)),,log="x",type="n",ylab="Ne(log 10)",xlab="Generations ago")
+plot(1,1,ylim=c(0,round(max(psmcdata$ne)/0.6)), xlim=c(ceiling(min(psmcdata$year)),round(max(psmcdata$year))),type="n",ylab="Ne(log 10)",xlab=paste("Generations ago(g=",opt$year,")",sep=""),xaxt="n")
 for (i in 1:length(popid)){
 	lines(y=psmcdata$ne[psmcdata$popid==popid[i]],x=psmcdata$year[psmcdata$popid==popid[i]],type="l",col=col[i],lwd=2)
 }
+axis(1,at=seq(ceiling(min(psmcdata$year)),round(max(psmcdata$year)),1),label=paste("10","^",seq(ceiling(min(psmcdata$year)),round(max(psmcdata$year)),1)))
 legend("topright",col=col,legend=pop.id,pch=1,cex=1)
 dev.off()
 

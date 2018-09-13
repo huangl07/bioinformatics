@@ -1,0 +1,61 @@
+[Command used]:
+CRISPResso /mnt/ilustre/users/dna/.env//bin/CRISPResso -r1 CRISPRessoWGS_on_w22m2_3.mkdup/ANALYZED_REGIONS/REGION_R91.fastq.gz -a GGCCACCATTAAATTTTTTACG -o CRISPRessoWGS_on_w22m2_3.mkdup --name R91 --window_around_sgrna 1 --cleavage_offset -3 --min_average_read_quality 0 --min_single_bp_quality 0 --min_identity_score 60.0 --min_single_bp_quality 0 --exclude_bp_from_left 5 --exclude_bp_from_right 5 --hdr_perfect_alignment_threshold 98.0 --needle_options_string  -gapopen=10 -gapextend=0.5  -awidth3=5000 --n_processes 8
+
+[Execution log]:
+Preparing files for the alignment...
+Done!
+Aligning sequences...
+Needleman-Wunsch global alignment of two sequences
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1661_11134_12101_2' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1247_21395_6950_17' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2265_2148_34272_21' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2576_32940_36088_25' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1632_7943_17597_27' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2506_28149_30796_31' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1461_9679_33285_36' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2567_31792_22733_45' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1640_1958_14465_51' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1455_2492_19304_62' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1573_6352_14340_68' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2175_1660_10379_70' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1124_13756_11318_77' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1141_12364_19366_84' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2512_3830_25379_93' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1310_7735_28980_97' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2338_19895_30154_100' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1504_17951_32581_103' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1332_18313_20462_106' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2147_16957_12289_110' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2119_26847_4304_113' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1424_12563_34491_115' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2460_8865_19288_122' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2616_1045_8813_125' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1431_13892_10739_127' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1342_11758_32346_129' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1332_10194_5525_131' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2329_10800_1939_133' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1559_11379_18693_139' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1262_26838_28338_141' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1636_5041_2769_146' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2375_31494_36620_153' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2358_8495_1391_157' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2303_30825_36933_159' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1515_26503_26193_163' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2377_5439_34554_191' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1265_9037_19460_194' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2567_28375_1407_199' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_1227_20184_18881_203' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2128_23493_24956_210' has zero length, ignored
+Warning: Sequence 'fasta::/dev/stdin:@A00283_26_H3YYKDSXX_1_2464_23656_8484_218' has zero length, ignored
+Quantifying indels/substitutions...
+[CRISPResso quantification is running in parallel mode with 8 processes]
+Done!
+Calculating indel distribution based on the length of the reads...
+Done!
+Calculating alleles frequencies...
+Done!
+Making Plots...
+Done!
+Removing Intermediate files...
+Saving processed data...
+All Done!

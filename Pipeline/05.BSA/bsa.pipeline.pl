@@ -40,9 +40,9 @@ if (scalar @bid == 1) {
 	}else{
 		print SH "&& ";
 	}
-	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 3 --win 2000000 --step 10000 --method bp && ";
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result.index --outfile $out/sliding-win --col 3 --win 2000000 --step 10000 --method bp && ";
 	print SH "Rscript $Bin/bin/manhattan.R --input $out/sliding-win.result --output $out/fig/bsa --col 1,3,4,5 && ";
-	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result.index -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
 	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.threshold.gene -i $out/sliding-win.threshold.select && ";
 	print SH "perl $Bin/bin/region-vcf.pl -i $vcf -o $out/region.threshold.vcf -r $out/sliding-win.threshold.select && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/fig/region.threshold.gene.kegg.stat --top 1 && ";
@@ -57,9 +57,9 @@ if (scalar @bid == 1) {
 	}else{
 		print SH "&& ";
 	}
-	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result --outfile $out/sliding-win --col 5 --win 2000000 --step 10000 --method bp && ";
-	print SH "Rscript $Bin/bin/manhattan.R --input $out/sliding-win.result --output $out/bsa --col 1,3,4,5,6 && ";
-	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
+	print SH "Rscript $Bin/bin/slidingwin.R --infile $out/index-calc.result.index --outfile $out/sliding-win --col 5 --win 2000000 --step 10000 --method bp && ";
+	print SH "Rscript $Bin/bin/manhattan.R --input $out/sliding-win.result --output $out/bsa --col 1,3,4,5,6,7 && ";
+	print SH "perl $Bin/bin/region-variant.pl -i $out/index-calc.result.index -o $out/region.threshold.variant -r $out/sliding-win.threshold.select && ";
 	print SH "perl $Bin/bin/region-gene.pl -a $ann -o $out/region.threshold.gene -i $out/sliding-win.threshold.select && ";
 	print SH "perl $Bin/bin/region-vcf.pl -i $vcf -o $out/region.threshold.vcf -r $out/sliding-win.threshold.select && ";
 	print SH "Rscript $Bin/bin/eff-enrich.R --input $out/region.threshold.gene.kegg.stat --output $out/region.threshold.gene.kegg.stat --top 1 && ";

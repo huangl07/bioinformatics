@@ -57,7 +57,7 @@ while (<In>) {
 			my ($pos1,$pos2)=split(/\s+/,$region);
 			if ($pos >= $pos1 && $pos <= $pos2) {
 				push @{$info{$chr}{$region}},$_;
-				my ($fun,$impact,$genename,$geneid)=split(/\|/,$ann);
+				my ($base,$fun,$impact,$genename,$geneid)=split(/\|/,$ann);
 				push @{$einfo{$chr}{$region}},$_ if($impact eq "HIGH" || $impact eq "MODERATE");
 				$impact||="unknown";
 				if ($type eq "INDEL") {
