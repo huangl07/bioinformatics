@@ -1,2 +1,0 @@
-Aligned_Sequence	Reference_Sequence	NHEJ	UNMODIFIED	HDR	n_deleted	n_inserted	n_mutated	#Reads	%Reads
-AGGCTCCATTAATTTTGTTAAG	AGGCTCCATTAATTTTGTTAAG	False	True	False	0	0	0	28	100.0
